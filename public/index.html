@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonlight Line - Fantasy League</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        body {
+            background-color: #06111f;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Animated background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+        
+        .bg-gif {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cubre toda la pantalla */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        /* Dark overlay for better readability */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Ajusta la opacidad según necesites */
+            z-index: -1;
+        }
+        
+        /* Grid Lines */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Background court design for extra effect */
+        .court-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .side-glow-left {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #00f0ff, transparent);
+            box-shadow: 0 0 20px 5px rgba(0, 240, 255, 0.5);
+            opacity: 0.8;
+            z-index: -1;
+        }
+        
+        .side-glow-right {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #8c00ff, transparent);
+            box-shadow: 0 0 20px 5px rgba(140, 0, 255, 0.5);
+            opacity: 0.8;
+            z-index: -1;
+        }
+        
+        /* Main content */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Title */
+        .title {
+            font-size: 5rem;
+            font-weight: 700;
+            text-align: center;
+            line-height: 1.1;
+            color: #00f0ff;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.7);
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+        
+        .title span {
+            display: block;
+        }
+        
+        /* User info when logged in */
+        .user-info {
+            display: none; /* Initially hidden, shown when logged in */
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00f0ff;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        
+        .team-name {
+            color: #00f0ff;
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.7);
+        }
+        
+        /* Buttons */
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            width: 100%;
+        }
+        
+        .neon-button {
+            background-color: rgba(0, 0, 0, 0.5); /* Más opaco para mejor contraste */
+            border: 2px solid #00f0ff;
+            border-radius: 15px;
+            color: #00f0ff;
+            font-size: 1.8rem;
+            font-weight: 600;
+            padding: 18px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .neon-button:hover {
+            background-color: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
+            transform: translateY(-2px);
+        }
+        
+        #leaderboards-btn, #leaderboards-btn-logged {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-color: #8c00ff;
+            color: #bf9aff;
+            box-shadow: 0 0 10px rgba(140, 0, 255, 0.5);
+        }
+        
+        #leaderboards-btn:hover, #leaderboards-btn-logged:hover {
+            background-color: rgba(140, 0, 255, 0.2);
+            box-shadow: 0 0 15px rgba(140, 0, 255, 0.7);
+        }
+        
+        #logout-btn {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+            font-size: 1.3rem;
+        }
+        
+        #logout-btn:hover {
+            background-color: rgba(255, 107, 107, 0.2);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.7);
+        }
+        
+        .admin-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-color: #ff8c00;
+            color: #ff8c00;
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+        }
+        
+        .admin-button:hover {
+            background-color: rgba(255, 140, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.7);
+        }
+        
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 40px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7); /* Más opaco para mejor contraste */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .footer-left {
+            color: #00f0ff;
+            opacity: 0.9; /* Más opaco para mejor contraste */
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+        }
+        
+        .footer-right {
+            color: white;
+            opacity: 0.9; /* Más opaco para mejor contraste */
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Admin settings button */
+        .admin-settings {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00f0ff;
+            color: #00f0ff;
+            padding: 8px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            z-index: 100;
+            text-decoration: none;
+        }
+        
+        .admin-settings:hover {
+            background-color: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: rotate(45deg);
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 3.5rem;
+            }
+            
+            .neon-button {
+                font-size: 1.5rem;
+                padding: 15px;
+            }
+            
+            .footer {
+                padding: 0 20px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .title {
+                font-size: 2.8rem;
+            }
+            
+            .neon-button {
+                font-size: 1.3rem;
+                padding: 12px;
+            }
+        }
+        
+        /* Añadir reproductor de audio de fondo (oculto) */
+        .audio-control {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00f0ff;
+            color: #00f0ff;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .audio-control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <!-- Grid Lines -->
+    <div class="grid-lines"></div>
+    
+    <!-- Background GIF -->
+    <div class="bg-container">
+        <img src="https://i.pinimg.com/originals/64/a8/08/64a8083d07b8c98923311cbc88fecafe.gif" alt="Basketball Court Background" class="bg-gif">
+    </div>
+    
+    <!-- Dark overlay for better readability -->
+    <div class="overlay"></div>
+    
+    <!-- Background Elements -->
+    <div class="court-bg"></div>
+    <div class="side-glow-left"></div>
+    <div class="side-glow-right"></div>
+    
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="title">
+            <span>DELL TECHNOLOGIES</span>
+            <span>FANTASY LEAGUE</span>
+        </div>
+        
+        <!-- User info (visible when logged in) -->
+        <div class="user-info" id="user-info">
+            <p>LOGGED IN AS <span class="team-name" id="user-team-name">Team Name</span></p>
+        </div>
+        
+        <!-- Buttons for logged out users -->
+        <div class="buttons-container" id="logged-out-buttons">
+            <a href="login.html" class="neon-button">LOGIN</a>
+            <a href="signup.html" class="neon-button">SIGN UP</a>
+            <a href="create-team.html" class="neon-button">CREATE TEAM</a>
+            <a href="leaderboards.html" class="neon-button" id="leaderboards-btn">LEADERBOARDS</a>
+        </div>
+        
+        <!-- Buttons for logged in users -->
+        <div class="buttons-container" id="logged-in-buttons" style="display: none;">
+            <a href="create-team.html" class="neon-button">MY TEAM</a>
+            <a href="draft-players.html" class="neon-button">DRAFT PLAYERS</a>
+            <a href="leaderboards.html" class="neon-button" id="leaderboards-btn-logged">LEADERBOARDS</a>
+            <a href="stats-manager.html" class="neon-button admin-button" id="stats-button" style="display: none;">MANAGE STATS</a>
+            <button class="neon-button" id="logout-btn">LOGOUT</button>
+        </div>
+    </div>
+    
+    <!-- Admin Settings Button (Solo visible para admins) -->
+    <a href="admin.html" class="admin-settings" id="admin-btn" style="display: none;">⚙️</a>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-left"></div>
+        <div class="footer-right"></div>
+    </div>
+    
+    <!-- Añadir reproductor de audio de fondo (oculto) -->
+    <audio id="background-audio" loop>
+        <source src="assets/sounds/background-music.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        // API URL
+        const API_URL = '/api';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar estado de inicio de sesión
+            checkLoginStatus();
+            
+            // Comprueba si la imagen de fondo se carga correctamente
+            const bgImage = document.querySelector('.bg-gif');
+            
+            bgImage.addEventListener('error', function() {
+                console.error('Error al cargar la imagen de fondo');
+                // Si hay un problema, cambia a un color de fondo
+                document.body.style.background = 'linear-gradient(to bottom right, #06111f, #0a1528)';
+            });
+            
+            // Verificar si el usuario es administrador
+            checkAdminStatus();
+            
+            // Configuración del audio de fondo
+            setupAudio();
+            
+            // Configurar el botón de logout
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    // Limpiar todos los datos de sesión
+                    clearUserSession();
+                    
+                    // Recargar la página para actualizar la interfaz
+                    window.location.reload();
+                });
+            }
+        });
+        
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('authToken') !== null;
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            const userInfo = document.getElementById('user-info');
+            const loggedOutButtons = document.getElementById('logged-out-buttons');
+            const loggedInButtons = document.getElementById('logged-in-buttons');
+            
+            if (isLoggedIn && userData.team_name) {
+                // Usuario logueado - mostrar su información
+                document.getElementById('user-team-name').textContent = userData.team_name;
+                userInfo.style.display = 'block';
+                loggedOutButtons.style.display = 'none';
+                loggedInButtons.style.display = 'flex';
+                
+                // Actualizar datos de compatibilidad con otras páginas
+                updateCompatibilityData(userData);
+            } else {
+                // Usuario no logueado - limpiar datos y mostrar botones de login
+                clearUserSession();
+                userInfo.style.display = 'none';
+                loggedOutButtons.style.display = 'flex';
+                loggedInButtons.style.display = 'none';
+            }
+        }
+        
+        function updateCompatibilityData(userData) {
+            // Guardar datos para compatibilidad con otras páginas
+            localStorage.setItem('loggedIn', 'true');
+            localStorage.setItem('currentUser', JSON.stringify({
+                id: userData.id,
+                username: userData.username,
+                teamName: userData.team_name,
+                email: userData.email
+            }));
+        }
+        
+        function clearUserSession() {
+            // Limpiar todos los datos de sesión
+            const keysToRemove = [
+                'authToken',
+                'userData', 
+                'loggedIn',
+                'currentUser',
+                'basketballTeam',
+                'draftedPlayers'
+            ];
+            
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+            });
+        }
+        
+        function checkAdminStatus() {
+            // Verificar si el usuario es administrador
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            
+            if (userData.is_admin) {
+                // Mostrar botones de administración
+                document.getElementById('admin-btn').style.display = 'flex';
+                document.getElementById('stats-button').style.display = 'block';
+            }
+        }
+        
+        function setupAudio() {
+            const bgAudio = document.getElementById('background-audio');
+            
+            if (bgAudio) {
+                // Configurar volumen (valor entre 0.0 y 1.0)
+                bgAudio.volume = 0.3;
+                
+                // Botón para controlar el audio
+                const audioButton = document.createElement('button');
+                audioButton.innerHTML = '🔊';
+                audioButton.className = 'audio-control';
+                audioButton.title = 'Toggle Sound';
+                
+                document.body.appendChild(audioButton);
+                
+                // Estado de reproducción
+                let isPlaying = false;
+                
+                // Agregar evento click al botón
+                audioButton.addEventListener('click', function() {
+                    if (isPlaying) {
+                        bgAudio.pause();
+                        audioButton.innerHTML = '🔇';
+                    } else {
+                        // Intentar reproducir el audio
+                        const playPromise = bgAudio.play();
+                        
+                        // Manejar la promesa para evitar errores
+                        if (playPromise !== undefined) {
+                            playPromise.then(_ => {
+                                audioButton.innerHTML = '🔊';
+                            })
+                            .catch(error => {
+                                console.log('Reproducción automática bloqueada por el navegador:', error);
+                                audioButton.innerHTML = '🔇';
+                            });
+                        }
+                    }
+                    
+                    isPlaying = !isPlaying;
+                });
+            }
+        }
+    </script>
+</body>
+</html>

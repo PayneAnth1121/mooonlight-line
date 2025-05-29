@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonlight Line - Sign Up</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        body {
+            background-color: #06111f;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            /* Agregar la imagen de fondo */
+            background-image: url('https://98747F04B20194A89A3E59780734E32E2E7A2516');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        /* Overlay para mejorar legibilidad sobre fondo */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(6, 17, 31, 0.85);
+            z-index: -1;
+        }
+        
+        /* Grid Lines */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Contenedor principal */
+        .signup-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Navegación */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .nav-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00f0ff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-button:hover {
+            background-color: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Contenedor de formulario */
+        .signup-container {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00f0ff;
+            border-radius: 10px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Título del formulario */
+        .signup-title {
+            font-size: 2rem;
+            color: #00f0ff;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        /* Grupos de formulario */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00f0ff;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
+        }
+        
+        .form-input {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.5);
+            border-radius: 5px;
+            padding: 12px 15px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: #00f0ff;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        
+        .input-focused .form-label {
+            color: white;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.7);
+        }
+        
+        /* Botón de registro */
+        .signup-button {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00f0ff;
+            border-radius: 5px;
+            color: #00f0ff;
+            padding: 12px 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+        }
+        
+        .signup-button:hover {
+            background-color: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .signup-button.success {
+            background-color: rgba(0, 255, 128, 0.1);
+            border-color: #00ff80;
+            color: #00ff80;
+            box-shadow: 0 0 15px rgba(0, 255, 128, 0.5);
+        }
+        
+        /* Animación de pulso */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Mensaje de error */
+        .form-error {
+            color: #ff6b6b;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            text-shadow: 0 0 5px rgba(255, 107, 107, 0.5);
+        }
+        
+        .form-error-general {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: rgba(255, 107, 107, 0.1);
+            border-radius: 5px;
+            border: 1px solid #ff6b6b;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .input-error {
+            border-color: #ff6b6b;
+        }
+        
+        /* Elementos decorativos */
+        .decorative-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.5;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .left-circle {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0) 70%);
+            left: -100px;
+            top: 30%;
+            animation: float-left 10s ease-in-out infinite;
+        }
+        
+        .right-circle {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 140, 0, 0.1) 0%, rgba(255, 140, 0, 0) 70%);
+            right: -150px;
+            bottom: 20%;
+            animation: float-right 12s ease-in-out infinite alternate;
+        }
+        
+        @keyframes float-left {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -20px); }
+            100% { transform: translate(0, 0); }
+        }
+        
+        @keyframes float-right {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(-40px, 30px); }
+            100% { transform: translate(0, 0); }
+        }
+        
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(0, 240, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00f0ff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .signup-container {
+                padding: 20px;
+            }
+            
+            .signup-title {
+                font-size: 1.6rem;
+            }
+            
+            .form-input, .signup-button {
+                padding: 10px;
+            }
+            
+            .decorative-element {
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-lines"></div>
+    
+    <div class="signup-screen">
+        <!-- Navegación -->
+        <div class="navigation">
+            <div class="logo">DELL TECHNOLOGIES</div>
+            <a href="index.html" class="nav-button">BACK</a>
+        </div>
+        
+        <div class="signup-container">
+            <h2 class="signup-title">JOIN THE LEAGUE</h2>
+            
+            <!-- Mensaje de error general -->
+            <div id="general-error" class="form-error-general"></div>
+            
+            <form id="signup-form">
+                <div class="form-group">
+                    <label class="form-label" for="username">USERNAME</label>
+                    <input type="text" id="username" class="form-input" required>
+                    <div class="form-error" id="username-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">EMAIL</label>
+                    <input type="email" id="email" class="form-input" required>
+                    <div class="form-error" id="email-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">PASSWORD</label>
+                    <input type="password" id="password" class="form-input" required>
+                    <div class="form-error" id="password-error"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="team-name">TEAM NAME</label>
+                    <input type="text" id="team-name" class="form-input" required>
+                    <div class="form-error" id="team-name-error"></div>
+                </div>
+                
+                <button type="submit" class="signup-button pulse">SIGN UP</button>
+            </form>
+        </div>
+        
+        <!-- Elementos decorativos -->
+        <div class="decorative-element left-circle"></div>
+        <div class="decorative-element right-circle"></div>
+    </div>
+    
+    <script>
+        // API URL
+        const API_URL = '/api';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Limpiar datos de sesión previos si existen
+            clearPreviousSession();
+            
+            // Efectos para los inputs
+            const formInputs = document.querySelectorAll('.form-input');
+            
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('input-focused');
+                });
+                
+                input.addEventListener('blur', function() {
+                    if (!this.value) {
+                        this.parentElement.classList.remove('input-focused');
+                    }
+                });
+            });
+            
+            // Validación y procesamiento del formulario
+            const signupForm = document.getElementById('signup-form');
+            const generalError = document.getElementById('general-error');
+            
+            signupForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Limpiar errores previos
+                generalError.style.display = 'none';
+                document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+                document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+                
+                // Obtener valores del formulario
+                const username = document.getElementById('username').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                const teamName = document.getElementById('team-name').value.trim();
+                
+                // Validación básica
+                let isValid = true;
+                
+                if (username.length < 3) {
+                    showFieldError('username', 'Username must be at least 3 characters long');
+                    isValid = false;
+                }
+                
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showFieldError('email', 'Please enter a valid email address');
+                    isValid = false;
+                }
+                
+                if (password.length < 6) {
+                    showFieldError('password', 'Password must be at least 6 characters long');
+                    isValid = false;
+                }
+                
+                if (teamName.length < 3) {
+                    showFieldError('team-name', 'Team name must be at least 3 characters long');
+                    isValid = false;
+                }
+                
+                if (!isValid) return;
+                
+                // Mostrar indicador de carga y deshabilitar botón
+                const submitButton = document.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<span class="loading-spinner"></span> Processing...';
+                
+                try {
+                    // Llamar a la API de registro
+                    const response = await fetch(`${API_URL}/auth/register`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username,
+                            email,
+                            password,
+                            team_name: teamName
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Registration failed');
+                    }
+                    
+                    // Guardar datos de usuario de manera consistente
+                    saveUserSession(data);
+                    
+                    // Éxito - Actualizar el botón
+                    submitButton.classList.remove('pulse');
+                    submitButton.classList.add('success');
+                    submitButton.innerHTML = 'WELCOME TO THE LEAGUE!';
+                    
+                    // Redirigir después de un breve retraso
+                    setTimeout(() => {
+                        window.location.href = 'create-team.html';
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    
+                    // Mostrar error
+                    generalError.textContent = error.message || 'Registration failed. Please try again.';
+                    generalError.style.display = 'block';
+                    
+                    // Restaurar botón
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = 'SIGN UP';
+                }
+            });
+            
+            function showFieldError(fieldId, message) {
+                const field = document.getElementById(fieldId);
+                const errorElement = document.getElementById(`${fieldId}-error`);
+                
+                field.classList.add('input-error');
+                errorElement.textContent = message;
+            }
+            
+            // Efecto de movimiento de los elementos decorativos
+            const decorativeElements = document.querySelectorAll('.decorative-element');
+            window.addEventListener('mousemove', function(e) {
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+                
+                decorativeElements.forEach(element => {
+                    const offsetX = (mouseX - 0.5) * 20;
+                    const offsetY = (mouseY - 0.5) * 20;
+                    element.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+                });
+            });
+        });
+        
+        function clearPreviousSession() {
+            // Limpiar datos previos para evitar conflictos
+            const keysToRemove = [
+                'authToken',
+                'userData', 
+                'loggedIn',
+                'currentUser',
+                'basketballTeam',
+                'draftedPlayers'
+            ];
+            
+            keysToRemove.forEach(key => {
+                localStorage.removeItem(key);
+            });
+        }
+        
+        function saveUserSession(data) {
+            // Guardar token y datos de usuario de manera consistente
+            localStorage.setItem('authToken', data.token);
+            localStorage.setItem('userData', JSON.stringify(data.user));
+            
+            // Datos de compatibilidad para otras páginas
+            localStorage.setItem('loggedIn', 'true');
+            localStorage.setItem('currentUser', JSON.stringify({
+                id: data.user.id,
+                username: data.user.username,
+                teamName: data.user.team_name,
+                email: data.user.email
+            }));
+        }
+    </script>
+</body>
+</html>

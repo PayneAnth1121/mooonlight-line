@@ -1,0 +1,28 @@
+{
+  "name": "moonlight-line",
+  "version": "1.0.0",
+  "description": "Fantasy Basketball League - Moonlight Line",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Build complete'",
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@vercel/node": "^3.0.0"
+  },
+  "keywords": [
+    "fantasy",
+    "basketball",
+    "league",
+    "moonlight",
+    "game"
+  ],
+  "author": "Moonlight Line",
+  "license": "MIT"
+}

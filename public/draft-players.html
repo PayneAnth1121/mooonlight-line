@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonlight Line - Draft Players</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        body {
+            background-color: #06111f;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Grid Lines */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Navegación */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1400px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00f0ff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-button:hover {
+            background-color: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Título de sección */
+        .section-title {
+            font-size: 2rem;
+            color: #00f0ff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        
+        /* Filtros de búsqueda */
+        .filters-container {
+            width: 100%;
+            max-width: 1400px;
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .filter-input {
+            flex: 1;
+            max-width: 500px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 240, 255, 0.5);
+            border-radius: 4px;
+            color: white;
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-input:focus {
+            border-color: #00f0ff;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        
+        /* Resumen de selecciones */
+        .selection-summary {
+            width: 100%;
+            max-width: 1400px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00f0ff;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        
+        .selected-count {
+            font-size: 1.2rem;
+            color: #00f0ff;
+            letter-spacing: 1px;
+        }
+        
+        .selection-warning {
+            color: #ff8c00;
+            font-size: 1rem;
+            display: none;
+        }
+        
+        /* Contenedor de grid de jugadores */
+        .player-grid-container {
+            width: 100%;
+            max-width: 1400px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00f0ff;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        
+        /* GRID CORREGIDO - Columnas fijas como en tu imagen */
+        .player-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr); /* 6 columnas fijas */
+            gap: 15px;
+            width: 100%;
+            justify-items: center;
+            place-items: start;
+        }
+        
+        /* === CARTAS PIXEL ART === */
+        .player-card {
+            width: 180px;
+            height: 250px;
+            background: linear-gradient(145deg, #2a1810, #1a0f08);
+            border: 3px solid transparent;
+            border-image: linear-gradient(45deg, #ff8c00, #ffa500, #ff7f00, #ff8c00) 1;
+            position: relative;
+            box-shadow: 
+                0 0 15px rgba(255, 140, 0, 0.3),
+                inset 0 0 8px rgba(255, 140, 0, 0.1);
+            font-family: 'Orbitron', monospace;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .player-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 
+                0 10px 25px rgba(255, 140, 0, 0.4),
+                inset 0 0 12px rgba(255, 140, 0, 0.2);
+        }
+
+        .player-card.selected {
+            border-image: linear-gradient(45deg, #00f0ff, #00d4ff, #00f0ff, #00d4ff) 1;
+            box-shadow: 
+                0 0 20px rgba(0, 240, 255, 0.6),
+                inset 0 0 10px rgba(0, 240, 255, 0.2);
+            background: linear-gradient(145deg, #1a2830, #0f1a20);
+        }
+
+        /* Bordes decorativos */
+        .card-border {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            right: 6px;
+            bottom: 6px;
+            border: 1px solid #ff8c00;
+            pointer-events: none;
+        }
+
+        .player-card.selected .card-border {
+            border-color: #00f0ff;
+        }
+
+        /* Esquinas decorativas */
+        .corner {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(45deg, #ff8c00, #ffa500);
+        }
+
+        .player-card.selected .corner {
+            background: linear-gradient(45deg, #00f0ff, #00d4ff);
+        }
+
+        .corner.top-left {
+            top: 0;
+            left: 0;
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+        }
+
+        .corner.top-right {
+            top: 0;
+            right: 0;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+        }
+
+        .corner.bottom-left {
+            bottom: 0;
+            left: 0;
+            clip-path: polygon(0 0, 100% 100%, 0 100%);
+        }
+
+        .corner.bottom-right {
+            bottom: 0;
+            right: 0;
+            clip-path: polygon(100% 0, 100% 100%, 0 100%);
+        }
+
+        /* Nombre del jugador */
+        .player-name {
+            background: linear-gradient(90deg, #ff8c00, #ffa500, #ff8c00);
+            color: #000;
+            text-align: center;
+            padding: 5px 6px;
+            margin: 8px 8px 4px 8px;
+            font-weight: 900;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid #ff7f00;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+
+        .player-card.selected .player-name {
+            background: linear-gradient(90deg, #00f0ff, #00d4ff, #00f0ff);
+            border-color: #00d4ff;
+        }
+
+        /* Posición del jugador */
+        .player-position {
+            background: rgba(255, 140, 0, 0.2);
+            color: #ffa500;
+            text-align: center;
+            padding: 2px 4px;
+            margin: 0 8px 6px 8px;
+            font-weight: 600;
+            font-size: 8px;
+            letter-spacing: 0.5px;
+            border: 1px solid #ff8c00;
+            text-transform: uppercase;
+        }
+
+        .player-card.selected .player-position {
+            background: rgba(0, 240, 255, 0.2);
+            color: #00f0ff;
+            border-color: #00f0ff;
+        }
+
+        /* Contenedor de imagen */
+        .player-image-container {
+            width: 120px;
+            height: 90px;
+            margin: 0 auto 8px auto;
+            background: linear-gradient(135deg, #1a4c80, #2a5c90, #1a4c80);
+            border: 2px solid #ff8c00;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .player-card.selected .player-image-container {
+            border-color: #00f0ff;
+        }
+
+        .player-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.1) saturate(1.1);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 28px;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #1a4c80, #2a5c90);
+        }
+
+        /* Contenedor de estadísticas */
+        .stats-container {
+            padding: 0 10px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px 6px;
+            margin-bottom: 8px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 7px;
+            font-weight: 600;
+            color: #e6d7c3;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .stat-label {
+            color: #ffa500;
+        }
+
+        .player-card.selected .stat-label {
+            color: #00f0ff;
+        }
+
+        .stat-value {
+            color: #e6d7c3;
+            font-weight: 700;
+            min-width: 18px;
+            text-align: right;
+        }
+
+        /* Badge de selección */
+        .selection-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #00f0ff;
+            color: #000;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+        }
+
+        .player-card.selected .selection-badge {
+            opacity: 1;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1400px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .confirm-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #ff8c00;
+            color: #ff8c00;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .confirm-button:hover {
+            background-color: rgba(255, 140, 0, 0.15);
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .confirm-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Responsive - GRID AJUSTADO */
+        @media (max-width: 1200px) {
+            .player-grid {
+                grid-template-columns: repeat(5, 1fr); /* 5 columnas en pantallas medianas */
+            }
+            
+            .player-card {
+                width: 160px;
+                height: 220px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .player-grid {
+                grid-template-columns: repeat(4, 1fr); /* 4 columnas en tablets */
+            }
+            
+            .player-card {
+                width: 150px;
+                height: 210px;
+            }
+            
+            .player-image-container {
+                width: 110px;
+                height: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .filters-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .player-grid {
+                grid-template-columns: repeat(3, 1fr); /* 3 columnas en móviles */
+                gap: 10px;
+            }
+            
+            .player-grid-container {
+                padding: 15px;
+            }
+            
+            .player-card {
+                width: 130px;
+                height: 190px;
+            }
+            
+            .player-image-container {
+                width: 100px;
+                height: 70px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .player-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columnas en móviles pequeños */
+            }
+            
+            .player-card {
+                width: 120px;
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-lines"></div>
+    
+    <div class="draft-screen">
+        <!-- Navegación -->
+        <div class="navigation">
+            <div class="logo">MOONLIGHT LINE</div>
+            <div class="nav-buttons">
+                <a href="create-team.html" class="nav-button">BACK TO TEAM</a>
+            </div>
+        </div>
+        
+        <h2 class="section-title">DRAFT PLAYERS</h2>
+        
+        <!-- Filtros y búsqueda -->
+        <div class="filters-container">
+            <input type="text" class="filter-input" id="search-input" placeholder="Search by name...">
+        </div>
+        
+        <!-- Resumen de selección -->
+        <div class="selection-summary">
+            <div class="selected-count">Selected: <span id="selection-count">0</span>/10</div>
+            <div class="selection-warning" id="selection-warning">Maximum selection reached (10/10)</div>
+        </div>
+        
+        <!-- Grid de jugadores -->
+        <div class="player-grid-container">
+            <div class="player-grid" id="player-grid">
+                <!-- Las cartas de jugadores se generarán dinámicamente -->
+            </div>
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+            <button class="nav-button" id="clear-selections-btn">CLEAR SELECTIONS</button>
+            <button class="confirm-button" id="confirm-draft-btn" disabled>CONFIRM DRAFT</button>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const playerGrid = document.getElementById('player-grid');
+            const searchInput = document.getElementById('search-input');
+            const selectionCount = document.getElementById('selection-count');
+            const selectionWarning = document.getElementById('selection-warning');
+            const clearSelectionsBtn = document.getElementById('clear-selections-btn');
+            const confirmDraftBtn = document.getElementById('confirm-draft-btn');
+            
+            let players = [];
+            let selectedPlayers = [];
+            
+            loadPlayers();
+            loadPreviousSelections();
+            
+            searchInput.addEventListener('input', applyFilters);
+            clearSelectionsBtn.addEventListener('click', clearSelections);
+            confirmDraftBtn.addEventListener('click', confirmDraft);
+            
+            async function loadPlayers() {
+                try {
+                    const response = await fetch('/api/players');
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch players');
+                    }
+                    
+                    players = await response.json();
+                    renderPlayers(players);
+                } catch (error) {
+                    console.error('Error loading players:', error);
+                    playerGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #ff6b6b;">Error loading players. Please refresh the page.</div>';
+                }
+            }
+            
+            function createPlayerCard(player) {
+                const isSelected = selectedPlayers.some(p => p.id === player.id);
+                const selectionIndex = isSelected ? selectedPlayers.findIndex(p => p.id === player.id) + 1 : '';
+                
+                return `
+                    <div class="player-card ${isSelected ? 'selected' : ''}" data-id="${player.id}" data-name="${player.name}">
+                        <div class="card-border"></div>
+                        <div class="corner top-left"></div>
+                        <div class="corner top-right"></div>
+                        <div class="corner bottom-left"></div>
+                        <div class="corner bottom-right"></div>
+                        <div class="selection-badge">${selectionIndex}</div>
+                        
+                        <div class="player-name">${player.name.toUpperCase()}</div>
+                        <div class="player-position">${player.position || 'SF'} - ${player.nickname || 'PLAYER'}</div>
+                        
+                        <div class="player-image-container">
+                            ${player.imageUrl ? 
+                                `<img src="${player.imageUrl}" alt="${player.name}" class="player-image">` :
+                                `<div class="image-placeholder">👤</div>`
+                            }
+                        </div>
+                        
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <span class="stat-label">SPEED</span>
+                                <span class="stat-value">${player.stats?.speed || Math.floor(Math.random() * 30) + 70}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">DEFENSE</span>
+                                <span class="stat-value">${player.stats?.defense || Math.floor(Math.random() * 30) + 70}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">SHOOTING</span>
+                                <span class="stat-value">${player.stats?.shooting || Math.floor(Math.random() * 30) + 70}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">OFFENSE</span>
+                                <span class="stat-value">${player.stats?.offense || Math.floor(Math.random() * 30) + 70}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function renderPlayers(playersArray) {
+                playerGrid.innerHTML = '';
+                
+                playersArray.forEach(player => {
+                    const cardElement = document.createElement('div');
+                    cardElement.innerHTML = createPlayerCard(player);
+                    const card = cardElement.firstElementChild;
+                    
+                    card.addEventListener('click', () => togglePlayerSelection(player, card));
+                    playerGrid.appendChild(card);
+                });
+            }
+            
+            function togglePlayerSelection(player, card) {
+                const isSelected = selectedPlayers.some(p => p.id === player.id);
+                
+                if (isSelected) {
+                    selectedPlayers = selectedPlayers.filter(p => p.id !== player.id);
+                    card.classList.remove('selected');
+                } else {
+                    if (selectedPlayers.length >= 10) {
+                        selectionWarning.style.display = 'block';
+                        setTimeout(() => {
+                            selectionWarning.style.display = 'none';
+                        }, 3000);
+                        return;
+                    }
+                    
+                    selectedPlayers.push(player);
+                    card.classList.add('selected');
+                }
+                
+                updateSelectionCount();
+                updateSelectionBadges();
+                confirmDraftBtn.disabled = selectedPlayers.length === 0;
+            }
+            
+            function updateSelectionCount() {
+                selectionCount.textContent = selectedPlayers.length;
+            }
+            
+            function updateSelectionBadges() {
+                const cards = document.querySelectorAll('.player-card');
+                
+                cards.forEach(card => {
+                    const playerId = parseInt(card.dataset.id);
+                    const selectionIndex = selectedPlayers.findIndex(p => p.id === playerId);
+                    const badge = card.querySelector('.selection-badge');
+                    
+                    if (selectionIndex !== -1) {
+                        badge.textContent = selectionIndex + 1;
+                    } else {
+                        badge.textContent = '';
+                    }
+                });
+            }
+            
+            function applyFilters() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredPlayers = players.filter(player => 
+                    player.name.toLowerCase().includes(searchTerm)
+                );
+                renderPlayers(filteredPlayers);
+            }
+            
+            function clearSelections() {
+                selectedPlayers = [];
+                updateSelectionCount();
+                confirmDraftBtn.disabled = true;
+                renderPlayers(players);
+                localStorage.removeItem('draftedPlayers');
+                
+                const clearBtn = document.getElementById('clear-selections-btn');
+                const originalText = clearBtn.textContent;
+                clearBtn.textContent = 'CLEARED!';
+                clearBtn.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.7)';
+                
+                setTimeout(() => {
+                    clearBtn.textContent = originalText;
+                    clearBtn.style.boxShadow = '';
+                }, 1500);
+            }
+            
+            function confirmDraft() {
+                if (selectedPlayers.length > 0) {
+                    localStorage.setItem('draftedPlayers', JSON.stringify(selectedPlayers));
+                    
+                    const teamData = {};
+                    for (let i = 1; i <= 5; i++) {
+                        teamData[`position${i}`] = null;
+                    }
+                    
+                    for (let i = 0; i < 5 && i < selectedPlayers.length; i++) {
+                        teamData[`bench${i+1}`] = selectedPlayers[i].id.toString();
+                    }
+                    
+                    for (let i = 5; i < 10 && i < selectedPlayers.length; i++) {
+                        teamData[`bench${i+1}`] = selectedPlayers[i].id.toString();
+                    }
+                    
+                    localStorage.setItem('basketballTeam', JSON.stringify(teamData));
+                    
+                    const confirmBtn = document.getElementById('confirm-draft-btn');
+                    confirmBtn.textContent = 'CONFIRMED!';
+                    confirmBtn.style.boxShadow = '0 0 20px rgba(255, 140, 0, 0.7)';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'create-team.html';
+                    }, 1500);
+                }
+            }
+            
+            function loadPreviousSelections() {
+                const draftedPlayers = localStorage.getItem('draftedPlayers');
+                if (draftedPlayers) {
+                    selectedPlayers = JSON.parse(draftedPlayers);
+                    updateSelectionCount();
+                    confirmDraftBtn.disabled = selectedPlayers.length === 0;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

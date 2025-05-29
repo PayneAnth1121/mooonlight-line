@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonlight Line - Leaderboards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        body {
+            background-color: #06111f;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            /* Agregar la imagen de fondo */
+            background-image: url('https://98747F04B20194A89A3E59780734E32E2E7A2516');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        
+        /* Overlay para mejorar legibilidad sobre fondo */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(6, 17, 31, 0.85);
+            z-index: -1;
+        }
+        
+        /* Grid Lines */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        /* Contenedor principal */
+        .leaderboards-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Navegación */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00f0ff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-button:hover {
+            background-color: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Título de sección */
+        .section-title {
+            font-size: 2rem;
+            color: #00f0ff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        
+        /* Contenedor de leaderboards */
+        .leaderboards-container {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00f0ff;
+            border-radius: 10px;
+            padding: 30px;
+            width: 100%;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Tabs de navegación - Simplificadas solo ALL TIME */
+        .leaderboards-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+            justify-content: center;
+        }
+        
+        .leaderboards-tab {
+            padding: 15px 30px;
+            background-color: rgba(0, 240, 255, 0.2);
+            color: #00f0ff;
+            border-top: 1px solid #00f0ff;
+            border-left: 1px solid #00f0ff;
+            border-right: 1px solid #00f0ff;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            font-weight: 600;
+            box-shadow: 0 -5px 10px rgba(0, 240, 255, 0.1);
+        }
+        
+        /* Tabla de clasificaciones */
+        .leaderboards-content {
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            color: white;
+        }
+        
+        .leaderboard-table thead {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .leaderboard-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #00f0ff;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+        }
+        
+        .leaderboard-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.95rem;
+        }
+        
+        .leaderboard-table tbody tr {
+            transition: all 0.3s ease;
+            transform: translateY(10px);
+            opacity: 0;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        
+        .leaderboard-table tbody tr:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+        
+        .leaderboard-table tbody tr:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .leaderboard-table tbody tr:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+        
+        .leaderboard-table tbody tr:nth-child(4) {
+            animation-delay: 0.2s;
+        }
+        
+        .leaderboard-table tbody tr:nth-child(5) {
+            animation-delay: 0.25s;
+        }
+        
+        .leaderboard-table tbody tr:nth-child(6) {
+            animation-delay: 0.3s;
+        }
+        
+        .leaderboard-table tbody tr:nth-child(7) {
+            animation-delay: 0.35s;
+        }
+        
+        .leaderboard-table tbody tr:nth-child(8) {
+            animation-delay: 0.4s;
+        }
+        
+        .leaderboard-table tbody tr:nth-child(9) {
+            animation-delay: 0.45s;
+        }
+        
+        .leaderboard-table tbody tr:nth-child(10) {
+            animation-delay: 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .leaderboard-table tbody tr:hover,
+        .leaderboard-table tbody tr.row-hover {
+            background-color: rgba(0, 240, 255, 0.1);
+            transform: scale(1.01);
+            z-index: 2;
+        }
+        
+        /* Estilos específicos para columnas */
+        .rank-column {
+            width: 15%;
+        }
+        
+        .team-column {
+            width: 35%;
+        }
+        
+        .username-column {
+            width: 25%;
+        }
+        
+        .points-column {
+            width: 25%;
+        }
+        
+        /* Estilos para los primeros lugares */
+        .top-rank {
+            background-color: rgba(0, 240, 255, 0.05);
+        }
+        
+        .top-rank .rank {
+            color: #00f0ff;
+            font-weight: 700;
+        }
+        
+        .top-rank .team {
+            font-weight: 600;
+        }
+        
+        .top-rank .points {
+            color: #00f0ff;
+            font-weight: 600;
+        }
+        
+        /* Highlighting del usuario actual */
+        .user-row {
+            background-color: rgba(0, 240, 255, 0.15) !important;
+            border-left: 3px solid #00f0ff;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+            font-weight: 600;
+        }
+        
+        .user-row:hover {
+            background-color: rgba(0, 240, 255, 0.25) !important;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+        }
+        
+        /* Mensaje de carga */
+        .loading {
+            text-align: center;
+            padding: 30px !important;
+            position: relative;
+        }
+        
+        .loading::after {
+            content: '';
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(0, 240, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00f0ff;
+            animation: spin 1s ease-in-out infinite;
+            position: absolute;
+            left: calc(50% - 15px);
+            top: calc(50% - 15px);
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Navegación de páginas */
+        .leaderboard-navigation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 25px;
+            gap: 15px;
+        }
+        
+        .page-indicator {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+        
+        .prev-page, .next-page {
+            opacity: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .prev-page:disabled, .next-page:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* Sección de estadísticas del jugador - NUEVA */
+        .user-stats {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00f0ff;
+            border-radius: 10px;
+            padding: 25px;
+            width: 100%;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+        
+        .user-stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 240, 255, 0.2),
+                transparent
+            );
+            animation: shimmer 3s infinite;
+            z-index: 1;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .user-stats-title {
+            color: #00f0ff;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            text-transform: uppercase;
+            font-weight: 600;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .user-stats-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .user-stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            flex: 1;
+            min-width: 150px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin: 5px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .user-stat-item:hover {
+            background-color: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .user-stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        .user-stat-value {
+            color: #00f0ff;
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
+        }
+        
+        .user-stat-value.rank {
+            font-size: 2rem;
+            color: #ff8c00;
+            text-shadow: 0 0 8px rgba(255, 140, 0, 0.5);
+        }
+        
+        /* Elementos decorativos */
+        .circle-glow {
+            position: fixed;
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+        
+        .top-left {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0) 70%);
+            animation: float 15s ease-in-out infinite alternate;
+        }
+        
+        .bottom-right {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -150px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0) 70%);
+            animation: float 18s ease-in-out infinite alternate-reverse;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -20px); }
+            100% { transform: translate(-20px, 40px); }
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .leaderboards-container, 
+            .user-stats {
+                padding: 15px;
+            }
+            
+            .leaderboard-table th,
+            .leaderboard-table td {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .user-stats-container {
+                flex-direction: column;
+            }
+            
+            .user-stat-item {
+                padding: 12px;
+                margin: 5px 0;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .user-stats-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-lines"></div>
+    
+    <div class="leaderboards-screen">
+        <!-- Navegación -->
+        <div class="navigation">
+            <div class="logo">DELL TECHNOLOGIES</div>
+            <div class="nav-buttons">
+                <a href="index.html" class="nav-button">BACK</a>
+            </div>
+        </div>
+        
+        <h2 class="section-title">LEADERBOARDS</h2>
+        
+        <div class="leaderboards-container">
+            <div class="leaderboards-tabs">
+                <div class="leaderboards-tab">ALL TIME</div>
+            </div>
+            
+            <div class="leaderboards-content">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th class="rank-column">RANK</th>
+                            <th class="team-column">TEAM</th>
+                            <th class="username-column">USERNAME</th>
+                            <th class="points-column">POINTS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-data">
+                        <tr>
+                            <td colspan="4" class="loading">Loading leaderboard data...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="leaderboard-navigation">
+                <button class="nav-button prev-page" disabled>PREV</button>
+                <div class="page-indicator">Page <span id="current-page">1</span> of <span id="total-pages">1</span></div>
+                <button class="nav-button next-page" disabled>NEXT</button>
+            </div>
+        </div>
+        
+        <!-- Nueva sección YOUR STATS -->
+        <div class="user-stats" id="user-stats-section">
+            <h3 class="user-stats-title">YOUR STATS</h3>
+            <div class="user-stats-container">
+                <div class="user-stat-item">
+                    <div class="user-stat-label">RANK</div>
+                    <div class="user-stat-value rank" id="user-rank">-</div>
+                </div>
+                <div class="user-stat-item">
+                    <div class="user-stat-label">USERNAME</div>
+                    <div class="user-stat-value" id="user-username">-</div>
+                </div>
+                <div class="user-stat-item">
+                    <div class="user-stat-label">TEAM NAME</div>
+                    <div class="user-stat-value" id="user-team-name">-</div>
+                </div>
+                <div class="user-stat-item">
+                    <div class="user-stat-label">POINTS</div>
+                    <div class="user-stat-value" id="user-points">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Elementos decorativos -->
+    <div class="circle-glow top-left"></div>
+    <div class="circle-glow bottom-right"></div>
+    
+    <script>
+        // API URL
+        const API_URL = '/api';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch current jornada's leaderboard data
+            fetchLeaderboard();
+            
+            // If user is logged in, fetch user stats
+            if (isUserLoggedIn()) {
+                fetchUserStats();
+            } else {
+                // Hide user stats section if not logged in
+                document.getElementById('user-stats-section').style.display = 'none';
+            }
+            
+            // Setup pagination
+            setupPagination();
+            
+            // Background effects
+            setupBackgroundEffects();
+        });
+        
+        // Check if user is logged in
+        function isUserLoggedIn() {
+            return localStorage.getItem('authToken') !== null;
+        }
+        
+        // Get the JWT token for authenticated requests
+        function getAuthToken() {
+            return localStorage.getItem('authToken') || '';
+        }
+        
+        // Get the current user's ID and data
+        function getCurrentUserData() {
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            return userData;
+        }
+        
+        // Fetch leaderboard data from the API
+        async function fetchLeaderboard(page = 1) {
+            try {
+                // Show loading state
+                document.getElementById('leaderboard-data').innerHTML = 
+                    '<tr><td colspan="4" class="loading">Loading leaderboard data...</td></tr>';
+                
+                // Build the URL - Always fetch all time data
+                const url = `${API_URL}/leaderboard`;
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch leaderboard data');
+                }
+                
+                const data = await response.json();
+                
+                // Store the full data for pagination
+                window.leaderboardData = data;
+                window.currentPage = page;
+                
+                // Implement client-side pagination
+                const itemsPerPage = 10;
+                const totalPages = Math.ceil(data.length / itemsPerPage);
+                const startIndex = (page - 1) * itemsPerPage;
+                const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
+                
+                // Update pagination info
+                document.getElementById('current-page').textContent = page;
+                document.getElementById('total-pages').textContent = totalPages || 1;
+                
+                // Render the leaderboard
+                renderLeaderboard(paginatedData);
+                
+                // Enable/disable pagination buttons
+                const prevButton = document.querySelector('.prev-page');
+                const nextButton = document.querySelector('.next-page');
+                
+                prevButton.disabled = page <= 1;
+                nextButton.disabled = page >= totalPages;
+                
+            } catch (error) {
+                console.error('Error fetching leaderboard:', error);
+                document.getElementById('leaderboard-data').innerHTML = 
+                    '<tr><td colspan="4" class="loading">Error loading leaderboard data. Please try again.</td></tr>';
+            }
+        }
+        
+        // Render leaderboard data to the table
+        function renderLeaderboard(data) {
+            const tableBody = document.getElementById('leaderboard-data');
+            const currentUserData = getCurrentUserData();
+            let html = '';
+            
+            if (data.length === 0) {
+                html = '<tr><td colspan="4" class="loading">No data available for this period.</td></tr>';
+            } else {
+                data.forEach(item => {
+                    const isCurrentUser = parseInt(item.user_id) === parseInt(currentUserData.id);
+                    const isTopRank = item.rank <= 3;
+                    
+                    html += `
+                        <tr class="${isTopRank ? 'top-rank' : ''} ${isCurrentUser ? 'user-row' : ''}">
+                            <td class="rank">${item.rank}</td>
+                            <td class="team">${item.team}</td>
+                            <td class="username">${item.manager}</td>
+                            <td class="points">${parseInt(item.points).toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            tableBody.innerHTML = html;
+            
+            // Add row hover effects
+            addRowHoverEffects();
+        }
+        
+        // Fetch user stats
+        async function fetchUserStats() {
+            try {
+                // Check if user is logged in
+                if (!isUserLoggedIn()) {
+                    return;
+                }
+                
+                const currentUserData = getCurrentUserData();
+                
+                // Build the URL for user stats
+                const url = `${API_URL}/user-stats`;
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user stats');
+                }
+                
+                const data = await response.json();
+                
+                // Update the user stats display
+                document.getElementById('user-rank').textContent = data.rank || '-';
+                document.getElementById('user-username').textContent = currentUserData.username || '-';
+                document.getElementById('user-team-name').textContent = data.team || currentUserData.team_name || '-';
+                document.getElementById('user-points').textContent = data.points ? 
+                    parseInt(data.points).toLocaleString() : '0';
+                
+            } catch (error) {
+                console.error('Error fetching user stats:', error);
+                // Show error message in user stats section
+                document.getElementById('user-rank').textContent = '-';
+                document.getElementById('user-username').textContent = 'Error';
+                document.getElementById('user-team-name').textContent = 'Error loading data';
+                document.getElementById('user-points').textContent = '-';
+            }
+        }
+        
+        // Setup pagination
+        function setupPagination() {
+            const prevButton = document.querySelector('.prev-page');
+            const nextButton = document.querySelector('.next-page');
+            
+            prevButton.addEventListener('click', function() {
+                if (window.currentPage > 1) {
+                    const newPage = window.currentPage - 1;
+                    
+                    // We already have the data, so just re-render with the new page
+                    const itemsPerPage = 10;
+                    const startIndex = (newPage - 1) * itemsPerPage;
+                    const paginatedData = window.leaderboardData.slice(startIndex, startIndex + itemsPerPage);
+                    
+                    window.currentPage = newPage;
+                    document.getElementById('current-page').textContent = newPage;
+                    renderLeaderboard(paginatedData);
+                    
+                    // Update button states
+                    this.disabled = newPage <= 1;
+                    nextButton.disabled = newPage >= Math.ceil(window.leaderboardData.length / itemsPerPage);
+                }
+            });
+            
+            nextButton.addEventListener('click', function() {
+                if (window.leaderboardData) {
+                    const maxPage = Math.ceil(window.leaderboardData.length / 10);
+                    if (window.currentPage < maxPage) {
+                        const newPage = window.currentPage + 1;
+                        
+                        // We already have the data, so just re-render with the new page
+                        const itemsPerPage = 10;
+                        const startIndex = (newPage - 1) * itemsPerPage;
+                        const paginatedData = window.leaderboardData.slice(startIndex, startIndex + itemsPerPage);
+                        
+                        window.currentPage = newPage;
+                        document.getElementById('current-page').textContent = newPage;
+                        renderLeaderboard(paginatedData);
+                        
+                        // Update button states
+                        prevButton.disabled = newPage <= 1;
+                        this.disabled = newPage >= maxPage;
+                    }
+                }
+            });
+        }
+        
+        // Add row hover effects
+        function addRowHoverEffects() {
+            const tableRows = document.querySelectorAll('.leaderboard-table tbody tr');
+            
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.classList.add('row-hover');
+                });
+                
+                row.addEventListener('mouseleave', function() {
+                    this.classList.remove('row-hover');
+                });
+            });
+        }
+        
+        // Setup background effects
+        function setupBackgroundEffects() {
+            const glowEffects = document.querySelectorAll('.circle-glow');
+            window.addEventListener('mousemove', function(e) {
+                glowEffects.forEach((glow, index) => {
+                    // Create subtle movement based on mouse movement
+                    const offsetX = (e.clientX / window.innerWidth - 0.5) * 100;
+                    const offsetY = (e.clientY / window.innerHeight - 0.5) * 100;
+                    
+                    setTimeout(() => {
+                        glow.style.transform = `translate(${offsetX * (index + 1) * 0.2}px, ${offsetY * (index + 1) * 0.2}px)`;
+                    }, index * 100);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

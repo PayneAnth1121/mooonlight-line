@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonlight Line - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        body {
+            background-color: #06111f;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Grid Lines */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Admin dashboard main container */
+        .admin-dashboard {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Navegación */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00f0ff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-button:hover {
+            background-color: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Admin panel title */
+        .admin-title {
+            font-size: 2rem;
+            color: #00f0ff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        
+        /* Admin features */
+        .admin-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .admin-feature-card {
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00f0ff;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+        }
+        
+        .admin-feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .admin-feature-icon {
+            font-size: 3rem;
+            color: #00f0ff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
+        }
+        
+        .admin-feature-title {
+            font-size: 1.4rem;
+            color: #00f0ff;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        
+        .admin-feature-desc {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .admin-feature-button {
+            display: inline-block;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00f0ff;
+            color: #00f0ff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .admin-feature-button:hover {
+            background-color: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        
+        /* Mensajes de alerta */
+        .alert {
+            padding: 12px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .alert-error {
+            background-color: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        
+        /* Media queries */
+        @media (max-width: 768px) {
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .admin-title {
+                font-size: 1.5rem;
+            }
+            
+            .admin-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-lines"></div>
+    
+    <div class="admin-dashboard">
+        <!-- Navegación -->
+        <div class="navigation">
+            <div class="logo">MOONLIGHT LINE</div>
+            <div class="nav-buttons">
+                <a href="index.html" class="nav-button">BACK TO SITE</a>
+            </div>
+        </div>
+        
+        <h1 class="admin-title">ADMIN DASHBOARD</h1>
+        
+        <!-- Mensaje de error (inicialmente oculto) -->
+        <div id="error-message" class="alert alert-error"></div>
+        
+        <!-- Características de administración -->
+        <div class="admin-features">
+            <div class="admin-feature-card">
+                <div class="admin-feature-icon">📊</div>
+                <h3 class="admin-feature-title">MANAGE PLAYER STATS</h3>
+                <p class="admin-feature-desc">
+                    Update player statistics for each game week. Set points, rebounds, 
+                    assists and more to calculate fantasy scores.
+                </p>
+                <a href="stats-manager.html" class="admin-feature-button">MANAGE STATS</a>
+            </div>
+            
+            <div class="admin-feature-card">
+                <div class="admin-feature-icon">📅</div>
+                <h3 class="admin-feature-title">GAME WEEKS</h3>
+                <p class="admin-feature-desc">
+                    Create and manage game weeks. Set active weeks, 
+                    start and end dates for each competition period.
+                </p>
+                <a href="admin-jornadas.html" class="admin-feature-button">MANAGE WEEKS</a>
+            </div>
+            
+            <div class="admin-feature-card">
+                <div class="admin-feature-icon">👥</div>
+                <h3 class="admin-feature-title">USERS & TEAMS</h3>
+                <p class="admin-feature-desc">
+                    View all users and their teams. Monitor team selections
+                    and manage user accounts if needed.
+                </p>
+                <a href="admin-users.html" class="admin-feature-button">VIEW USERS</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // API URL
+        const API_URL = '/api';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar si el usuario está autorizado
+            checkAuth();
+            
+            function checkAuth() {
+                // Verificar si el usuario es administrador
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                const token = localStorage.getItem('authToken');
+                
+                if (!token || !userData.is_admin) {
+                    // Mostrar error y redirigir
+                    const errorMessage = document.getElementById('error-message');
+                    errorMessage.textContent = 'Access denied. Admin privileges required.';
+                    errorMessage.style.display = 'block';
+                    
+                    // Ocultar tarjetas de características
+                    document.querySelector('.admin-features').style.display = 'none';
+                    
+                    // Redirigir después de un breve retraso
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 3000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

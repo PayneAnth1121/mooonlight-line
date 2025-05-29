@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonlight Line - Stats Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        body {
+            background-color: #06111f;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Grid Lines */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Admin dashboard main container */
+        .admin-dashboard {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Navegación */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00f0ff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-button:hover {
+            background-color: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Admin panel title */
+        .admin-title {
+            font-size: 2rem;
+            color: #ff8c00;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        
+        /* Admin tabs */
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 140, 0, 0.3);
+        }
+        
+        .admin-tab {
+            padding: 10px 20px;
+            margin-right: 5px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        
+        .admin-tab:hover {
+            background-color: rgba(255, 140, 0, 0.1);
+            color: white;
+        }
+        
+        .admin-tab.active {
+            background-color: rgba(255, 140, 0, 0.2);
+            color: #ff8c00;
+            border-top: 1px solid #ff8c00;
+            border-left: 1px solid #ff8c00;
+            border-right: 1px solid #ff8c00;
+            box-shadow: 0 -5px 10px rgba(255, 140, 0, 0.1);
+        }
+        
+        /* Admin panels */
+        .admin-panel {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #ff8c00;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.2);
+        }
+        
+        .admin-panel.active {
+            display: block;
+        }
+        
+        /* Selector de jornada */
+        .jornada-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+        
+        .jornada-label {
+            font-size: 1.2rem;
+            color: #ff8c00;
+        }
+        
+        .jornada-select {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #ff8c00;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            min-width: 200px;
+            font-size: 1rem;
+        }
+        
+        .jornada-select:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+        }
+        
+        /* Panel de stats */
+        .stats-panel {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #ff8c00;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.2);
+        }
+        
+        /* Tabla de estadísticas */
+        .stats-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            color: white;
+            margin-top: 20px;
+        }
+        
+        .stats-table th {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #ff8c00;
+            text-align: center;
+            padding: 12px 8px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 140, 0, 0.3);
+            white-space: nowrap;
+        }
+        
+        .stats-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .stats-table tr:hover {
+            background-color: rgba(255, 140, 0, 0.1);
+        }
+        
+        .player-name-cell {
+            text-align: left !important;
+            min-width: 200px;
+        }
+        
+        /* Inputs para estadísticas */
+        .stat-input {
+            width: 60px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 140, 0, 0.5);
+            border-radius: 4px;
+            padding: 6px;
+            color: white;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .stat-input:focus {
+            outline: none;
+            border-color: #ff8c00;
+            box-shadow: 0 0 8px rgba(255, 140, 0, 0.5);
+        }
+        
+        /* Checkbox para Victoria */
+        .victory-checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 140, 0, 0.5);
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .victory-checkbox:checked {
+            background-color: rgba(255, 140, 0, 0.7);
+            border-color: #ff8c00;
+        }
+        
+        .victory-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+        }
+        
+        /* Botones de acción */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .action-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #ff8c00;
+            color: #ff8c00;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .action-button:hover {
+            background-color: rgba(255, 140, 0, 0.15);
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .action-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Loader */
+        .loader {
+            border: 3px solid rgba(0, 240, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #00f0ff;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mensajes de alerta */
+        .alert {
+            padding: 12px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .alert-success {
+            background-color: rgba(0, 255, 128, 0.1);
+            border: 1px solid #00ff80;
+            color: #00ff80;
+        }
+        
+        .alert-error {
+            background-color: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        
+        /* Media queries */
+        @media (max-width: 1200px) {
+            .stats-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .jornada-selector {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .admin-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-lines"></div>
+    
+    <div class="admin-dashboard">
+        <!-- Navegación -->
+        <div class="navigation">
+            <div class="logo">MOONLIGHT LINE</div>
+            <div class="nav-buttons">
+                <a href="admin.html" class="nav-button">ADMIN DASHBOARD</a>
+                <a href="index.html" class="nav-button">BACK TO SITE</a>
+            </div>
+        </div>
+        
+        <h1 class="admin-title">PLAYER STATS MANAGER</h1>
+        
+        <!-- Mensajes de alerta -->
+        <div id="alert-success" class="alert alert-success"></div>
+        <div id="alert-error" class="alert alert-error"></div>
+        
+        <!-- Selector de jornada -->
+        <div class="jornada-selector">
+            <span class="jornada-label">SELECT GAME WEEK:</span>
+            <select id="jornada-select" class="jornada-select">
+                <option value="">Select a game week...</option>
+                <!-- Opciones se cargarán dinámicamente -->
+            </select>
+        </div>
+        
+        <!-- Loader -->
+        <div id="stats-loader" class="loader"></div>
+        
+        <!-- Panel de estadísticas -->
+        <div id="stats-panel" class="stats-panel" style="display: none;">
+            <form id="stats-form">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th class="player-name-cell">PLAYER</th>
+                            <th>REBOUNDS</th>
+                            <th>2-POINTS</th>
+                            <th>3-POINTS</th>
+                            <th>FREE THROWS</th>
+                            <th>ASSISTS</th>
+                            <th>BLOCKS</th>
+                            <th>VICTORY</th>
+                            <th>TOTAL PTS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stats-table-body">
+                        <!-- Filas se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+                
+                <div class="action-buttons">
+                    <button type="button" id="calculate-button" class="action-button">CALCULATE TOTALS</button>
+                    <button type="submit" id="save-button" class="action-button">SAVE ALL STATS</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // API URL
+        const API_URL = '/api';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const jornadaSelect = document.getElementById('jornada-select');
+            const statsLoader = document.getElementById('stats-loader');
+            const statsPanel = document.getElementById('stats-panel');
+            const statsForm = document.getElementById('stats-form');
+            const statsTableBody = document.getElementById('stats-table-body');
+            const calculateButton = document.getElementById('calculate-button');
+            const saveButton = document.getElementById('save-button');
+            const alertSuccess = document.getElementById('alert-success');
+            const alertError = document.getElementById('alert-error');
+            
+            // Verificar si el usuario está autorizado
+            checkAuth();
+            
+            // Event listeners
+            jornadaSelect.addEventListener('change', handleJornadaChange);
+            calculateButton.addEventListener('click', calculateTotals);
+            statsForm.addEventListener('submit', saveStats);
+            
+            // Verificar autorización
+            async function checkAuth() {
+                try {
+                    const token = getAuthToken();
+                    
+                    if (!token) {
+                        // Redirigir a login si no hay token
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    // Verificar si el usuario es administrador
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    
+                    if (!userData.is_admin) {
+                        // Mostrar error y redirigir
+                        showAlert('error', 'Access denied. Admin privileges required.');
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 2000);
+                        return;
+                    }
+                    
+                    // Si todo está bien, cargar jornadas
+                    loadJornadas();
+                    
+                } catch (error) {
+                    console.error('Auth error:', error);
+                    showAlert('error', 'Authentication failed');
+                }
+            }
+            
+            // Cargar jornadas
+            async function loadJornadas() {
+                try {
+                    // Mostrar loader
+                    statsLoader.style.display = 'block';
+                    
+                    // Realizar la petición
+                    const response = await fetch(`${API_URL}/admin/jornadas`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch game weeks');
+                    }
+                    
+                    const jornadas = await response.json();
+                    
+                    // Llenar el selector
+                    let options = '<option value="">Select a game week...</option>';
+                    
+                    jornadas.forEach(jornada => {
+                        const currentMarker = jornada.is_current ? ' (Current)' : '';
+                        const completedMarker = jornada.is_completed ? ' - Completed' : '';
+                        options += `<option value="${jornada.id}">Week ${jornada.week_number}${currentMarker}${completedMarker}</option>`;
+                    });
+                    
+                    jornadaSelect.innerHTML = options;
+                    
+                    // Ocultar loader
+                    statsLoader.style.display = 'none';
+                    
+                    // Seleccionar automáticamente la jornada actual si existe
+                    const currentJornada = jornadas.find(j => j.is_current);
+                    if (currentJornada) {
+                        jornadaSelect.value = currentJornada.id;
+                        handleJornadaChange();
+                    }
+                    
+                } catch (error) {
+                    console.error('Error loading game weeks:', error);
+                    showAlert('error', 'Error loading game weeks. Please try again.');
+                    statsLoader.style.display = 'none';
+                }
+            }
+            
+            // Manejar cambio de jornada
+            async function handleJornadaChange() {
+                const jornadaId = jornadaSelect.value;
+                
+                if (!jornadaId) {
+                    statsPanel.style.display = 'none';
+                    return;
+                }
+                
+                try {
+                    // Mostrar loader
+                    statsLoader.style.display = 'block';
+                    statsPanel.style.display = 'none';
+                    
+                    // Realizar la petición
+                    const response = await fetch(`${API_URL}/admin/player-stats/${jornadaId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch player stats');
+                    }
+                    
+                    const playerStats = await response.json();
+                    
+                    // Renderizar tabla
+                    renderStatsTable(playerStats);
+                    
+                    // Mostrar panel de estadísticas
+                    statsLoader.style.display = 'none';
+                    statsPanel.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('Error loading player stats:', error);
+                    showAlert('error', 'Error loading player stats. Please try again.');
+                    statsLoader.style.display = 'none';
+                }
+            }
+            
+            // Renderizar tabla de estadísticas
+            function renderStatsTable(players) {
+                let html = '';
+                
+                players.forEach(player => {
+                    html += `
+                        <tr data-player-id="${player.player_id}">
+                            <td class="player-name-cell">${player.player_name}</td>
+                            <td>
+                                <input type="number" class="stat-input rebounds-input" 
+                                       value="${player.rebounds || 0}" min="0">
+                            </td>
+                            <td>
+                                <input type="number" class="stat-input two-points-input" 
+                                       value="${player.two_points || 0}" min="0">
+                            </td>
+                            <td>
+                                <input type="number" class="stat-input three-points-input" 
+                                       value="${player.three_points || 0}" min="0">
+                            </td>
+                            <td>
+                                <input type="number" class="stat-input free-throws-input" 
+                                       value="${player.free_throws || 0}" min="0">
+                            </td>
+                            <td>
+                                <input type="number" class="stat-input assists-input" 
+                                       value="${player.assists || 0}" min="0">
+                            </td>
+                            <td>
+                                <input type="number" class="stat-input blocks-input" 
+                                       value="${player.blocks || 0}" min="0">
+                            </td>
+                            <td>
+                                <input type="checkbox" class="victory-checkbox" 
+                                       ${player.victories ? 'checked' : ''}>
+                            </td>
+                            <td class="total-points">${player.total_points || 0}</td>
+                        </tr>
+                    `;
+                });
+                
+                statsTableBody.innerHTML = html;
+                
+                // Agregar event listeners a los inputs para actualizaciones inmediatas
+                document.querySelectorAll('.stat-input, .victory-checkbox').forEach(input => {
+                    input.addEventListener('change', function() {
+                        calculateRowTotal(this.closest('tr'));
+                    });
+                });
+            }
+            
+            // Calcular total para una fila
+            function calculateRowTotal(row) {
+                const rebounds = parseInt(row.querySelector('.rebounds-input').value) || 0;
+                const twoPoints = parseInt(row.querySelector('.two-points-input').value) || 0;
+                const threePoints = parseInt(row.querySelector('.three-points-input').value) || 0;
+                const freeThrows = parseInt(row.querySelector('.free-throws-input').value) || 0;
+                const assists = parseInt(row.querySelector('.assists-input').value) || 0;
+                const blocks = parseInt(row.querySelector('.blocks-input').value) || 0;
+                const victory = row.querySelector('.victory-checkbox').checked;
+                
+                // Calcular total según la fórmula (misma que en la trigger de la BD)
+                const total = 
+                    rebounds * 1 +
+                    twoPoints * 2 +
+                    threePoints * 3 +
+                    freeThrows * 1 +
+                    assists * 1 +
+                    blocks * 2 +
+                    (victory ? 5 : 0);
+                
+                // Actualizar total en la UI
+                row.querySelector('.total-points').textContent = total;
+            }
+            
+            // Calcular totales para todas las filas
+            function calculateTotals() {
+                document.querySelectorAll('#stats-table-body tr').forEach(row => {
+                    calculateRowTotal(row);
+                });
+                
+                showAlert('success', 'All totals calculated successfully!');
+            }
+            
+            // Guardar estadísticas
+            async function saveStats(e) {
+                e.preventDefault();
+                
+                const jornadaId = jornadaSelect.value;
+                
+                if (!jornadaId) {
+                    showAlert('error', 'Please select a game week first.');
+                    return;
+                }
+                
+                try {
+                    // Deshabilitar botón y mostrar estado de carga
+                    saveButton.disabled = true;
+                    saveButton.textContent = 'SAVING...';
+                    
+                    // Recopilar datos
+                    const stats = [];
+                    document.querySelectorAll('#stats-table-body tr').forEach(row => {
+                        const playerId = parseInt(row.dataset.playerId);
+                        
+                        stats.push({
+                            player_id: playerId,
+                            rebounds: parseInt(row.querySelector('.rebounds-input').value) || 0,
+                            two_points: parseInt(row.querySelector('.two-points-input').value) || 0,
+                            three_points: parseInt(row.querySelector('.three-points-input').value) || 0,
+                            free_throws: parseInt(row.querySelector('.free-throws-input').value) || 0,
+                            assists: parseInt(row.querySelector('.assists-input').value) || 0,
+                            blocks: parseInt(row.querySelector('.blocks-input').value) || 0,
+                            victories: row.querySelector('.victory-checkbox').checked
+                        });
+                    });
+                    
+                    // Realizar la petición
+                    const response = await fetch(`${API_URL}/admin/player-stats`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        },
+                        body: JSON.stringify({
+                            jornada_id: jornadaId,
+                            stats: stats
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to save player stats');
+                    }
+                    
+                    // Mostrar mensaje de éxito
+                    showAlert('success', 'Player stats saved successfully!');
+                    
+                    // Recargar los datos
+                    handleJornadaChange();
+                    
+                } catch (error) {
+                    console.error('Error saving player stats:', error);
+                    showAlert('error', 'Error saving player stats. Please try again.');
+                } finally {
+                    // Restaurar botón
+                    saveButton.disabled = false;
+                    saveButton.textContent = 'SAVE ALL STATS';
+                }
+            }
+            
+            // Mostrar alerta
+            function showAlert(type, message) {
+                const alert = document.getElementById(`alert-${type}`);
+                alert.textContent = message;
+                alert.style.display = 'block';
+                
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Obtener token de autenticación
+            function getAuthToken() {
+                return localStorage.getItem('authToken') || '';
+            }
+        });
+    </script>
+</body>
+</html>

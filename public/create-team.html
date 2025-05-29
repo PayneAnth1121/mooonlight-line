@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonlight Line - Create Team</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        body {
+            background-color: #06111f;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Grid Lines */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Navegación */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00f0ff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-button:hover {
+            background-color: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Botón Draft Players */
+        .draft-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #ff8c00;
+            color: #ff8c00;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-right: 15px;
+        }
+        
+        .draft-button:hover {
+            background-color: rgba(255, 140, 0, 0.15);
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Título de sección */
+        .section-title {
+            font-size: 2rem;
+            color: #00f0ff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        
+        /* Cancha de baloncesto */
+        .court-container {
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .court {
+            width: 100%;
+            aspect-ratio: 2/1;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 2px solid #00f0ff;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        
+        /* Líneas de la cancha */
+        .center-line,
+        .free-throw-left,
+        .free-throw-right,
+        .backboard-left,
+        .backboard-right {
+            position: absolute;
+            background-color: #00f0ff;
+            box-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+        }
+        
+        .center-line {
+            top: 0;
+            left: 50%;
+            height: 100%;
+            width: 2px;
+        }
+        
+        .center-circle,
+        .free-throw-circle-left,
+        .free-throw-circle-right {
+            position: absolute;
+            border: 2px solid #00f0ff;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+        }
+        
+        .center-circle {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+        }
+        
+        .three-point-left,
+        .three-point-right,
+        .key-left,
+        .key-right {
+            position: absolute;
+            top: 50%;
+            border: 2px solid #00f0ff;
+            box-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+            transform: translateY(-50%);
+        }
+        
+        .three-point-left {
+            left: 0;
+            width: 40%;
+            height: 80%;
+            border-radius: 0 33% 33% 0 / 50% 50% 50% 50%;
+            border-left: none;
+        }
+        
+        .three-point-right {
+            right: 0;
+            width: 40%;
+            height: 80%;
+            border-radius: 33% 0 0 33% / 50% 50% 50% 50%;
+            border-right: none;
+        }
+        
+        .key-left {
+            left: 0;
+            width: 19%;
+            height: 40%;
+            border-left: none;
+        }
+        
+        .key-right {
+            right: 0;
+            width: 19%;
+            height: 40%;
+            border-right: none;
+        }
+        
+        .free-throw-left,
+        .free-throw-right {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 19%;
+            height: 2px;
+        }
+        
+        .free-throw-left {
+            left: 0;
+        }
+        
+        .free-throw-right {
+            right: 0;
+        }
+        
+        .free-throw-circle-left {
+            left: 19%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+        }
+        
+        .free-throw-circle-right {
+            right: 19%;
+            top: 50%;
+            transform: translate(50%, -50%);
+            width: 100px;
+            height: 100px;
+        }
+        
+        .basket-left,
+        .basket-right {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00f0ff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.8);
+        }
+        
+        .basket-left {
+            left: 5%;
+        }
+        
+        .basket-right {
+            right: 5%;
+        }
+        
+        .backboard-left {
+            left: 2%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 2px;
+        }
+        
+        .backboard-right {
+            right: 2%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 2px;
+        }
+        
+        /* Slots para jugadores */
+        .player-slots {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .player-slot {
+            position: absolute;
+            width: 100px;
+            height: 140px;
+            background-color: rgba(12, 19, 28, 0.5);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .player-slot:hover {
+            border-color: #00f0ff;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        
+        .player-slot.has-player {
+            background-color: rgba(0, 240, 255, 0.1);
+            border-color: #00f0ff;
+        }
+        
+        /* Posiciones de los slots */
+        .slot-left {
+            top: 25%;
+            left: 20%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .slot-center {
+            top: 75%;
+            left: 20%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .slot-top {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .slot-right {
+            top: 25%;
+            left: 80%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .slot-bottom {
+            top: 75%;
+            left: 80%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Banca */
+        .bench-container,
+        .bench-container-2 {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        
+        .bench-container-2 {
+            margin-bottom: 15px;
+        }
+        
+        .bench-slot {
+            width: 100px;
+            height: 140px;
+            background-color: rgba(12, 19, 28, 0.7);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        .bench-slot:hover {
+            border-color: #00f0ff;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        
+        .bench-slot.has-player {
+            background-color: rgba(0, 240, 255, 0.1);
+            border-color: #00f0ff;
+        }
+        
+        /* === CARTAS PIXEL ART PEQUEÑAS === */
+        .player-card {
+            width: 90px;
+            height: 130px;
+            background: linear-gradient(145deg, #2a1810, #1a0f08);
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, #ff8c00, #ffa500, #ff7f00, #ff8c00) 1;
+            position: relative;
+            box-shadow: 
+                0 0 10px rgba(255, 140, 0, 0.3),
+                inset 0 0 5px rgba(255, 140, 0, 0.1);
+            font-family: 'Orbitron', monospace;
+            overflow: hidden;
+            cursor: grab;
+            transition: all 0.3s ease;
+        }
+
+        .player-card:active {
+            cursor: grabbing;
+        }
+
+        .player-card:hover {
+            transform: scale(1.05);
+            box-shadow: 
+                0 5px 15px rgba(255, 140, 0, 0.4),
+                inset 0 0 8px rgba(255, 140, 0, 0.2);
+        }
+
+        /* Bordes decorativos pequeños */
+        .card-border {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            right: 3px;
+            bottom: 3px;
+            border: 1px solid #ff8c00;
+            pointer-events: none;
+        }
+
+        /* Esquinas decorativas pequeñas */
+        .corner {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(45deg, #ff8c00, #ffa500);
+        }
+
+        .corner.top-left {
+            top: 0;
+            left: 0;
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+        }
+
+        .corner.top-right {
+            top: 0;
+            right: 0;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+        }
+
+        .corner.bottom-left {
+            bottom: 0;
+            left: 0;
+            clip-path: polygon(0 0, 100% 100%, 0 100%);
+        }
+
+        .corner.bottom-right {
+            bottom: 0;
+            right: 0;
+            clip-path: polygon(100% 0, 100% 100%, 0 100%);
+        }
+
+        /* Nombre del jugador pequeño */
+        .player-name {
+            background: linear-gradient(90deg, #ff8c00, #ffa500, #ff8c00);
+            color: #000;
+            text-align: center;
+            padding: 2px 4px;
+            margin: 4px 4px 2px 4px;
+            font-weight: 900;
+            font-size: 7px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: 1px solid #ff7f00;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+
+        /* Posición del jugador pequeña */
+        .player-position {
+            background: rgba(255, 140, 0, 0.2);
+            color: #ffa500;
+            text-align: center;
+            padding: 1px 2px;
+            margin: 0 4px 4px 4px;
+            font-weight: 600;
+            font-size: 6px;
+            letter-spacing: 0.3px;
+            border: 1px solid #ff8c00;
+            text-transform: uppercase;
+        }
+
+        /* Contenedor de imagen pequeño */
+        .player-image-container {
+            width: 60px;
+            height: 50px;
+            margin: 0 auto 4px auto;
+            background: linear-gradient(135deg, #1a4c80, #2a5c90, #1a4c80);
+            border: 1px solid #ff8c00;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
+        }
+
+        .player-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: contrast(1.1) saturate(1.1);
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 18px;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                linear-gradient(135deg, #1a4c80, #2a5c90);
+        }
+
+        /* Stats mini */
+        .stats-container {
+            padding: 0 6px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px 3px;
+            margin-bottom: 4px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 5px;
+            font-weight: 600;
+            color: #e6d7c3;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+        }
+
+        .stat-label {
+            color: #ffa500;
+        }
+
+        .stat-value {
+            color: #e6d7c3;
+            font-weight: 700;
+            min-width: 12px;
+            text-align: right;
+        }
+
+        /* Botones de acción */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        /* Placeholder styles */
+        .empty-slot {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.7rem;
+            text-align: center;
+        }
+        
+        .loading-message {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        /* Elementos decorativos */
+        .circle-glow {
+            position: fixed;
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+        
+        .top-left {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0) 70%);
+            animation: float 15s ease-in-out infinite alternate;
+        }
+        
+        .bottom-right {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -150px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0) 70%);
+            animation: float 18s ease-in-out infinite alternate-reverse;
+        }
+        
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -20px); }
+            100% { transform: translate(-20px, 40px); }
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .bench-container,
+            .bench-container-2 {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .player-slot, .bench-slot {
+                width: 80px;
+                height: 120px;
+            }
+
+            .player-card {
+                width: 75px;
+                height: 110px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-lines"></div>
+    
+    <div class="team-creation-screen">
+        <!-- Navegación -->
+        <div class="navigation">
+            <div class="logo">MOONLIGHT LINE</div>
+            <div class="nav-buttons">
+                <a href="draft-players.html" class="draft-button">DRAFT PLAYERS</a>
+                <a href="index.html" class="nav-button">BACK</a>
+                <button class="nav-button" id="save-team-btn">SAVE TEAM</button>
+            </div>
+        </div>
+        
+        <h2 class="section-title">CREATE YOUR TEAM</h2>
+        
+        <!-- Cancha de baloncesto -->
+        <div class="court-container">
+            <div class="court">
+                <!-- Líneas de la cancha -->
+                <div class="center-line"></div>
+                <div class="center-circle"></div>
+                
+                <div class="three-point-left"></div>
+                <div class="three-point-right"></div>
+                
+                <div class="key-left"></div>
+                <div class="key-right"></div>
+                
+                <div class="free-throw-left"></div>
+                <div class="free-throw-right"></div>
+                
+                <div class="free-throw-circle-left"></div>
+                <div class="free-throw-circle-right"></div>
+                
+                <div class="basket-left"></div>
+                <div class="basket-right"></div>
+                
+                <div class="backboard-left"></div>
+                <div class="backboard-right"></div>
+                
+                <!-- Posiciones de jugadores -->
+                <div class="player-slots">
+                    <div class="player-slot slot-top" data-position="1" id="position-1">
+                        <div class="empty-slot">Position 1</div>
+                    </div>
+                    <div class="player-slot slot-bottom" data-position="2" id="position-2">
+                        <div class="empty-slot">Position 2</div>
+                    </div>
+                    <div class="player-slot slot-center" data-position="3" id="position-3">
+                        <div class="empty-slot">Position 3</div>
+                    </div>
+                    <div class="player-slot slot-left" data-position="4" id="position-4">
+                        <div class="empty-slot">Position 4</div>
+                    </div>
+                    <div class="player-slot slot-right" data-position="5" id="position-5">
+                        <div class="empty-slot">Position 5</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Área de banca (primera fila - 5 slots) -->
+            <div class="bench-container">
+                <div class="bench-slot" data-position="6" id="bench-1">
+                    <div class="empty-slot">Bench 1</div>
+                </div>
+                <div class="bench-slot" data-position="7" id="bench-2">
+                    <div class="empty-slot">Bench 2</div>
+                </div>
+                <div class="bench-slot" data-position="8" id="bench-3">
+                    <div class="empty-slot">Bench 3</div>
+                </div>
+                <div class="bench-slot" data-position="9" id="bench-4">
+                    <div class="empty-slot">Bench 4</div>
+                </div>
+                <div class="bench-slot" data-position="10" id="bench-5">
+                    <div class="empty-slot">Bench 5</div>
+                </div>
+            </div>
+            
+            <!-- Área de banca adicional (segunda fila - 5 slots) -->
+            <div class="bench-container-2">
+                <div class="bench-slot" data-position="11" id="bench-6">
+                    <div class="empty-slot">Bench 6</div>
+                </div>
+                <div class="bench-slot" data-position="12" id="bench-7">
+                    <div class="empty-slot">Bench 7</div>
+                </div>
+                <div class="bench-slot" data-position="13" id="bench-8">
+                    <div class="empty-slot">Bench 8</div>
+                </div>
+                <div class="bench-slot" data-position="14" id="bench-9">
+                    <div class="empty-slot">Bench 9</div>
+                </div>
+                <div class="bench-slot" data-position="15" id="bench-10">
+                    <div class="empty-slot">Bench 10</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+            <button class="nav-button" id="clear-team-btn">CLEAR TEAM</button>
+            <button class="draft-button" id="save-team-btn-2">SAVE TEAM</button>
+        </div>
+    </div>
+    
+    <!-- Elementos decorativos -->
+    <div class="circle-glow top-left"></div>
+    <div class="circle-glow bottom-right"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables
+            const playerSlots = document.querySelectorAll('.player-slot, .bench-slot');
+            const clearTeamBtn = document.getElementById('clear-team-btn');
+            const saveTeamBtn = document.getElementById('save-team-btn');
+            const saveTeamBtn2 = document.getElementById('save-team-btn-2');
+            
+            let draggedCard = null;
+            let playersData = {}; // Para almacenar datos de jugadores
+            
+            // Team data
+            let teamData = {
+                position1: null,
+                position2: null,
+                position3: null,
+                position4: null,
+                position5: null,
+                bench1: null,
+                bench2: null,
+                bench3: null,
+                bench4: null,
+                bench5: null,
+                bench6: null,
+                bench7: null,
+                bench8: null,
+                bench9: null,
+                bench10: null
+            };
+            
+            // Cargar datos de jugadores y equipo guardado
+            loadPlayersData();
+            loadSavedTeam();
+            
+            // Set up drag and drop
+            setupDragAndDrop();
+            
+            // Clear team button
+            if (clearTeamBtn) {
+                clearTeamBtn.addEventListener('click', function() {
+                    clearTeam();
+                });
+            }
+            
+            // Save team buttons
+            if (saveTeamBtn) {
+                saveTeamBtn.addEventListener('click', function() {
+                    saveTeam();
+                });
+            }
+            
+            if (saveTeamBtn2) {
+                saveTeamBtn2.addEventListener('click', function() {
+                    saveTeam();
+                });
+            }
+            
+            // Efecto de movimiento de los resplandores
+            const glowEffects = document.querySelectorAll('.circle-glow');
+            window.addEventListener('mousemove', function(e) {
+                glowEffects.forEach((glow, index) => {
+                    const offsetX = (e.clientX / window.innerWidth - 0.5) * 100;
+                    const offsetY = (e.clientY / window.innerHeight - 0.5) * 100;
+                    
+                    setTimeout(() => {
+                        glow.style.transform = `translate(${offsetX * (index + 1) * 0.2}px, ${offsetY * (index + 1) * 0.2}px)`;
+                    }, index * 100);
+                });
+            });
+            
+            // Cargar datos de jugadores desde la API
+            async function loadPlayersData() {
+                try {
+                    const response = await fetch('/api/players');
+                    if (response.ok) {
+                        const players = await response.json();
+                        // Crear un mapa de jugadores por ID para acceso rápido
+                        players.forEach(player => {
+                            playersData[player.id] = player;
+                        });
+                        console.log('Players data loaded:', Object.keys(playersData).length, 'players');
+                    }
+                } catch (error) {
+                    console.error('Error loading players data:', error);
+                }
+            }
+            
+            function setupDragAndDrop() {
+                playerSlots.forEach(slot => {
+                    slot.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        this.style.borderColor = '#00f0ff';
+                        this.style.boxShadow = '0 0 10px rgba(0, 240, 255, 0.5)';
+                    });
+                    
+                    slot.addEventListener('dragleave', function() {
+                        this.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                        this.style.boxShadow = 'none';
+                    });
+                    
+                    slot.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        
+                        // Reset slot styling
+                        this.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                        this.style.boxShadow = 'none';
+                        
+                        if (!draggedCard) return;
+                        
+                        // Handle player swap
+                        const currentPlayerId = this.dataset.playerId;
+                        const draggedPlayerId = draggedCard.dataset.playerId;
+                        const originalSlot = draggedCard.parentElement;
+                        
+                        // Clear both slots
+                        this.innerHTML = '';
+                        originalSlot.innerHTML = '';
+                        
+                        // Move dragged player to new slot
+                        const newCard = createPlayerCard(draggedPlayerId, this.dataset.position);
+                        this.appendChild(newCard);
+                        this.classList.add('has-player');
+                        this.dataset.playerId = draggedPlayerId;
+                        
+                        // Move original player to dragged slot (if exists)
+                        if (currentPlayerId) {
+                            const swappedCard = createPlayerCard(currentPlayerId, originalSlot.dataset.position);
+                            originalSlot.appendChild(swappedCard);
+                        } else {
+                            // Reset original slot to empty state
+                            resetSlotToEmpty(originalSlot);
+                        }
+                        
+                        // Update team data
+                        updateTeamData();
+                        
+                        draggedCard = null;
+                    });
+                });
+            }
+            
+            function createPlayerCard(playerId, position) {
+                const playerInfo = playersData[playerId];
+                const playerName = playerInfo ? playerInfo.name : `Player ${playerId}`;
+                
+                const card = document.createElement('div');
+                card.className = 'player-card';
+                card.draggable = true;
+                card.dataset.playerId = playerId;
+                card.dataset.originalPosition = position;
+                
+                card.innerHTML = `
+                    <div class="card-border"></div>
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <div class="player-name">${playerName.toUpperCase()}</div>
+                    <div class="player-position">${playerInfo?.position || 'SF'} - ${playerInfo?.nickname || 'PLAYER'}</div>
+                    
+                    <div class="player-image-container">
+                        ${playerInfo?.imageUrl ? 
+                            `<img src="${playerInfo.imageUrl}" alt="${playerName}" class="player-image">` :
+                            `<div class="image-placeholder">👤</div>`
+                        }
+                    </div>
+                    
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <span class="stat-label">SPD</span>
+                            <span class="stat-value">${playerInfo?.stats?.speed || Math.floor(Math.random() * 30) + 70}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">DEF</span>
+                            <span class="stat-value">${playerInfo?.stats?.defense || Math.floor(Math.random() * 30) + 70}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">SHT</span>
+                            <span class="stat-value">${playerInfo?.stats?.shooting || Math.floor(Math.random() * 30) + 70}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">OFF</span>
+                            <span class="stat-value">${playerInfo?.stats?.offense || Math.floor(Math.random() * 30) + 70}</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Set up drag events
+                card.addEventListener('dragstart', function(e) {
+                    draggedCard = this;
+                    setTimeout(() => {
+                        this.style.opacity = '0.4';
+                    }, 0);
+                });
+                
+                card.addEventListener('dragend', function() {
+                    this.style.opacity = '1';
+                });
+                
+                return card;
+            }
+            
+            function resetSlotToEmpty(slot) {
+                const position = slot.dataset.position;
+                const slotType = parseInt(position) <= 5 ? 'Position' : 'Bench';
+                const slotNumber = parseInt(position) <= 5 ? position : (parseInt(position) - 5);
+                
+                slot.innerHTML = `<div class="empty-slot">${slotType} ${slotNumber}</div>`;
+                slot.classList.remove('has-player');
+                delete slot.dataset.playerId;
+            }
+            
+            function updateTeamData() {
+                // Reset team data
+                for (let key in teamData) {
+                    teamData[key] = null;
+                }
+                
+                // Update with current slots
+                playerSlots.forEach(slot => {
+                    if (slot.dataset.playerId) {
+                        const position = parseInt(slot.dataset.position);
+                        if (position <= 5) {
+                            teamData[`position${position}`] = slot.dataset.playerId;
+                        } else {
+                            teamData[`bench${position - 5}`] = slot.dataset.playerId;
+                        }
+                    }
+                });
+            }
+            
+            function clearTeam() {
+                playerSlots.forEach(slot => {
+                    resetSlotToEmpty(slot);
+                });
+                
+                // Reset team data
+                for (let key in teamData) {
+                    teamData[key] = null;
+                }
+                
+                // Save empty team to localStorage
+                localStorage.setItem('basketballTeam', JSON.stringify(teamData));
+                
+                // Efecto visual de confirmación
+                const courtContainer = document.querySelector('.court-container');
+                courtContainer.style.boxShadow = '0 0 30px rgba(0, 240, 255, 0.7)';
+                setTimeout(() => {
+                    courtContainer.style.boxShadow = '';
+                }, 500);
+            }
+            
+            function saveTeam() {
+                // Update team data before saving
+                updateTeamData();
+                
+                // Save to localStorage
+                localStorage.setItem('basketballTeam', JSON.stringify(teamData));
+                
+                // Efecto visual de confirmación
+                const btns = [saveTeamBtn, saveTeamBtn2];
+                
+                btns.forEach(btn => {
+                    if (btn) {
+                        const originalText = btn.textContent;
+                        btn.innerHTML = 'SAVED!';
+                        btn.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.7)';
+                        
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.style.boxShadow = '';
+                        }, 1500);
+                    }
+                });
+            }
+            
+            function loadSavedTeam() {
+                // Check if we have drafted players from the draft-players.html page
+                const draftedPlayers = localStorage.getItem('draftedPlayers');
+                if (draftedPlayers) {
+                    const players = JSON.parse(draftedPlayers);
+                    console.log('Loading drafted players:', players);
+                    
+                    // Create empty team data structure
+                    const newTeamData = {};
+                    
+                    // Reset all positions
+                    for (let i = 1; i <= 5; i++) {
+                        newTeamData['position' + i] = null;
+                    }
+                    
+                    // The first 5 players go to bench 1-5
+                    for (let i = 0; i < 5 && i < players.length; i++) {
+                        newTeamData['bench' + (i + 1)] = players[i].id.toString();
+                    }
+                    
+                    // The next 5 players go to bench 6-10
+                    for (let i = 5; i < 10 && i < players.length; i++) {
+                        newTeamData['bench' + (i + 1)] = players[i].id.toString();
+                    }
+                    
+                    // Save the new team data
+                    teamData = newTeamData;
+                    localStorage.setItem('basketballTeam', JSON.stringify(teamData));
+                }
+                
+                // Now load from basketballTeam which may have just been set above
+                const savedTeam = localStorage.getItem('basketballTeam');
+                if (savedTeam) {
+                    teamData = JSON.parse(savedTeam);
+                    console.log('Loading saved team:', teamData);
+                    
+                    // Wait for players data to load before placing players
+                    setTimeout(() => {
+                        // Cargar jugadores en las posiciones
+                        for (let i = 1; i <= 5; i++) {
+                            const playerId = teamData['position' + i];
+                            if (playerId) {
+                                const slot = document.getElementById('position-' + i);
+                                loadPlayerToSlot(playerId, slot, i);
+                            }
+                        }
+                        
+                        // Cargar jugadores en la banca
+                        for (let i = 1; i <= 10; i++) {
+                            const playerId = teamData['bench' + i];
+                            if (playerId) {
+                                const slot = document.getElementById('bench-' + i);
+                                loadPlayerToSlot(playerId, slot, i + 5);
+                            }
+                        }
+                    }, 500); // Wait 500ms for players data to load
+                }
+            }
+            
+            function loadPlayerToSlot(playerId, slot, position) {
+                if (!slot) return;
+                
+                console.log(`Loading player ${playerId} to slot ${position}`);
+                
+                const playerCard = createPlayerCard(playerId, position);
+                slot.innerHTML = '';
+                slot.appendChild(playerCard);
+                slot.classList.add('has-player');
+                slot.dataset.playerId = playerId;
+            }
+        });
+    </script>
+</body>
+</html>

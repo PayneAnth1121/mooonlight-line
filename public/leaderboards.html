@@ -20,7 +20,6 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            /* Agregar la imagen de fondo */
             background-image: url('https://98747F04B20194A89A3E59780734E32E2E7A2516');
             background-size: cover;
             background-position: center center;
@@ -133,7 +132,7 @@
             z-index: 10;
         }
         
-        /* Tabs de navegación - Simplificadas solo ALL TIME */
+        /* Tabs de navegación */
         .leaderboards-tabs {
             display: flex;
             margin-bottom: 20px;
@@ -154,6 +153,47 @@
             letter-spacing: 2px;
             font-weight: 600;
             box-shadow: 0 -5px 10px rgba(0, 240, 255, 0.1);
+        }
+        
+        /* Error container */
+        .error-container {
+            text-align: center;
+            padding: 40px;
+            color: #ff6b6b;
+        }
+        
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .error-message {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .error-details {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+        
+        .retry-button {
+            background-color: rgba(0, 240, 255, 0.1);
+            border: 1px solid #00f0ff;
+            color: #00f0ff;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+        
+        .retry-button:hover {
+            background-color: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
         }
         
         /* Tabla de clasificaciones */
@@ -196,74 +236,27 @@
             animation: fadeIn 0.3s ease-out forwards;
         }
         
-        .leaderboard-table tbody tr:nth-child(1) {
-            animation-delay: 0.05s;
-        }
-        
-        .leaderboard-table tbody tr:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-        
-        .leaderboard-table tbody tr:nth-child(3) {
-            animation-delay: 0.15s;
-        }
-        
-        .leaderboard-table tbody tr:nth-child(4) {
-            animation-delay: 0.2s;
-        }
-        
-        .leaderboard-table tbody tr:nth-child(5) {
-            animation-delay: 0.25s;
-        }
-        
-        .leaderboard-table tbody tr:nth-child(6) {
-            animation-delay: 0.3s;
-        }
-        
-        .leaderboard-table tbody tr:nth-child(7) {
-            animation-delay: 0.35s;
-        }
-        
-        .leaderboard-table tbody tr:nth-child(8) {
-            animation-delay: 0.4s;
-        }
-        
-        .leaderboard-table tbody tr:nth-child(9) {
-            animation-delay: 0.45s;
-        }
-        
-        .leaderboard-table tbody tr:nth-child(10) {
-            animation-delay: 0.5s;
-        }
+        .leaderboard-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+        .leaderboard-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+        .leaderboard-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+        .leaderboard-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+        .leaderboard-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .leaderboard-table tbody tr:hover,
-        .leaderboard-table tbody tr.row-hover {
+        .leaderboard-table tbody tr:hover {
             background-color: rgba(0, 240, 255, 0.1);
             transform: scale(1.01);
-            z-index: 2;
         }
         
         /* Estilos específicos para columnas */
-        .rank-column {
-            width: 15%;
-        }
-        
-        .team-column {
-            width: 35%;
-        }
-        
-        .username-column {
-            width: 25%;
-        }
-        
-        .points-column {
-            width: 25%;
-        }
+        .rank-column { width: 15%; }
+        .team-column { width: 35%; }
+        .username-column { width: 25%; }
+        .points-column { width: 25%; }
         
         /* Estilos para los primeros lugares */
         .top-rank {
@@ -347,7 +340,7 @@
             box-shadow: none !important;
         }
         
-        /* Sección de estadísticas del jugador - NUEVA */
+        /* Sección de estadísticas del jugador */
         .user-stats {
             background-color: rgba(0, 0, 0, 0.8);
             border: 1px solid #00f0ff;
@@ -445,38 +438,6 @@
             text-shadow: 0 0 8px rgba(255, 140, 0, 0.5);
         }
         
-        /* Elementos decorativos */
-        .circle-glow {
-            position: fixed;
-            border-radius: 50%;
-            z-index: -1;
-            opacity: 0.4;
-        }
-        
-        .top-left {
-            width: 400px;
-            height: 400px;
-            top: -100px;
-            left: -100px;
-            background: radial-gradient(circle, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0) 70%);
-            animation: float 15s ease-in-out infinite alternate;
-        }
-        
-        .bottom-right {
-            width: 500px;
-            height: 500px;
-            bottom: -150px;
-            right: -150px;
-            background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0) 70%);
-            animation: float 18s ease-in-out infinite alternate-reverse;
-        }
-        
-        @keyframes float {
-            0% { transform: translate(0, 0); }
-            50% { transform: translate(30px, -20px); }
-            100% { transform: translate(-20px, 40px); }
-        }
-        
         /* Media Queries */
         @media (max-width: 768px) {
             .navigation {
@@ -528,6 +489,29 @@
         
         <h2 class="section-title">LEADERBOARDS</h2>
         
+        <!-- Sección YOUR STATS (visible solo si está logueado) -->
+        <div class="user-stats" id="user-stats-section">
+            <h3 class="user-stats-title">YOUR STATS</h3>
+            <div class="user-stats-container">
+                <div class="user-stat-item">
+                    <div class="user-stat-label">RANK</div>
+                    <div class="user-stat-value rank" id="user-rank">-</div>
+                </div>
+                <div class="user-stat-item">
+                    <div class="user-stat-label">USERNAME</div>
+                    <div class="user-stat-value" id="user-username">-</div>
+                </div>
+                <div class="user-stat-item">
+                    <div class="user-stat-label">TEAM NAME</div>
+                    <div class="user-stat-value" id="user-team-name">-</div>
+                </div>
+                <div class="user-stat-item">
+                    <div class="user-stat-label">POINTS</div>
+                    <div class="user-stat-value" id="user-points">-</div>
+                </div>
+            </div>
+        </div>
+        
         <div class="leaderboards-container">
             <div class="leaderboards-tabs">
                 <div class="leaderboards-tab">ALL TIME</div>
@@ -557,272 +541,192 @@
                 <button class="nav-button next-page" disabled>NEXT</button>
             </div>
         </div>
-        
-        <!-- Nueva sección YOUR STATS -->
-        <div class="user-stats" id="user-stats-section">
-            <h3 class="user-stats-title">YOUR STATS</h3>
-            <div class="user-stats-container">
-                <div class="user-stat-item">
-                    <div class="user-stat-label">RANK</div>
-                    <div class="user-stat-value rank" id="user-rank">-</div>
-                </div>
-                <div class="user-stat-item">
-                    <div class="user-stat-label">USERNAME</div>
-                    <div class="user-stat-value" id="user-username">-</div>
-                </div>
-                <div class="user-stat-item">
-                    <div class="user-stat-label">TEAM NAME</div>
-                    <div class="user-stat-value" id="user-team-name">-</div>
-                </div>
-                <div class="user-stat-item">
-                    <div class="user-stat-label">POINTS</div>
-                    <div class="user-stat-value" id="user-points">-</div>
-                </div>
-            </div>
-        </div>
     </div>
     
-    <!-- Elementos decorativos -->
-    <div class="circle-glow top-left"></div>
-    <div class="circle-glow bottom-right"></div>
+    <!-- Incluir configuración -->
+    <script src="assets/js/config.js"></script>
     
     <script>
-        // API URL
-        const API_URL = '/api';
-        
         document.addEventListener('DOMContentLoaded', function() {
-            // Fetch current jornada's leaderboard data
-            fetchLeaderboard();
+            const leaderboardData = document.getElementById('leaderboard-data');
             
-            // If user is logged in, fetch user stats
-            if (isUserLoggedIn()) {
-                fetchUserStats();
-            } else {
-                // Hide user stats section if not logged in
-                document.getElementById('user-stats-section').style.display = 'none';
+            // Initialize
+            init();
+            
+            async function init() {
+                try {
+                    // Check if user is logged in and fetch user stats
+                    if (isUserLoggedIn()) {
+                        await fetchUserStats();
+                    } else {
+                        document.getElementById('user-stats-section').style.display = 'none';
+                    }
+                    
+                    // Fetch leaderboard data
+                    await fetchLeaderboard();
+                    
+                    // Setup pagination
+                    setupPagination();
+                    
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                    showError('Failed to initialize leaderboards', error.message);
+                }
             }
             
-            // Setup pagination
-            setupPagination();
+            function isUserLoggedIn() {
+                return localStorage.getItem('authToken') !== null;
+            }
             
-            // Background effects
-            setupBackgroundEffects();
-        });
-        
-        // Check if user is logged in
-        function isUserLoggedIn() {
-            return localStorage.getItem('authToken') !== null;
-        }
-        
-        // Get the JWT token for authenticated requests
-        function getAuthToken() {
-            return localStorage.getItem('authToken') || '';
-        }
-        
-        // Get the current user's ID and data
-        function getCurrentUserData() {
-            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-            return userData;
-        }
-        
-        // Fetch leaderboard data from the API
-        async function fetchLeaderboard(page = 1) {
-            try {
-                // Show loading state
-                document.getElementById('leaderboard-data').innerHTML = 
-                    '<tr><td colspan="4" class="loading">Loading leaderboard data...</td></tr>';
+            function getCurrentUserData() {
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                return userData;
+            }
+            
+            async function fetchLeaderboard(page = 1) {
+                try {
+                    showLoading();
+                    
+                    const data = await window.AppUtils.apiCall('/leaderboard');
+                    
+                    // Store the full data for pagination
+                    window.leaderboardData = Array.isArray(data) ? data : [];
+                    window.currentPage = page;
+                    
+                    // Implement client-side pagination
+                    const itemsPerPage = 10;
+                    const totalPages = Math.ceil(window.leaderboardData.length / itemsPerPage);
+                    const startIndex = (page - 1) * itemsPerPage;
+                    const paginatedData = window.leaderboardData.slice(startIndex, startIndex + itemsPerPage);
+                    
+                    // Update pagination info
+                    document.getElementById('current-page').textContent = page;
+                    document.getElementById('total-pages').textContent = totalPages || 1;
+                    
+                    // Render the leaderboard
+                    renderLeaderboard(paginatedData);
+                    
+                    // Enable/disable pagination buttons
+                    const prevButton = document.querySelector('.prev-page');
+                    const nextButton = document.querySelector('.next-page');
+                    
+                    prevButton.disabled = page <= 1;
+                    nextButton.disabled = page >= totalPages;
+                    
+                } catch (error) {
+                    console.error('Error fetching leaderboard:', error);
+                    showError('Failed to load leaderboard', error.message);
+                }
+            }
+            
+            async function fetchUserStats() {
+                try {
+                    const data = await window.AppUtils.apiCall('/user-stats');
+                    const currentUserData = getCurrentUserData();
+                    
+                    // Update the user stats display
+                    document.getElementById('user-rank').textContent = data.rank || '-';
+                    document.getElementById('user-username').textContent = currentUserData.username || '-';
+                    document.getElementById('user-team-name').textContent = data.team || currentUserData.team_name || '-';
+                    document.getElementById('user-points').textContent = data.points ? 
+                        window.AppUtils.formatNumber(data.points) : '0';
+                        
+                } catch (error) {
+                    console.error('Error fetching user stats:', error);
+                    // Don't show error for user stats, just show defaults
+                    document.getElementById('user-rank').textContent = '-';
+                    document.getElementById('user-username').textContent = 'Error';
+                    document.getElementById('user-team-name').textContent = 'Error loading data';
+                    document.getElementById('user-points').textContent = '-';
+                }
+            }
+            
+            function renderLeaderboard(data) {
+                const currentUserData = getCurrentUserData();
+                let html = '';
                 
-                // Build the URL - Always fetch all time data
-                const url = `${API_URL}/leaderboard`;
-                
-                const response = await fetch(url);
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch leaderboard data');
+                if (data.length === 0) {
+                    html = '<tr><td colspan="4" class="loading">No leaderboard data available yet.</td></tr>';
+                } else {
+                    data.forEach(item => {
+                        const isCurrentUser = parseInt(item.user_id) === parseInt(currentUserData.id);
+                        const isTopRank = item.rank <= 3;
+                        
+                        html += `
+                            <tr class="${isTopRank ? 'top-rank' : ''} ${isCurrentUser ? 'user-row' : ''}">
+                                <td class="rank">${item.rank}</td>
+                                <td class="team">${item.team}</td>
+                                <td class="username">${item.manager}</td>
+                                <td class="points">${window.AppUtils.formatNumber(parseInt(item.points))}</td>
+                            </tr>
+                        `;
+                    });
                 }
                 
-                const data = await response.json();
-                
-                // Store the full data for pagination
-                window.leaderboardData = data;
-                window.currentPage = page;
-                
-                // Implement client-side pagination
-                const itemsPerPage = 10;
-                const totalPages = Math.ceil(data.length / itemsPerPage);
-                const startIndex = (page - 1) * itemsPerPage;
-                const paginatedData = data.slice(startIndex, startIndex + itemsPerPage);
-                
-                // Update pagination info
-                document.getElementById('current-page').textContent = page;
-                document.getElementById('total-pages').textContent = totalPages || 1;
-                
-                // Render the leaderboard
-                renderLeaderboard(paginatedData);
-                
-                // Enable/disable pagination buttons
+                leaderboardData.innerHTML = html;
+            }
+            
+            function showLoading() {
+                leaderboardData.innerHTML = '<tr><td colspan="4" class="loading">Loading leaderboard data...</td></tr>';
+            }
+            
+            function showError(title, details) {
+                leaderboardData.innerHTML = `
+                    <tr>
+                        <td colspan="4">
+                            <div class="error-container">
+                                <div class="error-icon">⚠️</div>
+                                <div class="error-message">${title}</div>
+                                <div class="error-details">${details}</div>
+                                <button class="retry-button" onclick="location.reload()">
+                                    RETRY
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            function setupPagination() {
                 const prevButton = document.querySelector('.prev-page');
                 const nextButton = document.querySelector('.next-page');
                 
-                prevButton.disabled = page <= 1;
-                nextButton.disabled = page >= totalPages;
-                
-            } catch (error) {
-                console.error('Error fetching leaderboard:', error);
-                document.getElementById('leaderboard-data').innerHTML = 
-                    '<tr><td colspan="4" class="loading">Error loading leaderboard data. Please try again.</td></tr>';
-            }
-        }
-        
-        // Render leaderboard data to the table
-        function renderLeaderboard(data) {
-            const tableBody = document.getElementById('leaderboard-data');
-            const currentUserData = getCurrentUserData();
-            let html = '';
-            
-            if (data.length === 0) {
-                html = '<tr><td colspan="4" class="loading">No data available for this period.</td></tr>';
-            } else {
-                data.forEach(item => {
-                    const isCurrentUser = parseInt(item.user_id) === parseInt(currentUserData.id);
-                    const isTopRank = item.rank <= 3;
-                    
-                    html += `
-                        <tr class="${isTopRank ? 'top-rank' : ''} ${isCurrentUser ? 'user-row' : ''}">
-                            <td class="rank">${item.rank}</td>
-                            <td class="team">${item.team}</td>
-                            <td class="username">${item.manager}</td>
-                            <td class="points">${parseInt(item.points).toLocaleString()}</td>
-                        </tr>
-                    `;
-                });
-            }
-            
-            tableBody.innerHTML = html;
-            
-            // Add row hover effects
-            addRowHoverEffects();
-        }
-        
-        // Fetch user stats
-        async function fetchUserStats() {
-            try {
-                // Check if user is logged in
-                if (!isUserLoggedIn()) {
-                    return;
-                }
-                
-                const currentUserData = getCurrentUserData();
-                
-                // Build the URL for user stats
-                const url = `${API_URL}/user-stats`;
-                
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `Bearer ${getAuthToken()}`
+                prevButton.addEventListener('click', function() {
+                    if (window.currentPage > 1) {
+                        const newPage = window.currentPage - 1;
+                        paginateData(newPage);
                     }
                 });
                 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch user stats');
-                }
-                
-                const data = await response.json();
-                
-                // Update the user stats display
-                document.getElementById('user-rank').textContent = data.rank || '-';
-                document.getElementById('user-username').textContent = currentUserData.username || '-';
-                document.getElementById('user-team-name').textContent = data.team || currentUserData.team_name || '-';
-                document.getElementById('user-points').textContent = data.points ? 
-                    parseInt(data.points).toLocaleString() : '0';
-                
-            } catch (error) {
-                console.error('Error fetching user stats:', error);
-                // Show error message in user stats section
-                document.getElementById('user-rank').textContent = '-';
-                document.getElementById('user-username').textContent = 'Error';
-                document.getElementById('user-team-name').textContent = 'Error loading data';
-                document.getElementById('user-points').textContent = '-';
-            }
-        }
-        
-        // Setup pagination
-        function setupPagination() {
-            const prevButton = document.querySelector('.prev-page');
-            const nextButton = document.querySelector('.next-page');
-            
-            prevButton.addEventListener('click', function() {
-                if (window.currentPage > 1) {
-                    const newPage = window.currentPage - 1;
-                    
-                    // We already have the data, so just re-render with the new page
-                    const itemsPerPage = 10;
-                    const startIndex = (newPage - 1) * itemsPerPage;
-                    const paginatedData = window.leaderboardData.slice(startIndex, startIndex + itemsPerPage);
-                    
-                    window.currentPage = newPage;
-                    document.getElementById('current-page').textContent = newPage;
-                    renderLeaderboard(paginatedData);
-                    
-                    // Update button states
-                    this.disabled = newPage <= 1;
-                    nextButton.disabled = newPage >= Math.ceil(window.leaderboardData.length / itemsPerPage);
-                }
-            });
-            
-            nextButton.addEventListener('click', function() {
-                if (window.leaderboardData) {
-                    const maxPage = Math.ceil(window.leaderboardData.length / 10);
-                    if (window.currentPage < maxPage) {
-                        const newPage = window.currentPage + 1;
-                        
-                        // We already have the data, so just re-render with the new page
-                        const itemsPerPage = 10;
-                        const startIndex = (newPage - 1) * itemsPerPage;
-                        const paginatedData = window.leaderboardData.slice(startIndex, startIndex + itemsPerPage);
-                        
-                        window.currentPage = newPage;
-                        document.getElementById('current-page').textContent = newPage;
-                        renderLeaderboard(paginatedData);
-                        
-                        // Update button states
-                        prevButton.disabled = newPage <= 1;
-                        this.disabled = newPage >= maxPage;
+                nextButton.addEventListener('click', function() {
+                    if (window.leaderboardData) {
+                        const maxPage = Math.ceil(window.leaderboardData.length / 10);
+                        if (window.currentPage < maxPage) {
+                            const newPage = window.currentPage + 1;
+                            paginateData(newPage);
+                        }
                     }
-                }
-            });
-        }
-        
-        // Add row hover effects
-        function addRowHoverEffects() {
-            const tableRows = document.querySelectorAll('.leaderboard-table tbody tr');
+                });
+            }
             
-            tableRows.forEach(row => {
-                row.addEventListener('mouseenter', function() {
-                    this.classList.add('row-hover');
-                });
+            function paginateData(newPage) {
+                const itemsPerPage = 10;
+                const startIndex = (newPage - 1) * itemsPerPage;
+                const paginatedData = window.leaderboardData.slice(startIndex, startIndex + itemsPerPage);
                 
-                row.addEventListener('mouseleave', function() {
-                    this.classList.remove('row-hover');
-                });
-            });
-        }
-        
-        // Setup background effects
-        function setupBackgroundEffects() {
-            const glowEffects = document.querySelectorAll('.circle-glow');
-            window.addEventListener('mousemove', function(e) {
-                glowEffects.forEach((glow, index) => {
-                    // Create subtle movement based on mouse movement
-                    const offsetX = (e.clientX / window.innerWidth - 0.5) * 100;
-                    const offsetY = (e.clientY / window.innerHeight - 0.5) * 100;
-                    
-                    setTimeout(() => {
-                        glow.style.transform = `translate(${offsetX * (index + 1) * 0.2}px, ${offsetY * (index + 1) * 0.2}px)`;
-                    }, index * 100);
-                });
-            });
-        }
+                window.currentPage = newPage;
+                document.getElementById('current-page').textContent = newPage;
+                renderLeaderboard(paginatedData);
+                
+                // Update button states
+                const prevButton = document.querySelector('.prev-page');
+                const nextButton = document.querySelector('.next-page');
+                const maxPage = Math.ceil(window.leaderboardData.length / itemsPerPage);
+                
+                prevButton.disabled = newPage <= 1;
+                nextButton.disabled = newPage >= maxPage;
+            }
+        });
     </script>
 </body>
 </html>

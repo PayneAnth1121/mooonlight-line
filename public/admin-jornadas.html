@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonlight Line - Manage Game Weeks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        body {
+            background-color: #06111f;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Grid Lines */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Contenedor principal */
+        .admin-dashboard {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* Navegación */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00f0ff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-button:hover {
+            background-color: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Título */
+        .admin-title {
+            font-size: 2rem;
+            color: #ff8c00;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        
+        /* Formulario para crear jornada */
+        .create-form {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00ff80;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 128, 0.2);
+        }
+        
+        .form-title {
+            color: #00ff80;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00ff80;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        
+        .form-input {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 128, 0.5);
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #00ff80;
+            box-shadow: 0 0 10px rgba(0, 255, 128, 0.5);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .checkbox {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 128, 0.5);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .checkbox:checked {
+            background-color: rgba(0, 255, 128, 0.7);
+            border-color: #00ff80;
+        }
+        
+        .checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+        }
+        
+        .form-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff80;
+            color: #00ff80;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+        }
+        
+        .form-button:hover {
+            background-color: rgba(0, 255, 128, 0.15);
+            box-shadow: 0 0 15px rgba(0, 255, 128, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .form-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Lista de jornadas */
+        .jornadas-list {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #ff8c00;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.2);
+        }
+        
+        .list-title {
+            color: #ff8c00;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        
+        .jornadas-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            color: white;
+        }
+        
+        .jornadas-table th {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #ff8c00;
+            text-align: center;
+            padding: 12px 8px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 140, 0, 0.3);
+        }
+        
+        .jornadas-table td {
+            padding: 12px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .jornadas-table tr:hover {
+            background-color: rgba(255, 140, 0, 0.1);
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .current {
+            background-color: rgba(0, 255, 128, 0.2);
+            color: #00ff80;
+            border: 1px solid #00ff80;
+        }
+        
+        .completed {
+            background-color: rgba(0, 240, 255, 0.2);
+            color: #00f0ff;
+            border: 1px solid #00f0ff;
+        }
+        
+        .pending {
+            background-color: rgba(255, 140, 0, 0.2);
+            color: #ff8c00;
+            border: 1px solid #ff8c00;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .action-btn {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid;
+            color: inherit;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-btn {
+            border-color: #00f0ff;
+            color: #00f0ff;
+        }
+        
+        .edit-btn:hover {
+            background-color: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        
+        .delete-btn {
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+        
+        .delete-btn:hover {
+            background-color: rgba(255, 107, 107, 0.15);
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+        
+        /* Alertas */
+        .alert {
+            padding: 12px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .alert-success {
+            background-color: rgba(0, 255, 128, 0.1);
+            border: 1px solid #00ff80;
+            color: #00ff80;
+        }
+        
+        .alert-error {
+            background-color: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        
+        .alert-warning {
+            background-color: rgba(255, 140, 0, 0.1);
+            border: 1px solid #ff8c00;
+            color: #ff8c00;
+        }
+        
+        /* Loader */
+        .loader {
+            border: 3px solid rgba(255, 140, 0, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #ff8c00;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Modal para editar */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .modal-content {
+            background-color: rgba(6, 17, 31, 0.95);
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #00f0ff;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.3);
+        }
+        
+        .close {
+            color: #ff6b6b;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: white;
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .jornadas-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-lines"></div>
+    
+    <div class="admin-dashboard">
+        <!-- Navegación -->
+        <div class="navigation">
+            <div class="logo">MOONLIGHT LINE</div>
+            <div class="nav-buttons">
+                <a href="admin.html" class="nav-button">ADMIN DASHBOARD</a>
+                <a href="index.html" class="nav-button">BACK TO SITE</a>
+            </div>
+        </div>
+        
+        <h1 class="admin-title">MANAGE GAME WEEKS</h1>
+        
+        <!-- Alertas -->
+        <div id="alert-success" class="alert alert-success"></div>
+        <div id="alert-error" class="alert alert-error"></div>
+        <div id="alert-warning" class="alert alert-warning"></div>
+        
+        <!-- Formulario para crear nueva jornada -->
+        <div class="create-form">
+            <h3 class="form-title">CREATE NEW GAME WEEK</h3>
+            <form id="create-jornada-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="week-number">WEEK NUMBER</label>
+                        <input type="number" id="week-number" class="form-input" min="1" max="52" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="start-date">START DATE</label>
+                        <input type="date" id="start-date" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="end-date">END DATE</label>
+                        <input type="date" id="end-date" class="form-input" required>
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="is-current" class="checkbox">
+                    <label for="is-current" class="form-label">Set as current game week</label>
+                </div>
+                <br>
+                <button type="submit" class="form-button">CREATE GAME WEEK</button>
+            </form>
+        </div>
+        
+        <!-- Loader -->
+        <div id="jornadas-loader" class="loader"></div>
+        
+        <!-- Lista de jornadas -->
+        <div class="jornadas-list">
+            <h3 class="list-title">EXISTING GAME WEEKS</h3>
+            <table class="jornadas-table">
+                <thead>
+                    <tr>
+                        <th>WEEK #</th>
+                        <th>START DATE</th>
+                        <th>END DATE</th>
+                        <th>STATUS</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="jornadas-table-body">
+                    <!-- Filas se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Modal para editar jornada -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 class="form-title">EDIT GAME WEEK</h3>
+            <form id="edit-jornada-form">
+                <input type="hidden" id="edit-jornada-id">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="edit-week-number">WEEK NUMBER</label>
+                        <input type="number" id="edit-week-number" class="form-input" min="1" max="52" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="edit-start-date">START DATE</label>
+                        <input type="date" id="edit-start-date" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="edit-end-date">END DATE</label>
+                        <input type="date" id="edit-end-date" class="form-input" required>
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="edit-is-current" class="checkbox">
+                    <label for="edit-is-current" class="form-label">Set as current game week</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="edit-is-completed" class="checkbox">
+                    <label for="edit-is-completed" class="form-label">Mark as completed</label>
+                </div>
+                <br>
+                <button type="submit" class="form-button">UPDATE GAME WEEK</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // API URL
+        const API_URL = '/api';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const createForm = document.getElementById('create-jornada-form');
+            const editForm = document.getElementById('edit-jornada-form');
+            const editModal = document.getElementById('edit-modal');
+            const closeModal = document.querySelector('.close');
+            const jornadasLoader = document.getElementById('jornadas-loader');
+            const jornadasTableBody = document.getElementById('jornadas-table-body');
+            const alertSuccess = document.getElementById('alert-success');
+            const alertError = document.getElementById('alert-error');
+            const alertWarning = document.getElementById('alert-warning');
+            
+            // Verificar autorización
+            checkAuth();
+            
+            // Event listeners
+            createForm.addEventListener('submit', createJornada);
+            editForm.addEventListener('submit', updateJornada);
+            closeModal.addEventListener('click', () => editModal.style.display = 'none');
+            
+            // Cerrar modal al hacer clic fuera
+            window.addEventListener('click', (e) => {
+                if (e.target === editModal) {
+                    editModal.style.display = 'none';
+                }
+            });
+            
+            // Verificar autorización
+            function checkAuth() {
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                const token = localStorage.getItem('authToken');
+                
+                if (!token || !userData.is_admin) {
+                    showAlert('error', 'Access denied. Admin privileges required.');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                    return;
+                }
+                
+                loadJornadas();
+            }
+            
+            // Cargar jornadas
+            async function loadJornadas() {
+                try {
+                    jornadasLoader.style.display = 'block';
+                    
+                    const response = await fetch(`${API_URL}/admin/jornadas`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch game weeks');
+                    }
+                    
+                    const jornadas = await response.json();
+                    renderJornadas(jornadas);
+                    
+                } catch (error) {
+                    console.error('Error loading game weeks:', error);
+                    showAlert('error', 'Error loading game weeks. Please try again.');
+                } finally {
+                    jornadasLoader.style.display = 'none';
+                }
+            }
+            
+            // Renderizar jornadas en la tabla
+            function renderJornadas(jornadas) {
+                let html = '';
+                
+                if (jornadas.length === 0) {
+                    html = '<tr><td colspan="5">No game weeks found</td></tr>';
+                } else {
+                    jornadas.forEach(jornada => {
+                        const status = getStatusBadge(jornada);
+                        const startDate = new Date(jornada.start_date).toLocaleDateString();
+                        const endDate = new Date(jornada.end_date).toLocaleDateString();
+                        
+                        html += `
+                            <tr>
+                                <td>${jornada.week_number}</td>
+                                <td>${startDate}</td>
+                                <td>${endDate}</td>
+                                <td>${status}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn edit-btn" onclick="editJornada(${jornada.id})">
+                                            EDIT
+                                        </button>
+                                        <button class="action-btn delete-btn" onclick="deleteJornada(${jornada.id}, ${jornada.week_number})">
+                                            DELETE
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                jornadasTableBody.innerHTML = html;
+            }
+            
+            // Obtener badge de estado
+            function getStatusBadge(jornada) {
+                if (jornada.is_current) {
+                    return '<span class="status-badge current">CURRENT</span>';
+                } else if (jornada.is_completed) {
+                    return '<span class="status-badge completed">COMPLETED</span>';
+                } else {
+                    return '<span class="status-badge pending">PENDING</span>';
+                }
+            }
+            
+            // Crear nueva jornada
+            async function createJornada(e) {
+                e.preventDefault();
+                
+                try {
+                    const formData = new FormData(createForm);
+                    const data = {
+                        week_number: parseInt(document.getElementById('week-number').value),
+                        start_date: document.getElementById('start-date').value,
+                        end_date: document.getElementById('end-date').value,
+                        is_current: document.getElementById('is-current').checked
+                    };
+                    
+                    const response = await fetch(`${API_URL}/admin/jornadas`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.message || 'Failed to create game week');
+                    }
+                    
+                    showAlert('success', 'Game week created successfully!');
+                    createForm.reset();
+                    loadJornadas();
+                    
+                } catch (error) {
+                    console.error('Error creating game week:', error);
+                    showAlert('error', error.message || 'Error creating game week. Please try again.');
+                }
+            }
+            
+            // Editar jornada (función global)
+            window.editJornada = async function(id) {
+                try {
+                    const response = await fetch(`${API_URL}/admin/jornadas/${id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch game week details');
+                    }
+                    
+                    const jornada = await response.json();
+                    
+                    // Llenar el formulario de edición
+                    document.getElementById('edit-jornada-id').value = jornada.id;
+                    document.getElementById('edit-week-number').value = jornada.week_number;
+                    document.getElementById('edit-start-date').value = jornada.start_date;
+                    document.getElementById('edit-end-date').value = jornada.end_date;
+                    document.getElementById('edit-is-current').checked = jornada.is_current;
+                    document.getElementById('edit-is-completed').checked = jornada.is_completed;
+                    
+                    // Mostrar modal
+                    editModal.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('Error fetching game week:', error);
+                    showAlert('error', 'Error loading game week details. Please try again.');
+                }
+            };
+            
+            // Actualizar jornada
+            async function updateJornada(e) {
+                e.preventDefault();
+                
+                try {
+                    const id = document.getElementById('edit-jornada-id').value;
+                    const data = {
+                        week_number: parseInt(document.getElementById('edit-week-number').value),
+                        start_date: document.getElementById('edit-start-date').value,
+                        end_date: document.getElementById('edit-end-date').value,
+                        is_current: document.getElementById('edit-is-current').checked,
+                        is_completed: document.getElementById('edit-is-completed').checked
+                    };
+                    
+                    const response = await fetch(`${API_URL}/admin/jornadas/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.message || 'Failed to update game week');
+                    }
+                    
+                    showAlert('success', 'Game week updated successfully!');
+                    editModal.style.display = 'none';
+                    loadJornadas();
+                    
+                } catch (error) {
+                    console.error('Error updating game week:', error);
+                    showAlert('error', error.message || 'Error updating game week. Please try again.');
+                }
+            }
+            
+            // Eliminar jornada (función global)
+            window.deleteJornada = async function(id, weekNumber) {
+                if (!confirm(`Are you sure you want to delete Week ${weekNumber}? This action cannot be undone.`)) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`${API_URL}/admin/jornadas/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.message || 'Failed to delete game week');
+                    }
+                    
+                    showAlert('success', 'Game week deleted successfully!');
+                    loadJornadas();
+                    
+                } catch (error) {
+                    console.error('Error deleting game week:', error);
+                    showAlert('error', error.message || 'Error deleting game week. Please try again.');
+                }
+            };
+            
+            // Mostrar alerta
+            function showAlert(type, message) {
+                const alert = document.getElementById(`alert-${type}`);
+                alert.textContent = message;
+                alert.style.display = 'block';
+                
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Obtener token de autenticación
+            function getAuthToken() {
+                return localStorage.getItem('authToken') || '';
+            }
+        });
+    </script>
+</body>
+</html>

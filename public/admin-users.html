@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonlight Line - Manage Users & Teams</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        body {
+            background-color: #06111f;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Grid Lines */
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Contenedor principal */
+        .admin-dashboard {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Navegación */
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .nav-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00f0ff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-button:hover {
+            background-color: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* Título */
+        .admin-title {
+            font-size: 2rem;
+            color: #8c00ff;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px rgba(140, 0, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        
+        /* Tabs */
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(140, 0, 255, 0.3);
+        }
+        
+        .admin-tab {
+            padding: 10px 20px;
+            margin-right: 5px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        
+        .admin-tab:hover {
+            background-color: rgba(140, 0, 255, 0.1);
+            color: white;
+        }
+        
+        .admin-tab.active {
+            background-color: rgba(140, 0, 255, 0.2);
+            color: #8c00ff;
+            border-top: 1px solid #8c00ff;
+            border-left: 1px solid #8c00ff;
+            border-right: 1px solid #8c00ff;
+            box-shadow: 0 -5px 10px rgba(140, 0, 255, 0.1);
+        }
+        
+        /* Paneles */
+        .admin-panel {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #8c00ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(140, 0, 255, 0.2);
+        }
+        
+        .admin-panel.active {
+            display: block;
+        }
+        
+        /* Filtros */
+        .filters-section {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-input {
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(140, 0, 255, 0.5);
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+            font-size: 0.9rem;
+            min-width: 200px;
+        }
+        
+        .filter-input:focus {
+            outline: none;
+            border-color: #8c00ff;
+            box-shadow: 0 0 10px rgba(140, 0, 255, 0.5);
+        }
+        
+        .filter-select {
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(140, 0, 255, 0.5);
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+            font-size: 0.9rem;
+            min-width: 150px;
+        }
+        
+        /* Estadísticas generales */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(140, 0, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #8c00ff;
+            text-shadow: 0 0 10px rgba(140, 0, 255, 0.5);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+        
+        /* Tablas */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            color: white;
+            margin-top: 20px;
+        }
+        
+        .data-table th {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #8c00ff;
+            text-align: left;
+            padding: 12px 10px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(140, 0, 255, 0.3);
+        }
+        
+        .data-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+        }
+        
+        .data-table tr:hover {
+            background-color: rgba(140, 0, 255, 0.1);
+        }
+        
+        /* Badges */
+        .admin-badge {
+            background-color: rgba(255, 140, 0, 0.2);
+            color: #ff8c00;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid #ff8c00;
+        }
+        
+        .user-badge {
+            background-color: rgba(0, 240, 255, 0.2);
+            color: #00f0ff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid #00f0ff;
+        }
+        
+        /* Botones de acción */
+        .action-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #8c00ff;
+            color: #8c00ff;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .action-button:hover {
+            background-color: rgba(140, 0, 255, 0.15);
+            box-shadow: 0 0 10px rgba(140, 0, 255, 0.5);
+        }
+        
+        /* Selector de jornada */
+        .jornada-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .jornada-label {
+            font-size: 1rem;
+            color: #8c00ff;
+        }
+        
+        .jornada-select {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #8c00ff;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            min-width: 200px;
+            font-size: 0.9rem;
+        }
+        
+        /* Alertas */
+        .alert {
+            padding: 12px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .alert-success {
+            background-color: rgba(0, 255, 128, 0.1);
+            border: 1px solid #00ff80;
+            color: #00ff80;
+        }
+        
+        .alert-error {
+            background-color: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        
+        /* Loader */
+        .loader {
+            border: 3px solid rgba(140, 0, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #8c00ff;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Team composition */
+        .team-composition {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .players-section {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .players-title {
+            color: #8c00ff;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        .player-item {
+            font-size: 0.8rem;
+            margin-bottom: 3px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .filters-section {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .team-composition {
+                grid-template-columns: 1fr;
+            }
+            
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .admin-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-lines"></div>
+    
+    <div class="admin-dashboard">
+        <!-- Navegación -->
+        <div class="navigation">
+            <div class="logo">MOONLIGHT LINE</div>
+            <div class="nav-buttons">
+                <a href="admin.html" class="nav-button">ADMIN DASHBOARD</a>
+                <a href="index.html" class="nav-button">BACK TO SITE</a>
+            </div>
+        </div>
+        
+        <h1 class="admin-title">MANAGE USERS & TEAMS</h1>
+        
+        <!-- Alertas -->
+        <div id="alert-success" class="alert alert-success"></div>
+        <div id="alert-error" class="alert alert-error"></div>
+        
+        <!-- Tabs -->
+        <div class="admin-tabs">
+            <div class="admin-tab active" data-tab="users">USERS</div>
+            <div class="admin-tab" data-tab="teams">TEAMS BY WEEK</div>
+            <div class="admin-tab" data-tab="stats">STATISTICS</div>
+        </div>
+        
+        <!-- Panel de usuarios -->
+        <div class="admin-panel active" id="users-panel">
+            <div class="filters-section">
+                <input type="text" class="filter-input" id="users-search" placeholder="Search users...">
+                <select class="filter-select" id="users-role-filter">
+                    <option value="">All Roles</option>
+                    <option value="admin">Admins Only</option>
+                    <option value="user">Users Only</option>
+                </select>
+            </div>
+            
+            <div id="users-loader" class="loader"></div>
+            
+            <table class="data-table" id="users-table">
+                <thead>
+                    <tr>
+                        <th>USERNAME</th>
+                        <th>EMAIL</th>
+                        <th>TEAM NAME</th>
+                        <th>ROLE</th>
+                        <th>JOINED</th>
+                        <th>ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body">
+                    <!-- Datos se cargarán dinámicamente -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Panel de equipos -->
+        <div class="admin-panel" id="teams-panel">
+            <div class="jornada-selector">
+                <span class="jornada-label">SELECT GAME WEEK:</span>
+                <select id="teams-jornada-select" class="jornada-select">
+                    <option value="">Select a game week...</option>
+                </select>
+            </div>
+            
+            <div id="teams-loader" class="loader"></div>
+            
+            <div id="teams-content" style="display: none;">
+                <table class="data-table" id="teams-table">
+                    <thead>
+                        <tr>
+                            <th>RANK</th>
+                            <th>USER</th>
+                            <th>TEAM NAME</th>
+                            <th>POINTS</th>
+                            <th>PLAYERS</th>
+                            <th>COMPOSITION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teams-table-body">
+                        <!-- Datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Panel de estadísticas -->
+        <div class="admin-panel" id="stats-panel">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-users">-</div>
+                    <div class="stat-label">TOTAL USERS</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-admins">-</div>
+                    <div class="stat-label">ADMINISTRATORS</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="active-teams">-</div>
+                    <div class="stat-label">ACTIVE TEAMS</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avg-team-size">-</div>
+                    <div class="stat-label">AVG TEAM SIZE</div>
+                </div>
+            </div>
+            
+            <div id="stats-loader" class="loader"></div>
+        </div>
+    </div>
+    
+    <script>
+        // API URL
+        const API_URL = '/api';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos del DOM
+            const tabs = document.querySelectorAll('.admin-tab');
+            const panels = document.querySelectorAll('.admin-panel');
+            const usersSearch = document.getElementById('users-search');
+            const usersRoleFilter = document.getElementById('users-role-filter');
+            const teamsJornadaSelect = document.getElementById('teams-jornada-select');
+            const alertSuccess = document.getElementById('alert-success');
+            const alertError = document.getElementById('alert-error');
+            
+            // Variables globales
+            let usersData = [];
+            let filteredUsers = [];
+            
+            // Verificar autorización
+            checkAuth();
+            
+            // Event listeners
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+            
+            usersSearch.addEventListener('input', filterUsers);
+            usersRoleFilter.addEventListener('change', filterUsers);
+            teamsJornadaSelect.addEventListener('change', loadTeamsByJornada);
+            
+            // Verificar autorización
+            function checkAuth() {
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                const token = localStorage.getItem('authToken');
+                
+                if (!token || !userData.is_admin) {
+                    showAlert('error', 'Access denied. Admin privileges required.');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                    return;
+                }
+                
+                // Cargar datos iniciales
+                loadUsers();
+                loadJornadas();
+                loadStatistics();
+            }
+            
+            // Cambiar tab
+            function switchTab(tabName) {
+                // Actualizar tabs
+                tabs.forEach(tab => {
+                    tab.classList.remove('active');
+                    if (tab.dataset.tab === tabName) {
+                        tab.classList.add('active');
+                    }
+                });
+                
+                // Actualizar panels
+                panels.forEach(panel => {
+                    panel.classList.remove('active');
+                    if (panel.id === `${tabName}-panel`) {
+                        panel.classList.add('active');
+                    }
+                });
+            }
+            
+            // Cargar usuarios
+            async function loadUsers() {
+                try {
+                    document.getElementById('users-loader').style.display = 'block';
+                    
+                    // Simular llamada a API de usuarios (necesitaríamos crear este endpoint)
+                    // Por ahora usamos datos ficticios basados en la base de datos
+                    const response = await fetch(`${API_URL}/admin/users`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        usersData = await response.json();
+                    } else {
+                        // Fallback con datos de ejemplo
+                        usersData = [
+                            {
+                                id: 1,
+                                username: 'admin',
+                                email: 'admin@dell.com',
+                                team_name: 'Admin Team',
+                                is_admin: true,
+                                created_at: '2025-01-01'
+                            },
+                            {
+                                id: 2,
+                                username: 'alfredo_ocana',
+                                email: 'alfredo.ocana@dell.com',
+                                team_name: 'Tech Warriors',
+                                is_admin: false,
+                                created_at: '2025-01-02'
+                            }
+                        ];
+                    }
+                    
+                    filteredUsers = [...usersData];
+                    renderUsers();
+                    
+                } catch (error) {
+                    console.error('Error loading users:', error);
+                    showAlert('error', 'Error loading users. Showing example data.');
+                    // Usar datos de ejemplo en caso de error
+                    usersData = [
+                        {
+                            id: 1,
+                            username: 'admin',
+                            email: 'admin@dell.com',
+                            team_name: 'Admin Team',
+                            is_admin: true,
+                            created_at: '2025-01-01'
+                        }
+                    ];
+                    filteredUsers = [...usersData];
+                    renderUsers();
+                } finally {
+                    document.getElementById('users-loader').style.display = 'none';
+                }
+            }
+            
+            // Renderizar usuarios
+            function renderUsers() {
+                const tbody = document.getElementById('users-table-body');
+                let html = '';
+                
+                if (filteredUsers.length === 0) {
+                    html = '<tr><td colspan="6">No users found</td></tr>';
+                } else {
+                    filteredUsers.forEach(user => {
+                        const roleBadge = user.is_admin ? 
+                            '<span class="admin-badge">ADMIN</span>' : 
+                            '<span class="user-badge">USER</span>';
+                        
+                        const joinedDate = new Date(user.created_at).toLocaleDateString();
+                        
+                        html += `
+                            <tr>
+                                <td>${user.username}</td>
+                                <td>${user.email}</td>
+                                <td>${user.team_name}</td>
+                                <td>${roleBadge}</td>
+                                <td>${joinedDate}</td>
+                                <td>
+                                    <button class="action-button" onclick="viewUserDetails(${user.id})">
+                                        VIEW DETAILS
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                tbody.innerHTML = html;
+            }
+            
+            // Filtrar usuarios
+            function filterUsers() {
+                const searchTerm = usersSearch.value.toLowerCase();
+                const roleFilter = usersRoleFilter.value;
+                
+                filteredUsers = usersData.filter(user => {
+                    const matchesSearch = 
+                        user.username.toLowerCase().includes(searchTerm) ||
+                        user.email.toLowerCase().includes(searchTerm) ||
+                        user.team_name.toLowerCase().includes(searchTerm);
+                    
+                    const matchesRole = 
+                        roleFilter === '' ||
+                        (roleFilter === 'admin' && user.is_admin) ||
+                        (roleFilter === 'user' && !user.is_admin);
+                    
+                    return matchesSearch && matchesRole;
+                });
+                
+                renderUsers();
+            }
+            
+            // Cargar jornadas para el selector
+            async function loadJornadas() {
+                try {
+                    const response = await fetch(`${API_URL}/admin/jornadas`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch game weeks');
+                    }
+                    
+                    const jornadas = await response.json();
+                    
+                    let options = '<option value="">Select a game week...</option>';
+                    jornadas.forEach(jornada => {
+                        const currentMarker = jornada.is_current ? ' (Current)' : '';
+                        options += `<option value="${jornada.id}">Week ${jornada.week_number}${currentMarker}</option>`;
+                    });
+                    
+                    teamsJornadaSelect.innerHTML = options;
+                    
+                } catch (error) {
+                    console.error('Error loading game weeks:', error);
+                    showAlert('error', 'Error loading game weeks.');
+                }
+            }
+            
+            // Cargar equipos por jornada
+            async function loadTeamsByJornada() {
+                const jornadaId = teamsJornadaSelect.value;
+                
+                if (!jornadaId) {
+                    document.getElementById('teams-content').style.display = 'none';
+                    return;
+                }
+                
+                try {
+                    document.getElementById('teams-loader').style.display = 'block';
+                    
+                    const response = await fetch(`${API_URL}/admin/user-teams/${jornadaId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch teams');
+                    }
+                    
+                    const data = await response.json();
+                    renderTeams(data.teams);
+                    document.getElementById('teams-content').style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('Error loading teams:', error);
+                    showAlert('error', 'Error loading teams for selected week.');
+                } finally {
+                    document.getElementById('teams-loader').style.display = 'none';
+                }
+            }
+            
+            // Renderizar equipos
+            function renderTeams(teams) {
+                const tbody = document.getElementById('teams-table-body');
+                let html = '';
+                
+                if (teams.length === 0) {
+                    html = '<tr><td colspan="6">No teams found for this week</td></tr>';
+                } else {
+                    teams.forEach((team, index) => {
+                        const composition = `
+                            <div class="team-composition">
+                                <div class="players-section">
+                                    <div class="players-title">STARTERS (${team.starters_count})</div>
+                                    ${team.starters.slice(0, 3).map(p => `<div class="player-item">${p.player_name}</div>`).join('')}
+                                    ${team.starters_count > 3 ? `<div class="player-item">... and ${team.starters_count - 3} more</div>` : ''}
+                                </div>
+                                <div class="players-section">
+                                    <div class="players-title">BENCH (${team.bench_count})</div>
+                                    ${team.bench.slice(0, 3).map(p => `<div class="player-item">${p.player_name}</div>`).join('')}
+                                    ${team.bench_count > 3 ? `<div class="player-item">... and ${team.bench_count - 3} more</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                        
+                        html += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${team.username}</td>
+                                <td>${team.team_name}</td>
+                                <td>${team.total_points}</td>
+                                <td>${team.players_count}</td>
+                                <td>${composition}</td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                tbody.innerHTML = html;
+            }
+            
+            // Cargar estadísticas
+            function loadStatistics() {
+                try {
+                    document.getElementById('stats-loader').style.display = 'block';
+                    
+                    // Estadísticas básicas (simuladas basadas en los datos conocidos)
+                    document.getElementById('total-users').textContent = '5+';
+                    document.getElementById('total-admins').textContent = '1+';
+                    document.getElementById('active-teams').textContent = '4+';
+                    document.getElementById('avg-team-size').textContent = '10';
+                    
+                } catch (error) {
+                    console.error('Error loading statistics:', error);
+                } finally {
+                    document.getElementById('stats-loader').style.display = 'none';
+                }
+            }
+            
+            // Ver detalles de usuario (función global)
+            window.viewUserDetails = function(userId) {
+                showAlert('success', `Viewing details for user ID: ${userId}`);
+                // Aquí podrías abrir un modal con más detalles del usuario
+            };
+            
+            // Mostrar alerta
+            function showAlert(type, message) {
+                const alert = document.getElementById(`alert-${type}`);
+                alert.textContent = message;
+                alert.style.display = 'block';
+                
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Obtener token de autenticación
+            function getAuthToken() {
+                return localStorage.getItem('authToken') || '';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,10 +1,10 @@
-// api/players.js
+// api/players.js - MEJORADO
 const { Pool } = require('pg');
 
-// Configuración de la base de datos
+// Configuración de la base de datos con mejor error handling
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 // CORS headers
@@ -17,6 +17,9 @@ const corsHeaders = {
 export default async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
+    Object.keys(corsHeaders).forEach(key => {
+      res.setHeader(key, corsHeaders[key]);
+    });
     return res.status(200).json({});
   }
 
@@ -26,21 +29,41 @@ export default async function handler(req, res) {
   });
 
   if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    return res.status(405).json({ 
+      message: 'Method not allowed',
+      error: `Expected GET, received ${req.method}` 
+    });
   }
 
   try {
+    console.log('Fetching players from database...');
+    
+    // Test database connection first
+    await pool.query('SELECT 1');
+    console.log('Database connection successful');
+
     // Get all active players including image_url
     const result = await pool.query(`
       SELECT 
         id,
         name,
         image_url,
-        is_active
+        is_active,
+        created_at
       FROM players 
       WHERE is_active = TRUE
       ORDER BY name ASC
     `);
+    
+    console.log(`Found ${result.rows.length} players`);
+    
+    if (result.rows.length === 0) {
+      return res.status(200).json({
+        message: 'No active players found',
+        players: [],
+        count: 0
+      });
+    }
     
     // Transform the data to match frontend expectations
     const players = result.rows.map(player => ({
@@ -48,6 +71,7 @@ export default async function handler(req, res) {
       name: player.name,
       image: player.image_url || `/images/players/default-player.png`,
       imageUrl: player.image_url,
+      isActive: player.is_active,
       // Generate design-only stats (these don't affect gameplay)
       stats: generateRandomStats(),
       position: getRandomPosition(),
@@ -55,11 +79,23 @@ export default async function handler(req, res) {
       signatureMove: getRandomSignatureMove()
     }));
 
-    res.json(players);
+    console.log('Players transformed successfully');
+
+    res.status(200).json(players);
 
   } catch (error) {
     console.error('Error fetching players:', error);
-    res.status(500).json({ message: 'Server error' });
+    
+    // More detailed error response
+    res.status(500).json({ 
+      message: 'Failed to fetch players',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+      details: process.env.NODE_ENV === 'development' ? {
+        stack: error.stack,
+        code: error.code,
+        sqlState: error.sqlState
+      } : undefined
+    });
   }
 }
 

@@ -1,8 +1,8 @@
-// API URL
-const BASE_URL = 'http://localhost:3000/api';
+// Updated public/assets/js/api.js - API configuration for consolidated routes
+const BASE_URL = '/api';
 
 /**
- * Clase para manejar las llamadas a la API
+ * Clase para manejar las llamadas a la API con rutas consolidadas
  */
 class ApiService {
     /**
@@ -68,7 +68,7 @@ class ApiService {
      * Iniciar sesión
      */
     static async login(username, password) {
-        const data = await this.fetchData('/auth/login', {
+        const data = await this.fetchData('/auth?action=login', {
             method: 'POST',
             body: JSON.stringify({ username, password })
         });
@@ -91,7 +91,7 @@ class ApiService {
      * Registrar nuevo usuario
      */
     static async register(username, email, password, teamName) {
-        const data = await this.fetchData('/auth/register', {
+        const data = await this.fetchData('/auth?action=register', {
             method: 'POST',
             body: JSON.stringify({
                 username,
@@ -153,14 +153,14 @@ class ApiService {
      * Obtener lista de jornadas
      */
     static async getJornadas() {
-        return await this.fetchData('/admin/jornadas');
+        return await this.fetchData('/admin?action=jornadas');
     }
     
     /**
      * Crear una nueva jornada
      */
     static async createJornada(weekNumber, startDate, endDate, isCurrent = false) {
-        return await this.fetchData('/admin/jornadas', {
+        return await this.fetchData('/admin?action=jornadas', {
             method: 'POST',
             body: JSON.stringify({
                 week_number: weekNumber,
@@ -175,7 +175,7 @@ class ApiService {
      * Actualizar una jornada
      */
     static async updateJornada(id, weekNumber, startDate, endDate, isCurrent, isCompleted) {
-        return await this.fetchData(`/admin/jornadas/${id}`, {
+        return await this.fetchData(`/admin?action=jornadas&id=${id}`, {
             method: 'PUT',
             body: JSON.stringify({
                 week_number: weekNumber,
@@ -191,7 +191,7 @@ class ApiService {
      * Eliminar una jornada
      */
     static async deleteJornada(id) {
-        return await this.fetchData(`/admin/jornadas/${id}`, {
+        return await this.fetchData(`/admin?action=jornadas&id=${id}`, {
             method: 'DELETE'
         });
     }
@@ -200,14 +200,14 @@ class ApiService {
      * Obtener estadísticas de jugadores para una jornada
      */
     static async getPlayerStats(jornadaId) {
-        return await this.fetchData(`/admin/player-stats/${jornadaId}`);
+        return await this.fetchData(`/admin?action=player-stats&id=${jornadaId}`);
     }
     
     /**
      * Guardar estadísticas de jugadores
      */
     static async savePlayerStats(jornadaId, stats) {
-        return await this.fetchData('/admin/player-stats', {
+        return await this.fetchData('/admin?action=player-stats', {
             method: 'POST',
             body: JSON.stringify({
                 jornada_id: jornadaId,
@@ -220,7 +220,70 @@ class ApiService {
      * Obtener equipos de usuarios para una jornada
      */
     static async getUserTeams(jornadaId) {
-        return await this.fetchData(`/admin/user-teams/${jornadaId}`);
+        return await this.fetchData(`/admin?action=user-teams&id=${jornadaId}`);
+    }
+    
+    /**
+     * Obtener usuarios
+     */
+    static async getUsers(includeStats = false) {
+        let endpoint = '/admin?action=users';
+        if (includeStats) {
+            endpoint += '&include_stats=true';
+        }
+        return await this.fetchData(endpoint);
+    }
+    
+    /**
+     * Obtener detalles de un usuario específico
+     */
+    static async getUserDetails(userId) {
+        return await this.fetchData(`/admin?action=users&id=${userId}`);
+    }
+    
+    /**
+     * Actualizar usuario
+     */
+    static async updateUser(userId, userData) {
+        return await this.fetchData('/admin?action=users', {
+            method: 'PUT',
+            body: JSON.stringify({
+                user_id: userId,
+                ...userData
+            })
+        });
+    }
+    
+    /**
+     * Eliminar usuario
+     */
+    static async deleteUser(userId) {
+        return await this.fetchData('/admin?action=users', {
+            method: 'DELETE',
+            body: JSON.stringify({
+                user_id: userId
+            })
+        });
+    }
+    
+    /**
+     * Obtener imágenes de jugadores
+     */
+    static async getPlayerImages() {
+        return await this.fetchData('/admin?action=player-images');
+    }
+    
+    /**
+     * Actualizar imagen de jugador
+     */
+    static async updatePlayerImage(playerId, imageUrl) {
+        return await this.fetchData('/admin?action=player-images', {
+            method: 'PUT',
+            body: JSON.stringify({
+                player_id: playerId,
+                image_url: imageUrl
+            })
+        });
     }
 }
 

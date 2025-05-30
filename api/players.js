@@ -1,4 +1,4 @@
-// api/players.js - MEJORADO
+// api/players.js - CONVERTED TO COMMONJS
 const { Pool } = require('pg');
 
 // Configuración de la base de datos con mejor error handling
@@ -14,7 +14,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     Object.keys(corsHeaders).forEach(key => {
@@ -97,7 +97,7 @@ export default async function handler(req, res) {
       } : undefined
     });
   }
-}
+};
 
 // Utility functions to generate design-only data
 function generateRandomStats() {

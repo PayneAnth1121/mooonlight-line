@@ -1,11 +1,11 @@
-// api/user-stats.js
+// api/user-stats.js - CONVERTED TO COMMONJS
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 
 // Configuración de la base de datos
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 // CORS headers
@@ -32,9 +32,12 @@ function authenticateToken(req) {
   }
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
+    Object.keys(corsHeaders).forEach(key => {
+      res.setHeader(key, corsHeaders[key]);
+    });
     return res.status(200).json({});
   }
 
@@ -90,4 +93,4 @@ export default async function handler(req, res) {
     }
     res.status(500).json({ message: 'Server error' });
   }
-}
+};

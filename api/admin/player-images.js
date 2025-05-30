@@ -35,7 +35,7 @@ function authenticateAdmin(req) {
   }
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return res.status(200).json({});
@@ -92,4 +92,4 @@ export default async function handler(req, res) {
     }
     res.status(500).json({ message: 'Server error' });
   }
-}
+};

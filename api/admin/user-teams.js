@@ -1,4 +1,4 @@
-// api/admin/user-teams/[jornadaId].js - Get user teams for specific jornada
+// api/admin/user-teams.js - CONSOLIDATED (using query params instead of [jornadaId])
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 
@@ -35,7 +35,7 @@ function authenticateAdmin(req) {
   }
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     Object.keys(corsHeaders).forEach(key => {
@@ -58,18 +58,18 @@ export default async function handler(req, res) {
     }
 
     // Get jornada ID from query params
-    const { jornadaId } = req.query;
+    const { jornada_id } = req.query;
     
-    if (!jornadaId || isNaN(parseInt(jornadaId))) {
-      return res.status(400).json({ message: 'Invalid jornada ID' });
+    if (!jornada_id || isNaN(parseInt(jornada_id))) {
+      return res.status(400).json({ message: 'Valid jornada ID is required' });
     }
 
-    const jornada_id = parseInt(jornadaId);
+    const jornadaIdInt = parseInt(jornada_id);
 
     // Validate jornada exists
     const jornadaCheck = await pool.query(
       'SELECT id, week_number, is_current, is_completed FROM jornadas WHERE id = $1',
-      [jornada_id]
+      [jornadaIdInt]
     );
     
     if (jornadaCheck.rows.length === 0) {
@@ -108,7 +108,7 @@ export default async function handler(req, res) {
       JOIN users u ON ut.user_id = u.id
       WHERE ut.jornada_id = $1
       ORDER BY ut.total_points DESC, u.username ASC
-    `, [jornada_id]);
+    `, [jornadaIdInt]);
 
     // Get detailed team compositions for each team
     const teamsWithPlayers = await Promise.all(
@@ -130,7 +130,7 @@ export default async function handler(req, res) {
           ORDER BY 
             utp.position_type DESC, -- 'starter' comes before 'bench'
             utp.position_number ASC
-        `, [jornada_id, team.team_id]);
+        `, [jornadaIdInt, team.team_id]);
 
         return {
           ...team,
@@ -151,7 +151,7 @@ export default async function handler(req, res) {
         COUNT(CASE WHEN ut.total_points > 0 THEN 1 END) as teams_with_points
       FROM user_teams ut
       WHERE ut.jornada_id = $1
-    `, [jornada_id]);
+    `, [jornadaIdInt]);
     
     const summary = summaryResult.rows[0];
 
@@ -176,7 +176,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Error in admin user teams by jornada:', error);
+    console.error('Error in admin user teams:', error);
     if (error.message.includes('Access denied') || error.message.includes('token')) {
       return res.status(401).json({ message: error.message });
     }
@@ -185,4 +185,4 @@ export default async function handler(req, res) {
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
-}
+};

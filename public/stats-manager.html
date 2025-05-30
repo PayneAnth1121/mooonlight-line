@@ -549,7 +549,7 @@
                     statsPanel.style.display = 'none';
                     
                     // Realizar la petición
-                    const response = await fetch(`${API_URL}/admin/player-stats/${jornadaId}`, {
+                    const response = await fetch(`${API_URL}/admin/player-stats?jornada_id=${jornadaId}`, {
                         headers: {
                             'Authorization': `Bearer ${getAuthToken()}`
                         }

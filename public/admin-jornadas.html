@@ -685,7 +685,7 @@
             // Editar jornada (función global)
             window.editJornada = async function(id) {
                 try {
-                    const response = await fetch(`${API_URL}/admin/jornadas/${id}`, {
+                    const response = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
                         headers: {
                             'Authorization': `Bearer ${getAuthToken()}`
                         }
@@ -728,7 +728,7 @@
                         is_completed: document.getElementById('edit-is-completed').checked
                     };
                     
-                    const response = await fetch(`${API_URL}/admin/jornadas/${id}`, {
+                    const response = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -759,7 +759,7 @@
                 }
                 
                 try {
-                    const response = await fetch(`${API_URL}/admin/jornadas/${id}`, {
+                    const response = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
                         method: 'DELETE',
                         headers: {
                             'Authorization': `Bearer ${getAuthToken()}`

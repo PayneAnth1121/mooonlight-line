@@ -14,6 +14,12 @@
             font-family: 'Orbitron', sans-serif;
         }
         
+        html {
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
         body {
             background-color: #06111f;
             color: white;
@@ -23,7 +29,9 @@
             align-items: center;
             padding: 20px;
             overflow-x: hidden;
+            overflow-y: auto;
             position: relative;
+            padding-bottom: 40px;
         }
         
         /* Grid Lines */
@@ -577,6 +585,7 @@
             border-radius: 50%;
             z-index: -1;
             opacity: 0.4;
+            pointer-events: none;
         }
         
         .top-left {
@@ -604,10 +613,39 @@
         }
         
         /* Media Queries */
+        @media (max-width: 1200px) {
+            .navigation {
+                max-width: 100%;
+                padding: 0 15px;
+            }
+            
+            .court-container {
+                max-width: 100%;
+                padding: 0 15px;
+            }
+        }
+        
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
             .navigation {
                 flex-direction: column;
                 gap: 15px;
+            }
+            
+            .logo {
+                font-size: 1.4rem;
+            }
+            
+            .nav-button, .draft-button {
+                padding: 8px 15px;
+                font-size: 0.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
             }
             
             .bench-container,
@@ -622,10 +660,6 @@
                 align-items: center;
             }
             
-            .section-title {
-                font-size: 1.5rem;
-            }
-            
             .player-slot, .bench-slot {
                 width: 80px;
                 height: 120px;
@@ -634,6 +668,26 @@
             .player-card {
                 width: 75px;
                 height: 110px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+            }
+            
+            .player-slot, .bench-slot {
+                width: 70px;
+                height: 100px;
+            }
+
+            .player-card {
+                width: 65px;
+                height: 95px;
             }
         }
     </style>
@@ -1002,87 +1056,268 @@
                 }, 500);
             }
             
-            function saveTeam() {
-                // Update team data before saving
-                updateTeamData();
+            // NUEVA FUNCIÓN CORREGIDA PARA GUARDAR EQUIPO
+            async function saveTeam() {
+                try {
+                    // Verificar si el usuario está logueado
+                    const authToken = localStorage.getItem('authToken');
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    
+                    if (!authToken || !userData.id) {
+                        alert('You need to be logged in to save your team');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+
+                    // Actualizar team data antes de guardar
+                    updateTeamData();
+                    
+                    console.log('Saving team data:', teamData);
+                    
+                    // Validar que hay al menos algunos jugadores
+                    const totalPlayers = Object.values(teamData).filter(id => id !== null).length;
+                    if (totalPlayers === 0) {
+                        alert('Please add at least one player to your team before saving');
+                        return;
+                    }
+
+                    // Obtener la jornada actual
+                    const currentJornada = await getCurrentJornada();
+                    if (!currentJornada) {
+                        alert('No active game week found. Please contact an administrator.');
+                        return;
+                    }
+
+                    // Preparar los datos para la API
+                    const teamDataForAPI = {
+                        user_id: userData.id,
+                        jornada_id: currentJornada.id,
+                        players: []
+                    };
+
+                    // Agregar jugadores titulares
+                    for (let i = 1; i <= 5; i++) {
+                        const playerId = teamData[`position${i}`];
+                        if (playerId) {
+                            teamDataForAPI.players.push({
+                                player_id: parseInt(playerId),
+                                position_type: 'starter',
+                                position_number: i
+                            });
+                        }
+                    }
+
+                    // Agregar jugadores suplentes
+                    for (let i = 1; i <= 10; i++) {
+                        const playerId = teamData[`bench${i}`];
+                        if (playerId) {
+                            teamDataForAPI.players.push({
+                                player_id: parseInt(playerId),
+                                position_type: 'bench',
+                                position_number: i
+                            });
+                        }
+                    }
+
+                    console.log('Team data for API:', teamDataForAPI);
+
+                    // Llamar a la API para guardar el equipo
+                    const response = await fetch('/api/user-teams', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify(teamDataForAPI)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Failed to save team');
+                    }
+
+                    const result = await response.json();
+                    console.log('Team saved successfully:', result);
+
+                    // Guardar también en localStorage como backup
+                    localStorage.setItem('basketballTeam', JSON.stringify(teamData));
+                    localStorage.setItem('lastSavedTeam', JSON.stringify({
+                        ...teamDataForAPI,
+                        savedAt: new Date().toISOString()
+                    }));
+
+                    // Efecto visual de confirmación
+                    showSaveSuccess();
+
+                } catch (error) {
+                    console.error('Error saving team:', error);
+                    alert(`Error saving team: ${error.message}`);
+                }
+            }
+
+            // Función para obtener la jornada actual
+            async function getCurrentJornada() {
+                try {
+                    const authToken = localStorage.getItem('authToken');
+                    const response = await fetch('/api/admin/jornadas', {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch game weeks');
+                    }
+
+                    const jornadas = await response.json();
+                    return jornadas.find(j => j.is_current) || jornadas[0]; // Current o la primera
+                } catch (error) {
+                    console.error('Error fetching current jornada:', error);
+                    return null;
+                }
+            }
+
+            // NUEVA FUNCIÓN CORREGIDA PARA CARGAR EQUIPO
+            async function loadSavedTeam() {
+                try {
+                    // Verificar si hay jugadores drafteados pendientes
+                    const draftedPlayers = localStorage.getItem('draftedPlayers');
+                    if (draftedPlayers) {
+                        const players = JSON.parse(draftedPlayers);
+                        console.log('Loading drafted players:', players);
+                        
+                        // Colocar jugadores en la banca
+                        for (let i = 0; i < Math.min(players.length, 10); i++) {
+                            teamData[`bench${i + 1}`] = players[i].id.toString();
+                        }
+                        
+                        // Limpiar drafted players ya que los hemos cargado
+                        localStorage.removeItem('draftedPlayers');
+                        
+                        // Guardar el equipo actualizado
+                        localStorage.setItem('basketballTeam', JSON.stringify(teamData));
+                    }
+
+                    // Cargar equipo desde la API si el usuario está logueado
+                    const authToken = localStorage.getItem('authToken');
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    
+                    if (authToken && userData.id) {
+                        await loadTeamFromAPI();
+                    }
+
+                    // Si no hay datos de la API, cargar desde localStorage
+                    const savedTeam = localStorage.getItem('basketballTeam');
+                    if (savedTeam) {
+                        const loadedTeamData = JSON.parse(savedTeam);
+                        Object.assign(teamData, loadedTeamData);
+                        console.log('Loading saved team from localStorage:', teamData);
+                    }
+
+                    // Esperar a que carguen los datos de jugadores
+                    setTimeout(() => {
+                        renderTeamOnField();
+                    }, 500);
+
+                } catch (error) {
+                    console.error('Error loading saved team:', error);
+                }
+            }
+
+            // Nueva función para cargar equipo desde la API
+            async function loadTeamFromAPI() {
+                try {
+                    const authToken = localStorage.getItem('authToken');
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    
+                    // Obtener jornada actual
+                    const currentJornada = await getCurrentJornada();
+                    if (!currentJornada) {
+                        console.log('No current jornada found');
+                        return;
+                    }
+
+                    // Obtener equipo del usuario para la jornada actual
+                    const response = await fetch(`/api/user-teams?user_id=${userData.id}&jornada_id=${currentJornada.id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const teamFromAPI = await response.json();
+                        console.log('Team loaded from API:', teamFromAPI);
+                        
+                        if (teamFromAPI.players && teamFromAPI.players.length > 0) {
+                            // Limpiar teamData actual
+                            for (let key in teamData) {
+                                teamData[key] = null;
+                            }
+                            
+                            // Cargar jugadores desde la API
+                            teamFromAPI.players.forEach(player => {
+                                if (player.position_type === 'starter') {
+                                    teamData[`position${player.position_number}`] = player.player_id.toString();
+                                } else if (player.position_type === 'bench') {
+                                    teamData[`bench${player.position_number}`] = player.player_id.toString();
+                                }
+                            });
+                            
+                            console.log('Team data loaded from API:', teamData);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading team from API:', error);
+                }
+            }
+
+            // Función para renderizar el equipo en el campo
+            function renderTeamOnField() {
+                // Cargar jugadores en las posiciones de campo
+                for (let i = 1; i <= 5; i++) {
+                    const playerId = teamData[`position${i}`];
+                    if (playerId) {
+                        const slot = document.getElementById(`position-${i}`);
+                        if (slot) {
+                            loadPlayerToSlot(playerId, slot, i);
+                        }
+                    }
+                }
                 
-                // Save to localStorage
-                localStorage.setItem('basketballTeam', JSON.stringify(teamData));
-                
-                // Efecto visual de confirmación
+                // Cargar jugadores en la banca
+                for (let i = 1; i <= 10; i++) {
+                    const playerId = teamData[`bench${i}`];
+                    if (playerId) {
+                        const slot = document.getElementById(`bench-${i}`);
+                        if (slot) {
+                            loadPlayerToSlot(playerId, slot, i + 5);
+                        }
+                    }
+                }
+            }
+
+            // Función mejorada para mostrar éxito al guardar
+            function showSaveSuccess() {
                 const btns = [saveTeamBtn, saveTeamBtn2];
                 
                 btns.forEach(btn => {
                     if (btn) {
                         const originalText = btn.textContent;
-                        btn.innerHTML = 'SAVED!';
-                        btn.style.boxShadow = '0 0 20px rgba(0, 240, 255, 0.7)';
+                        btn.innerHTML = '✓ TEAM SAVED!';
+                        btn.style.backgroundColor = 'rgba(0, 255, 128, 0.3)';
+                        btn.style.borderColor = '#00ff80';
+                        btn.style.color = '#00ff80';
+                        btn.style.boxShadow = '0 0 20px rgba(0, 255, 128, 0.7)';
                         
                         setTimeout(() => {
                             btn.textContent = originalText;
+                            btn.style.backgroundColor = '';
+                            btn.style.borderColor = '';
+                            btn.style.color = '';
                             btn.style.boxShadow = '';
-                        }, 1500);
+                        }, 3000);
                     }
                 });
-            }
-            
-            function loadSavedTeam() {
-                // Check if we have drafted players from the draft-players.html page
-                const draftedPlayers = localStorage.getItem('draftedPlayers');
-                if (draftedPlayers) {
-                    const players = JSON.parse(draftedPlayers);
-                    console.log('Loading drafted players:', players);
-                    
-                    // Create empty team data structure
-                    const newTeamData = {};
-                    
-                    // Reset all positions
-                    for (let i = 1; i <= 5; i++) {
-                        newTeamData['position' + i] = null;
-                    }
-                    
-                    // The first 5 players go to bench 1-5
-                    for (let i = 0; i < 5 && i < players.length; i++) {
-                        newTeamData['bench' + (i + 1)] = players[i].id.toString();
-                    }
-                    
-                    // The next 5 players go to bench 6-10
-                    for (let i = 5; i < 10 && i < players.length; i++) {
-                        newTeamData['bench' + (i + 1)] = players[i].id.toString();
-                    }
-                    
-                    // Save the new team data
-                    teamData = newTeamData;
-                    localStorage.setItem('basketballTeam', JSON.stringify(teamData));
-                }
-                
-                // Now load from basketballTeam which may have just been set above
-                const savedTeam = localStorage.getItem('basketballTeam');
-                if (savedTeam) {
-                    teamData = JSON.parse(savedTeam);
-                    console.log('Loading saved team:', teamData);
-                    
-                    // Wait for players data to load before placing players
-                    setTimeout(() => {
-                        // Cargar jugadores en las posiciones
-                        for (let i = 1; i <= 5; i++) {
-                            const playerId = teamData['position' + i];
-                            if (playerId) {
-                                const slot = document.getElementById('position-' + i);
-                                loadPlayerToSlot(playerId, slot, i);
-                            }
-                        }
-                        
-                        // Cargar jugadores en la banca
-                        for (let i = 1; i <= 10; i++) {
-                            const playerId = teamData['bench' + i];
-                            if (playerId) {
-                                const slot = document.getElementById('bench-' + i);
-                                loadPlayerToSlot(playerId, slot, i + 5);
-                            }
-                        }
-                    }, 500); // Wait 500ms for players data to load
-                }
             }
             
             function loadPlayerToSlot(playerId, slot, position) {

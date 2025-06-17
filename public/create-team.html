@@ -118,11 +118,61 @@
         .section-title {
             font-size: 2rem;
             color: #00f0ff;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
             text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
             text-transform: uppercase;
             letter-spacing: 2px;
             text-align: center;
+        }
+        
+        /* Subtítulo explicativo */
+        .section-subtitle {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .zone-explanation {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .zone-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .zone-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            border: 1px solid;
+        }
+        
+        .green-zone {
+            background-color: rgba(0, 255, 128, 0.3);
+            border-color: #00ff80;
+        }
+        
+        .red-zone {
+            background-color: rgba(255, 107, 107, 0.3);
+            border-color: #ff6b6b;
+        }
+        
+        .zone-text-green {
+            color: #00ff80;
+        }
+        
+        .zone-text-red {
+            color: #ff6b6b;
         }
         
         /* Cancha de baloncesto */
@@ -301,8 +351,8 @@
             position: absolute;
             width: 100px;
             height: 140px;
-            background-color: rgba(12, 19, 28, 0.5);
-            border: 1px solid rgba(0, 240, 255, 0.3);
+            background-color: rgba(0, 255, 128, 0.1);
+            border: 2px solid #00ff80;
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -310,16 +360,18 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            box-shadow: 0 0 10px rgba(0, 255, 128, 0.3);
         }
         
         .player-slot:hover {
-            border-color: #00f0ff;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            border-color: #00ff80;
+            box-shadow: 0 0 15px rgba(0, 255, 128, 0.5);
+            background-color: rgba(0, 255, 128, 0.2);
         }
         
         .player-slot.has-player {
-            background-color: rgba(0, 240, 255, 0.1);
-            border-color: #00f0ff;
+            background-color: rgba(0, 255, 128, 0.2);
+            border-color: #00ff80;
         }
         
         /* Posiciones de los slots */
@@ -370,8 +422,8 @@
         .bench-slot {
             width: 100px;
             height: 140px;
-            background-color: rgba(12, 19, 28, 0.7);
-            border: 1px solid rgba(0, 240, 255, 0.3);
+            background-color: rgba(255, 107, 107, 0.1);
+            border: 2px solid #ff6b6b;
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -381,16 +433,18 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
         }
         
         .bench-slot:hover {
-            border-color: #00f0ff;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            border-color: #ff6b6b;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+            background-color: rgba(255, 107, 107, 0.2);
         }
         
         .bench-slot.has-player {
-            background-color: rgba(0, 240, 255, 0.1);
-            border-color: #00f0ff;
+            background-color: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
         }
         
         /* === CARTAS PIXEL ART PEQUEÑAS === */
@@ -568,9 +622,10 @@
         
         /* Placeholder styles */
         .empty-slot {
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 255, 255, 0.5);
             font-size: 0.7rem;
             text-align: center;
+            font-weight: 600;
         }
         
         .loading-message {
@@ -648,6 +703,11 @@
                 font-size: 1.5rem;
             }
             
+            .zone-explanation {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
             .bench-container,
             .bench-container-2 {
                 flex-wrap: wrap;
@@ -708,6 +768,22 @@
         
         <h2 class="section-title">CREATE YOUR TEAM</h2>
         
+        <!-- Explicación de zonas -->
+        <div class="section-subtitle">
+            Place your players strategically! Only players in the <strong>green zone</strong> will earn points.
+        </div>
+        
+        <div class="zone-explanation">
+            <div class="zone-info">
+                <div class="zone-color green-zone"></div>
+                <span class="zone-text-green">GREEN ZONE: Starters (5 players) - EARN POINTS</span>
+            </div>
+            <div class="zone-info">
+                <div class="zone-color red-zone"></div>
+                <span class="zone-text-red">RED ZONE: Bench (up to 10 players) - NO POINTS</span>
+            </div>
+        </div>
+        
         <!-- Cancha de baloncesto -->
         <div class="court-container">
             <div class="court">
@@ -733,61 +809,61 @@
                 <div class="backboard-left"></div>
                 <div class="backboard-right"></div>
                 
-                <!-- Posiciones de jugadores -->
+                <!-- Posiciones de jugadores (ZONA VERDE - TITULARES) -->
                 <div class="player-slots">
                     <div class="player-slot slot-top" data-position="1" id="position-1">
-                        <div class="empty-slot">Position 1</div>
+                        <div class="empty-slot">STARTER 1<br><small>✅ EARNS POINTS</small></div>
                     </div>
                     <div class="player-slot slot-bottom" data-position="2" id="position-2">
-                        <div class="empty-slot">Position 2</div>
+                        <div class="empty-slot">STARTER 2<br><small>✅ EARNS POINTS</small></div>
                     </div>
                     <div class="player-slot slot-center" data-position="3" id="position-3">
-                        <div class="empty-slot">Position 3</div>
+                        <div class="empty-slot">STARTER 3<br><small>✅ EARNS POINTS</small></div>
                     </div>
                     <div class="player-slot slot-left" data-position="4" id="position-4">
-                        <div class="empty-slot">Position 4</div>
+                        <div class="empty-slot">STARTER 4<br><small>✅ EARNS POINTS</small></div>
                     </div>
                     <div class="player-slot slot-right" data-position="5" id="position-5">
-                        <div class="empty-slot">Position 5</div>
+                        <div class="empty-slot">STARTER 5<br><small>✅ EARNS POINTS</small></div>
                     </div>
                 </div>
             </div>
             
-            <!-- Área de banca (primera fila - 5 slots) -->
+            <!-- Área de banca (ZONA ROJA - SUPLENTES) primera fila - 5 slots -->
             <div class="bench-container">
                 <div class="bench-slot" data-position="6" id="bench-1">
-                    <div class="empty-slot">Bench 1</div>
+                    <div class="empty-slot">BENCH 1<br><small>❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="7" id="bench-2">
-                    <div class="empty-slot">Bench 2</div>
+                    <div class="empty-slot">BENCH 2<br><small>❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="8" id="bench-3">
-                    <div class="empty-slot">Bench 3</div>
+                    <div class="empty-slot">BENCH 3<br><small>❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="9" id="bench-4">
-                    <div class="empty-slot">Bench 4</div>
+                    <div class="empty-slot">BENCH 4<br><small>❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="10" id="bench-5">
-                    <div class="empty-slot">Bench 5</div>
+                    <div class="empty-slot">BENCH 5<br><small>❌ NO POINTS</small></div>
                 </div>
             </div>
             
-            <!-- Área de banca adicional (segunda fila - 5 slots) -->
+            <!-- Área de banca adicional (ZONA ROJA - SUPLENTES) segunda fila - 5 slots -->
             <div class="bench-container-2">
                 <div class="bench-slot" data-position="11" id="bench-6">
-                    <div class="empty-slot">Bench 6</div>
+                    <div class="empty-slot">BENCH 6<br><small>❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="12" id="bench-7">
-                    <div class="empty-slot">Bench 7</div>
+                    <div class="empty-slot">BENCH 7<br><small>❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="13" id="bench-8">
-                    <div class="empty-slot">Bench 8</div>
+                    <div class="empty-slot">BENCH 8<br><small>❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="14" id="bench-9">
-                    <div class="empty-slot">Bench 9</div>
+                    <div class="empty-slot">BENCH 9<br><small>❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="15" id="bench-10">
-                    <div class="empty-slot">Bench 10</div>
+                    <div class="empty-slot">BENCH 10<br><small>❌ NO POINTS</small></div>
                 </div>
             </div>
         </div>
@@ -899,15 +975,24 @@
                     });
                     
                     slot.addEventListener('dragleave', function() {
-                        this.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                        // Restore original colors based on zone
+                        if (parseInt(this.dataset.position) <= 5) {
+                            this.style.borderColor = '#00ff80';
+                        } else {
+                            this.style.borderColor = '#ff6b6b';
+                        }
                         this.style.boxShadow = 'none';
                     });
                     
                     slot.addEventListener('drop', function(e) {
                         e.preventDefault();
                         
-                        // Reset slot styling
-                        this.style.borderColor = 'rgba(0, 240, 255, 0.3)';
+                        // Reset slot styling to original colors
+                        if (parseInt(this.dataset.position) <= 5) {
+                            this.style.borderColor = '#00ff80';
+                        } else {
+                            this.style.borderColor = '#ff6b6b';
+                        }
                         this.style.boxShadow = 'none';
                         
                         if (!draggedCard) return;
@@ -1007,11 +1092,19 @@
             }
             
             function resetSlotToEmpty(slot) {
-                const position = slot.dataset.position;
-                const slotType = parseInt(position) <= 5 ? 'Position' : 'Bench';
-                const slotNumber = parseInt(position) <= 5 ? position : (parseInt(position) - 5);
+                const position = parseInt(slot.dataset.position);
+                let slotContent = '';
                 
-                slot.innerHTML = `<div class="empty-slot">${slotType} ${slotNumber}</div>`;
+                if (position <= 5) {
+                    // Slots de titulares (zona verde)
+                    slotContent = `<div class="empty-slot">STARTER ${position}<br><small>✅ EARNS POINTS</small></div>`;
+                } else {
+                    // Slots de suplentes (zona roja)
+                    const benchNumber = position - 5;
+                    slotContent = `<div class="empty-slot">BENCH ${benchNumber}<br><small>❌ NO POINTS</small></div>`;
+                }
+                
+                slot.innerHTML = slotContent;
                 slot.classList.remove('has-player');
                 delete slot.dataset.playerId;
             }
@@ -1056,7 +1149,7 @@
                 }, 500);
             }
             
-            // NUEVA FUNCIÓN CORREGIDA PARA GUARDAR EQUIPO
+            // 🔥 FUNCIÓN CORREGIDA PARA GUARDAR EQUIPO (DISTINGUE TITULARES VS SUPLENTES)
             async function saveTeam() {
                 try {
                     // Verificar si el usuario está logueado
@@ -1072,12 +1165,19 @@
                     // Actualizar team data antes de guardar
                     updateTeamData();
                     
-                    console.log('Saving team data:', teamData);
+                    console.log('💾 Saving team data:', teamData);
                     
-                    // Validar que hay al menos algunos jugadores
-                    const totalPlayers = Object.values(teamData).filter(id => id !== null).length;
-                    if (totalPlayers === 0) {
-                        alert('Please add at least one player to your team before saving');
+                    // Validar que hay al menos algunos jugadores titulares
+                    const starters = Object.values({
+                        position1: teamData.position1,
+                        position2: teamData.position2,
+                        position3: teamData.position3,
+                        position4: teamData.position4,
+                        position5: teamData.position5
+                    }).filter(id => id !== null);
+                    
+                    if (starters.length === 0) {
+                        alert('Please add at least one starter to your team (green zone on court)');
                         return;
                     }
 
@@ -1095,31 +1195,35 @@
                         players: []
                     };
 
-                    // Agregar jugadores titulares
+                    // ✅ AGREGAR JUGADORES TITULARES (zona verde - SÍ SUMAN PUNTOS)
                     for (let i = 1; i <= 5; i++) {
                         const playerId = teamData[`position${i}`];
                         if (playerId) {
                             teamDataForAPI.players.push({
                                 player_id: parseInt(playerId),
-                                position_type: 'starter',
+                                position_type: 'starter',  // ✅ TITULARES
                                 position_number: i
                             });
+                            console.log(`✅ STARTER added: Player ${playerId} at position ${i}`);
                         }
                     }
 
-                    // Agregar jugadores suplentes
+                    // ❌ AGREGAR JUGADORES SUPLENTES (zona roja - NO SUMAN PUNTOS)
                     for (let i = 1; i <= 10; i++) {
                         const playerId = teamData[`bench${i}`];
                         if (playerId) {
                             teamDataForAPI.players.push({
                                 player_id: parseInt(playerId),
-                                position_type: 'bench',
+                                position_type: 'bench',    // ❌ SUPLENTES
                                 position_number: i
                             });
+                            console.log(`❌ BENCH added: Player ${playerId} at bench ${i} (no points)`);
                         }
                     }
 
-                    console.log('Team data for API:', teamDataForAPI);
+                    console.log('🚀 Team data for API:', teamDataForAPI);
+                    console.log(`✅ Total starters: ${teamDataForAPI.players.filter(p => p.position_type === 'starter').length}`);
+                    console.log(`❌ Total bench: ${teamDataForAPI.players.filter(p => p.position_type === 'bench').length}`);
 
                     // Llamar a la API para guardar el equipo
                     const response = await fetch('/api/user-teams', {
@@ -1137,7 +1241,7 @@
                     }
 
                     const result = await response.json();
-                    console.log('Team saved successfully:', result);
+                    console.log('✅ Team saved successfully:', result);
 
                     // Guardar también en localStorage como backup
                     localStorage.setItem('basketballTeam', JSON.stringify(teamData));
@@ -1149,8 +1253,16 @@
                     // Efecto visual de confirmación
                     showSaveSuccess();
 
+                    // Mostrar resumen al usuario
+                    const startersCount = teamDataForAPI.players.filter(p => p.position_type === 'starter').length;
+                    const benchCount = teamDataForAPI.players.filter(p => p.position_type === 'bench').length;
+                    
+                    setTimeout(() => {
+                        alert(`🏀 Team saved successfully!\n\n✅ Starters (will earn points): ${startersCount}\n❌ Bench (won't earn points): ${benchCount}\n\nOnly players in the GREEN ZONE will earn fantasy points!`);
+                    }, 1000);
+
                 } catch (error) {
-                    console.error('Error saving team:', error);
+                    console.error('❌ Error saving team:', error);
                     alert(`Error saving team: ${error.message}`);
                 }
             }
@@ -1177,7 +1289,7 @@
                 }
             }
 
-            // NUEVA FUNCIÓN CORREGIDA PARA CARGAR EQUIPO
+            // FUNCIÓN CORREGIDA PARA CARGAR EQUIPO
             async function loadSavedTeam() {
                 try {
                     // Verificar si hay jugadores drafteados pendientes
@@ -1186,7 +1298,7 @@
                         const players = JSON.parse(draftedPlayers);
                         console.log('Loading drafted players:', players);
                         
-                        // Colocar jugadores en la banca
+                        // Colocar jugadores en la banca (zona roja)
                         for (let i = 0; i < Math.min(players.length, 10); i++) {
                             teamData[`bench${i + 1}`] = players[i].id.toString();
                         }
@@ -1273,7 +1385,7 @@
 
             // Función para renderizar el equipo en el campo
             function renderTeamOnField() {
-                // Cargar jugadores en las posiciones de campo
+                // Cargar jugadores en las posiciones de campo (titulares)
                 for (let i = 1; i <= 5; i++) {
                     const playerId = teamData[`position${i}`];
                     if (playerId) {
@@ -1284,7 +1396,7 @@
                     }
                 }
                 
-                // Cargar jugadores en la banca
+                // Cargar jugadores en la banca (suplentes)
                 for (let i = 1; i <= 10; i++) {
                     const playerId = teamData[`bench${i}`];
                     if (playerId) {

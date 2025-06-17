@@ -550,185 +550,257 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const leaderboardData = document.getElementById('leaderboard-data');
+    const leaderboardData = document.getElementById('leaderboard-data');
+    
+    // Initialize
+    init();
+    
+    async function init() {
+        try {
+            console.log('🚀 Initializing leaderboards...');
             
-            // Initialize
-            init();
+            // Check if user is logged in and fetch user stats
+            if (isUserLoggedIn()) {
+                console.log('👤 User is logged in, fetching user stats...');
+                await fetchUserStats();
+            } else {
+                console.log('👤 User not logged in, hiding user stats');
+                document.getElementById('user-stats-section').style.display = 'none';
+            }
             
-            async function init() {
-                try {
-                    // Check if user is logged in and fetch user stats
-                    if (isUserLoggedIn()) {
-                        await fetchUserStats();
-                    } else {
-                        document.getElementById('user-stats-section').style.display = 'none';
-                    }
-                    
-                    // Fetch leaderboard data
-                    await fetchLeaderboard();
-                    
-                    // Setup pagination
-                    setupPagination();
-                    
-                } catch (error) {
-                    console.error('Initialization error:', error);
-                    showError('Failed to initialize leaderboards', error.message);
+            // Fetch leaderboard data
+            console.log('📊 Fetching leaderboard data...');
+            await fetchLeaderboard();
+            
+            // Setup pagination
+            setupPagination();
+            
+        } catch (error) {
+            console.error('❌ Initialization error:', error);
+            showError('Failed to initialize leaderboards', error.message);
+        }
+    }
+    
+    function isUserLoggedIn() {
+        return localStorage.getItem('authToken') !== null;
+    }
+    
+    function getCurrentUserData() {
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        return userData;
+    }
+    
+    async function fetchLeaderboard(page = 1) {
+        try {
+            showLoading();
+            console.log('🔍 Fetching leaderboard...');
+            
+            // Make API call to leaderboards
+            const response = await fetch('/api/leaderboards', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
                 }
+            });
+            
+            console.log('📡 Leaderboard API response status:', response.status);
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('❌ API Error Response:', errorText);
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
-            function isUserLoggedIn() {
-                return localStorage.getItem('authToken') !== null;
-            }
+            const data = await response.json();
+            console.log('✅ Leaderboard data received:', data);
             
-            function getCurrentUserData() {
-                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-                return userData;
-            }
+            // Store the full data for pagination
+            window.leaderboardData = Array.isArray(data) ? data : [];
+            window.currentPage = page;
             
-            async function fetchLeaderboard(page = 1) {
-                try {
-                    showLoading();
-                    
-                    const data = await window.AppUtils.apiCall('/leaderboard');
-                    
-                    // Store the full data for pagination
-                    window.leaderboardData = Array.isArray(data) ? data : [];
-                    window.currentPage = page;
-                    
-                    // Implement client-side pagination
-                    const itemsPerPage = 10;
-                    const totalPages = Math.ceil(window.leaderboardData.length / itemsPerPage);
-                    const startIndex = (page - 1) * itemsPerPage;
-                    const paginatedData = window.leaderboardData.slice(startIndex, startIndex + itemsPerPage);
-                    
-                    // Update pagination info
-                    document.getElementById('current-page').textContent = page;
-                    document.getElementById('total-pages').textContent = totalPages || 1;
-                    
-                    // Render the leaderboard
-                    renderLeaderboard(paginatedData);
-                    
-                    // Enable/disable pagination buttons
-                    const prevButton = document.querySelector('.prev-page');
-                    const nextButton = document.querySelector('.next-page');
-                    
-                    prevButton.disabled = page <= 1;
-                    nextButton.disabled = page >= totalPages;
-                    
-                } catch (error) {
-                    console.error('Error fetching leaderboard:', error);
-                    showError('Failed to load leaderboard', error.message);
+            console.log('📊 Total leaderboard entries:', window.leaderboardData.length);
+            
+            // Implement client-side pagination
+            const itemsPerPage = 10;
+            const totalPages = Math.ceil(window.leaderboardData.length / itemsPerPage);
+            const startIndex = (page - 1) * itemsPerPage;
+            const paginatedData = window.leaderboardData.slice(startIndex, startIndex + itemsPerPage);
+            
+            // Update pagination info
+            document.getElementById('current-page').textContent = page;
+            document.getElementById('total-pages').textContent = totalPages || 1;
+            
+            // Render the leaderboard
+            renderLeaderboard(paginatedData);
+            
+            // Enable/disable pagination buttons
+            const prevButton = document.querySelector('.prev-page');
+            const nextButton = document.querySelector('.next-page');
+            
+            if (prevButton) prevButton.disabled = page <= 1;
+            if (nextButton) nextButton.disabled = page >= totalPages;
+            
+        } catch (error) {
+            console.error('❌ Error fetching leaderboard:', error);
+            showError('Failed to load leaderboard', `${error.message}\n\nThis might happen if:\n• No game weeks have been created yet\n• No teams have been registered\n• Database connection issues`);
+        }
+    }
+    
+    async function fetchUserStats() {
+        try {
+            console.log('📈 Fetching user stats...');
+            
+            const response = await fetch('/api/user-stats', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                 }
-            }
+            });
             
-            async function fetchUserStats() {
-                try {
-                    const data = await window.AppUtils.apiCall('/user-stats');
-                    const currentUserData = getCurrentUserData();
-                    
-                    // Update the user stats display
-                    document.getElementById('user-rank').textContent = data.rank || '-';
-                    document.getElementById('user-username').textContent = currentUserData.username || '-';
-                    document.getElementById('user-team-name').textContent = data.team || currentUserData.team_name || '-';
-                    document.getElementById('user-points').textContent = data.points ? 
-                        window.AppUtils.formatNumber(data.points) : '0';
-                        
-                } catch (error) {
-                    console.error('Error fetching user stats:', error);
-                    // Don't show error for user stats, just show defaults
-                    document.getElementById('user-rank').textContent = '-';
-                    document.getElementById('user-username').textContent = 'Error';
-                    document.getElementById('user-team-name').textContent = 'Error loading data';
-                    document.getElementById('user-points').textContent = '-';
-                }
-            }
-            
-            function renderLeaderboard(data) {
+            if (response.ok) {
+                const data = await response.json();
                 const currentUserData = getCurrentUserData();
-                let html = '';
                 
-                if (data.length === 0) {
-                    html = '<tr><td colspan="4" class="loading">No leaderboard data available yet.</td></tr>';
-                } else {
-                    data.forEach(item => {
-                        const isCurrentUser = parseInt(item.user_id) === parseInt(currentUserData.id);
-                        const isTopRank = item.rank <= 3;
+                console.log('✅ User stats received:', data);
+                
+                // Update the user stats display
+                document.getElementById('user-rank').textContent = data.rank || '-';
+                document.getElementById('user-username').textContent = currentUserData.username || '-';
+                document.getElementById('user-team-name').textContent = data.team || currentUserData.team_name || '-';
+                document.getElementById('user-points').textContent = data.points ? 
+                    formatNumber(data.points) : '0';
+            } else {
+                console.log('⚠️ User stats API failed, using defaults');
+                const currentUserData = getCurrentUserData();
+                document.getElementById('user-rank').textContent = '-';
+                document.getElementById('user-username').textContent = currentUserData.username || 'Unknown';
+                document.getElementById('user-team-name').textContent = currentUserData.team_name || 'No Team';
+                document.getElementById('user-points').textContent = '0';
+            }
                         
-                        html += `
-                            <tr class="${isTopRank ? 'top-rank' : ''} ${isCurrentUser ? 'user-row' : ''}">
-                                <td class="rank">${item.rank}</td>
-                                <td class="team">${item.team}</td>
-                                <td class="username">${item.manager}</td>
-                                <td class="points">${window.AppUtils.formatNumber(parseInt(item.points))}</td>
-                            </tr>
-                        `;
-                    });
-                }
+        } catch (error) {
+            console.error('❌ Error fetching user stats:', error);
+            // Don't show error for user stats, just show defaults
+            const currentUserData = getCurrentUserData();
+            document.getElementById('user-rank').textContent = '-';
+            document.getElementById('user-username').textContent = currentUserData.username || 'Error';
+            document.getElementById('user-team-name').textContent = currentUserData.team_name || 'Error loading data';
+            document.getElementById('user-points').textContent = '0';
+        }
+    }
+    
+    function renderLeaderboard(data) {
+        const currentUserData = getCurrentUserData();
+        let html = '';
+        
+        console.log('🎨 Rendering leaderboard with', data.length, 'entries');
+        
+        if (data.length === 0) {
+            html = `
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px; color: #ff8c00;">
+                        <div style="font-size: 1.2rem; margin-bottom: 10px;">🏀 No Teams Yet!</div>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">
+                            Teams will appear here once players create their lineups<br>
+                            and administrators input player statistics.
+                        </div>
+                    </td>
+                </tr>
+            `;
+        } else {
+            data.forEach(item => {
+                const isCurrentUser = parseInt(item.user_id) === parseInt(currentUserData.id);
+                const isTopRank = item.rank <= 3;
                 
-                leaderboardData.innerHTML = html;
-            }
-            
-            function showLoading() {
-                leaderboardData.innerHTML = '<tr><td colspan="4" class="loading">Loading leaderboard data...</td></tr>';
-            }
-            
-            function showError(title, details) {
-                leaderboardData.innerHTML = `
-                    <tr>
-                        <td colspan="4">
-                            <div class="error-container">
-                                <div class="error-icon">⚠️</div>
-                                <div class="error-message">${title}</div>
-                                <div class="error-details">${details}</div>
-                                <button class="retry-button" onclick="location.reload()">
-                                    RETRY
-                                </button>
-                            </div>
-                        </td>
+                console.log('👤 Rendering user:', item.manager, 'Rank:', item.rank, 'Points:', item.points);
+                
+                html += `
+                    <tr class="${isTopRank ? 'top-rank' : ''} ${isCurrentUser ? 'user-row' : ''}">
+                        <td class="rank">${item.rank}</td>
+                        <td class="team">${item.team}</td>
+                        <td class="username">${item.manager}</td>
+                        <td class="points">${formatNumber(parseInt(item.points))}</td>
                     </tr>
                 `;
-            }
-            
-            function setupPagination() {
-                const prevButton = document.querySelector('.prev-page');
-                const nextButton = document.querySelector('.next-page');
-                
-                prevButton.addEventListener('click', function() {
-                    if (window.currentPage > 1) {
-                        const newPage = window.currentPage - 1;
+            });
+        }
+        
+        leaderboardData.innerHTML = html;
+        console.log('✅ Leaderboard rendered successfully');
+    }
+    
+    function showLoading() {
+        leaderboardData.innerHTML = '<tr><td colspan="4" class="loading">Loading leaderboard data...</td></tr>';
+        console.log('⏳ Showing loading state');
+    }
+    
+    function showError(title, details) {
+        console.error('💥 Showing error:', title, details);
+        leaderboardData.innerHTML = `
+            <tr>
+                <td colspan="4">
+                    <div class="error-container">
+                        <div class="error-icon">⚠️</div>
+                        <div class="error-message">${title}</div>
+                        <div class="error-details">${details}</div>
+                        <button class="retry-button" onclick="location.reload()">
+                            RETRY
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+    
+    function setupPagination() {
+        const prevButton = document.querySelector('.prev-page');
+        const nextButton = document.querySelector('.next-page');
+        
+        if (prevButton) {
+            prevButton.addEventListener('click', function() {
+                if (window.currentPage > 1) {
+                    const newPage = window.currentPage - 1;
+                    paginateData(newPage);
+                }
+            });
+        }
+        
+        if (nextButton) {
+            nextButton.addEventListener('click', function() {
+                if (window.leaderboardData) {
+                    const maxPage = Math.ceil(window.leaderboardData.length / 10);
+                    if (window.currentPage < maxPage) {
+                        const newPage = window.currentPage + 1;
                         paginateData(newPage);
                     }
-                });
-                
-                nextButton.addEventListener('click', function() {
-                    if (window.leaderboardData) {
-                        const maxPage = Math.ceil(window.leaderboardData.length / 10);
-                        if (window.currentPage < maxPage) {
-                            const newPage = window.currentPage + 1;
-                            paginateData(newPage);
-                        }
-                    }
-                });
-            }
-            
-            function paginateData(newPage) {
-                const itemsPerPage = 10;
-                const startIndex = (newPage - 1) * itemsPerPage;
-                const paginatedData = window.leaderboardData.slice(startIndex, startIndex + itemsPerPage);
-                
-                window.currentPage = newPage;
-                document.getElementById('current-page').textContent = newPage;
-                renderLeaderboard(paginatedData);
-                
-                // Update button states
-                const prevButton = document.querySelector('.prev-page');
-                const nextButton = document.querySelector('.next-page');
-                const maxPage = Math.ceil(window.leaderboardData.length / itemsPerPage);
-                
-                prevButton.disabled = newPage <= 1;
-                nextButton.disabled = newPage >= maxPage;
-            }
-        });
+                }
+            });
+        }
+    }
+    
+    function paginateData(newPage) {
+        const itemsPerPage = 10;
+        const startIndex = (newPage - 1) * itemsPerPage;
+        const paginatedData = window.leaderboardData.slice(startIndex, startIndex + itemsPerPage);
+        
+        window.currentPage = newPage;
+        document.getElementById('current-page').textContent = newPage;
+        renderLeaderboard(paginatedData);
+        
+        // Update button states
+        const prevButton = document.querySelector('.prev-page');
+        const nextButton = document.querySelector('.next-page');
+        const maxPage = Math.ceil(window.leaderboardData.length / itemsPerPage);
+        
+        if (prevButton) prevButton.disabled = newPage <= 1;
+        if (nextButton) nextButton.disabled = newPage >= maxPage;
+    }
+    
+    function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+});
     </script>
 </body>
 </html>

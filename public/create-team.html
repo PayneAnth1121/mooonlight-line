@@ -1149,8 +1149,126 @@
                     courtContainer.style.boxShadow = '';
                 }, 500);
             }
+
+            // 🔧 FUNCIÓN MEJORADA PARA OBTENER JORNADA ACTUAL
+            async function getCurrentJornada() {
+                try {
+                    console.log('🔍 Looking for current jornada...');
+                    
+                    const authToken = localStorage.getItem('authToken');
+                    const response = await fetch('/api/admin/jornadas', {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+
+                    if (!response.ok) {
+                        console.error('❌ Failed to fetch jornadas:', response.status);
+                        // Fallback: intentar sin autenticación para usuarios regulares
+                        const publicResponse = await fetch('/api/leaderboards');
+                        if (publicResponse.ok) {
+                            // Si leaderboards funciona, significa que hay jornadas
+                            console.log('📊 Leaderboards accessible, using fallback jornada detection');
+                            return { id: 1, week_number: 1, message: 'Using fallback jornada' };
+                        }
+                        throw new Error('Cannot access game weeks');
+                    }
+
+                    const jornadas = await response.json();
+                    console.log('📅 Jornadas found:', jornadas.length);
+
+                    if (jornadas.length === 0) {
+                        throw new Error('NO_JORNADAS_EXIST');
+                    }
+
+                    // 1. Buscar jornada activa
+                    let currentJornada = jornadas.find(j => j.is_current);
+                    
+                    if (currentJornada) {
+                        console.log('✅ Found current jornada:', currentJornada.week_number);
+                        return currentJornada;
+                    }
+
+                    // 2. Si no hay activa, buscar la más reciente con estadísticas
+                    const jornadasWithStats = jornadas.filter(j => parseInt(j.stats_count) > 0);
+                    
+                    if (jornadasWithStats.length > 0) {
+                        currentJornada = jornadasWithStats[0]; // Ya ordenado por week_number DESC
+                        console.log('⚠️ Using latest jornada with stats:', currentJornada.week_number);
+                        
+                        // Activar esta jornada automáticamente
+                        try {
+                            await activateJornada(currentJornada.id);
+                            currentJornada.is_current = true;
+                        } catch (activationError) {
+                            console.error('Failed to activate jornada:', activationError);
+                        }
+                        
+                        return currentJornada;
+                    }
+
+                    // 3. Si no hay estadísticas, usar la más reciente
+                    if (jornadas.length > 0) {
+                        currentJornada = jornadas[0]; // Ya ordenado por week_number DESC
+                        console.log('⚠️ Using latest jornada (no stats yet):', currentJornada.week_number);
+                        
+                        // Activar esta jornada para que los usuarios puedan crear equipos
+                        try {
+                            await activateJornada(currentJornada.id);
+                            currentJornada.is_current = true;
+                        } catch (activationError) {
+                            console.error('Failed to activate jornada:', activationError);
+                        }
+                        
+                        return currentJornada;
+                    }
+
+                    throw new Error('NO_JORNADAS_AVAILABLE');
+
+                } catch (error) {
+                    console.error('❌ Error getting current jornada:', error);
+                    
+                    if (error.message === 'NO_JORNADAS_EXIST') {
+                        throw new Error('No game weeks exist. Administrator needs to create a game week first.');
+                    }
+                    
+                    if (error.message === 'NO_JORNADAS_AVAILABLE') {
+                        throw new Error('No game weeks available. Contact administrator.');
+                    }
+                    
+                    throw new Error('Unable to determine current game week. Please try again or contact administrator.');
+                }
+            }
+
+            // Nueva función para activar jornada
+            async function activateJornada(jornadaId) {
+                try {
+                    const authToken = localStorage.getItem('authToken');
+                    const response = await fetch(`/api/admin/jornadas?id=${jornadaId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify({
+                            is_current: true
+                        })
+                    });
+
+                    if (response.ok) {
+                        console.log(`✅ Jornada ${jornadaId} activated successfully`);
+                        return true;
+                    } else {
+                        console.log(`⚠️ Could not activate jornada ${jornadaId}:`, response.status);
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('Error activating jornada:', error);
+                    return false;
+                }
+            }
             
-            // 🔥 FUNCIÓN CORREGIDA PARA GUARDAR EQUIPO (DISTINGUE TITULARES VS SUPLENTES)
+            // 🔧 FUNCIÓN CORREGIDA PARA GUARDAR EQUIPO CON MEJOR MANEJO DE ERRORES
             async function saveTeam() {
                 try {
                     // Verificar si el usuario está logueado
@@ -1182,11 +1300,22 @@
                         return;
                     }
 
-                    // Obtener la jornada actual
-                    const currentJornada = await getCurrentJornada();
-                    if (!currentJornada) {
-                        alert('No active game week found. Please contact an administrator.');
-                        return;
+                    // 🆕 MEJORAR OBTENCIÓN DE JORNADA ACTUAL
+                    let currentJornada;
+                    try {
+                        currentJornada = await getCurrentJornada();
+                        console.log('📅 Using jornada:', currentJornada);
+                    } catch (jornadaError) {
+                        console.error('❌ Jornada error:', jornadaError);
+                        
+                        // Mostrar mensaje específico según el error
+                        if (jornadaError.message.includes('No game weeks exist')) {
+                            alert('❌ No game weeks exist!\n\nAn administrator needs to:\n1. Go to Admin Panel\n2. Create a game week\n3. Then you can save your team');
+                            return;
+                        } else {
+                            alert(`❌ Game Week Error:\n\n${jornadaError.message}\n\nPlease contact an administrator or try refreshing the page.`);
+                            return;
+                        }
                     }
 
                     // Preparar los datos para la API
@@ -1259,34 +1388,12 @@
                     const benchCount = teamDataForAPI.players.filter(p => p.position_type === 'bench').length;
                     
                     setTimeout(() => {
-                        alert(`🏀 Team saved successfully!\n\n✅ Starters (will earn points): ${startersCount}\n❌ Bench (won't earn points): ${benchCount}\n\nOnly players in the GREEN ZONE will earn fantasy points!`);
+                        alert(`🏀 Team saved successfully for Week ${currentJornada.week_number}!\n\n✅ Starters (will earn points): ${startersCount}\n❌ Bench (won't earn points): ${benchCount}\n\nOnly players in the GREEN ZONE will earn fantasy points!`);
                     }, 1000);
 
                 } catch (error) {
                     console.error('❌ Error saving team:', error);
-                    alert(`Error saving team: ${error.message}`);
-                }
-            }
-
-            // Función para obtener la jornada actual
-            async function getCurrentJornada() {
-                try {
-                    const authToken = localStorage.getItem('authToken');
-                    const response = await fetch('/api/admin/jornadas', {
-                        headers: {
-                            'Authorization': `Bearer ${authToken}`
-                        }
-                    });
-
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch game weeks');
-                    }
-
-                    const jornadas = await response.json();
-                    return jornadas.find(j => j.is_current) || jornadas[0]; // Current o la primera
-                } catch (error) {
-                    console.error('Error fetching current jornada:', error);
-                    return null;
+                    alert(`❌ Error saving team:\n\n${error.message}\n\nPlease try again or contact support.`);
                 }
             }
 

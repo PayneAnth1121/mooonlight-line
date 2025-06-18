@@ -1,4 +1,4 @@
-// api/admin/jornadas.js - CONSOLIDATED (handles both general and specific jornada operations)
+// api/admin/jornadas.js - COMPLETE VERSION: Sin dependencia de fechas
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 
@@ -57,23 +57,29 @@ module.exports = async function handler(req, res) {
 
     if (req.method === 'GET') {
       if (id) {
-        // Get specific jornada
+        // Get specific jornada with extended information
         if (isNaN(parseInt(id))) {
           return res.status(400).json({ message: 'Invalid jornada ID' });
         }
 
         const result = await pool.query(`
           SELECT 
-            id,
-            week_number,
-            start_date,
-            end_date,
-            is_current,
-            is_completed,
-            created_at,
-            updated_at
-          FROM jornadas 
-          WHERE id = $1
+            j.id,
+            j.week_number,
+            j.start_date,
+            j.end_date,
+            j.is_current,
+            j.is_completed,
+            j.created_at,
+            j.updated_at,
+            COUNT(DISTINCT ps.id) as stats_count,
+            COUNT(DISTINCT ut.id) as teams_count,
+            MAX(ps.updated_at) as last_stats_update
+          FROM jornadas j
+          LEFT JOIN player_stats ps ON j.id = ps.jornada_id
+          LEFT JOIN user_teams ut ON j.id = ut.jornada_id
+          WHERE j.id = $1
+          GROUP BY j.id, j.week_number, j.start_date, j.end_date, j.is_current, j.is_completed, j.created_at, j.updated_at
         `, [parseInt(id)]);
         
         if (result.rows.length === 0) {
@@ -82,21 +88,54 @@ module.exports = async function handler(req, res) {
         
         return res.json(result.rows[0]);
       } else {
-        // Get all jornadas
+        // Get all jornadas with extended information
         const result = await pool.query(`
-          SELECT * FROM jornadas 
-          ORDER BY week_number DESC
+          SELECT 
+            j.id,
+            j.week_number,
+            j.start_date,
+            j.end_date,
+            j.is_current,
+            j.is_completed,
+            j.created_at,
+            j.updated_at,
+            COUNT(DISTINCT ps.id) as stats_count,
+            COUNT(DISTINCT ut.id) as teams_count,
+            MAX(ps.updated_at) as last_stats_update
+          FROM jornadas j
+          LEFT JOIN player_stats ps ON j.id = ps.jornada_id
+          LEFT JOIN user_teams ut ON j.id = ut.jornada_id
+          GROUP BY j.id, j.week_number, j.start_date, j.end_date, j.is_current, j.is_completed, j.created_at, j.updated_at
+          ORDER BY j.week_number DESC
         `);
         return res.json(result.rows);
       }
     }
 
     if (req.method === 'POST') {
-      // Create new jornada
+      // 🆕 CREATE JORNADA WITHOUT MANDATORY DATES
       const { week_number, start_date, end_date, is_current } = req.body;
       
-      if (!week_number || !start_date || !end_date) {
-        return res.status(400).json({ message: 'Week number, start date and end date are required' });
+      if (!week_number) {
+        return res.status(400).json({ message: 'Week number is required' });
+      }
+
+      // Validate week number
+      if (week_number < 1 || week_number > 52) {
+        return res.status(400).json({ message: 'Week number must be between 1 and 52' });
+      }
+      
+      // Check if week already exists
+      const existingWeek = await pool.query(
+        'SELECT id, week_number FROM jornadas WHERE week_number = $1',
+        [week_number]
+      );
+      
+      if (existingWeek.rows.length > 0) {
+        return res.status(400).json({ 
+          message: `Week ${week_number} already exists`,
+          existing_id: existingWeek.rows[0].id
+        });
       }
       
       // If setting this jornada as current, unset any other current jornadas
@@ -104,12 +143,21 @@ module.exports = async function handler(req, res) {
         await pool.query('UPDATE jornadas SET is_current = false WHERE is_current = true');
       }
       
+      // Create new jornada (dates are optional now)
       const result = await pool.query(
-        'INSERT INTO jornadas (week_number, start_date, end_date, is_current) VALUES ($1, $2, $3, $4) RETURNING *',
-        [week_number, start_date, end_date, is_current]
+        `INSERT INTO jornadas (week_number, start_date, end_date, is_current) 
+         VALUES ($1, $2, $3, $4) RETURNING *`,
+        [week_number, start_date || null, end_date || null, is_current || false]
       );
       
-      return res.status(201).json(result.rows[0]);
+      console.log(`✅ Created Week ${week_number} - Auto-activation enabled`);
+      
+      return res.status(201).json({
+        ...result.rows[0],
+        message: `Week ${week_number} created successfully! Upload player stats to activate it automatically.`,
+        next_step: 'Go to Stats Manager to upload player results',
+        auto_activation: true
+      });
     }
 
     if (req.method === 'PUT') {
@@ -120,16 +168,34 @@ module.exports = async function handler(req, res) {
 
       const { week_number, start_date, end_date, is_current, is_completed } = req.body;
       
-      if (!week_number || !start_date || !end_date) {
+      if (!week_number) {
         return res.status(400).json({ 
-          message: 'Week number, start date and end date are required' 
+          message: 'Week number is required' 
         });
+      }
+
+      // Validate week number
+      if (week_number < 1 || week_number > 52) {
+        return res.status(400).json({ message: 'Week number must be between 1 and 52' });
       }
 
       const client = await pool.connect();
       
       try {
         await client.query('BEGIN');
+        
+        // Check if another jornada already has this week number
+        const existingWeek = await client.query(
+          'SELECT id FROM jornadas WHERE week_number = $1 AND id != $2',
+          [week_number, parseInt(id)]
+        );
+        
+        if (existingWeek.rows.length > 0) {
+          await client.query('ROLLBACK');
+          return res.status(400).json({ 
+            message: `Week ${week_number} already exists in another record` 
+          });
+        }
         
         // If setting this jornada as current, unset any other current jornadas
         if (is_current) {
@@ -139,7 +205,7 @@ module.exports = async function handler(req, res) {
           );
         }
         
-        // Update the jornada
+        // Update the jornada (dates are optional)
         const result = await client.query(`
           UPDATE jornadas 
           SET 
@@ -151,7 +217,7 @@ module.exports = async function handler(req, res) {
             updated_at = NOW()
           WHERE id = $6
           RETURNING *
-        `, [week_number, start_date, end_date, is_current, is_completed, parseInt(id)]);
+        `, [week_number, start_date || null, end_date || null, is_current, is_completed, parseInt(id)]);
         
         if (result.rows.length === 0) {
           await client.query('ROLLBACK');
@@ -159,6 +225,8 @@ module.exports = async function handler(req, res) {
         }
         
         await client.query('COMMIT');
+        
+        console.log(`✅ Updated Week ${week_number} (ID: ${id})`);
         
         return res.json({
           message: 'Jornada updated successfully',
@@ -195,6 +263,8 @@ module.exports = async function handler(req, res) {
           return res.status(404).json({ message: 'Jornada not found' });
         }
         
+        const jornadaInfo = checkResult.rows[0];
+        
         // Check if jornada has associated data
         const statsCount = await client.query(
           'SELECT COUNT(*) as count FROM player_stats WHERE jornada_id = $1',
@@ -206,15 +276,17 @@ module.exports = async function handler(req, res) {
           [parseInt(id)]
         );
         
-        const hasData = parseInt(statsCount.rows[0].count) > 0 || parseInt(teamsCount.rows[0].count) > 0;
+        const hasStats = parseInt(statsCount.rows[0].count) > 0;
+        const hasTeams = parseInt(teamsCount.rows[0].count) > 0;
         
-        if (hasData) {
+        if (hasStats || hasTeams) {
           await client.query('ROLLBACK');
           return res.status(400).json({ 
-            message: 'Cannot delete jornada with associated player stats or teams',
+            message: `Cannot delete Week ${jornadaInfo.week_number} - it has associated data`,
             details: {
               playerStats: parseInt(statsCount.rows[0].count),
-              userTeams: parseInt(teamsCount.rows[0].count)
+              userTeams: parseInt(teamsCount.rows[0].count),
+              suggestion: 'Mark as completed instead of deleting'
             }
           });
         }
@@ -224,9 +296,12 @@ module.exports = async function handler(req, res) {
         
         await client.query('COMMIT');
         
+        console.log(`🗑️ Deleted Week ${jornadaInfo.week_number} (ID: ${id})`);
+        
         return res.json({
-          message: 'Jornada deleted successfully',
-          deletedId: parseInt(id)
+          message: `Week ${jornadaInfo.week_number} deleted successfully`,
+          deletedId: parseInt(id),
+          deletedWeek: jornadaInfo.week_number
         });
         
       } catch (error) {
@@ -241,12 +316,29 @@ module.exports = async function handler(req, res) {
 
   } catch (error) {
     console.error('Error in admin jornadas:', error);
+    
+    // Handle specific error types
     if (error.message.includes('Access denied') || error.message.includes('token')) {
       return res.status(401).json({ message: error.message });
     }
+    
+    if (error.code === '23505') { // PostgreSQL unique violation
+      return res.status(400).json({ 
+        message: 'Week number already exists',
+        error: 'Duplicate week number'
+      });
+    }
+    
+    if (error.code === '23503') { // PostgreSQL foreign key violation
+      return res.status(400).json({ 
+        message: 'Cannot perform operation due to data dependencies',
+        error: 'Foreign key constraint'
+      });
+    }
+    
     res.status(500).json({ 
       message: 'Server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
 };

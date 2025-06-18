@@ -6,7 +6,7 @@
     <title>Moonlight Line - Stats Manager</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Reset y estilos base */
+        /* [Mantener todos los estilos existentes del original...] */
         * {
             margin: 0;
             padding: 0;
@@ -25,7 +25,6 @@
             position: relative;
         }
         
-        /* Grid Lines */
         .grid-lines {
             position: fixed;
             top: 0;
@@ -40,14 +39,12 @@
             z-index: -1;
         }
         
-        /* Admin dashboard main container */
         .admin-dashboard {
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
         }
         
-        /* Navegación */
         .navigation {
             display: flex;
             justify-content: space-between;
@@ -89,7 +86,6 @@
             transform: translateY(-2px);
         }
         
-        /* Admin panel title */
         .admin-title {
             font-size: 2rem;
             color: #ff8c00;
@@ -100,56 +96,19 @@
             text-align: center;
         }
         
-        /* Admin tabs */
-        .admin-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 140, 0, 0.3);
-        }
-        
-        .admin-tab {
-            padding: 10px 20px;
-            margin-right: 5px;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: rgba(255, 255, 255, 0.7);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-top-left-radius: 5px;
-            border-top-right-radius: 5px;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-        }
-        
-        .admin-tab:hover {
-            background-color: rgba(255, 140, 0, 0.1);
-            color: white;
-        }
-        
-        .admin-tab.active {
-            background-color: rgba(255, 140, 0, 0.2);
-            color: #ff8c00;
-            border-top: 1px solid #ff8c00;
-            border-left: 1px solid #ff8c00;
-            border-right: 1px solid #ff8c00;
-            box-shadow: 0 -5px 10px rgba(255, 140, 0, 0.1);
-        }
-        
-        /* Admin panels */
-        .admin-panel {
-            display: none;
-            background-color: rgba(0, 0, 0, 0.7);
-            border: 1px solid #ff8c00;
+        /* 🆕 NUEVO ESTILO PARA ACTIVACIÓN AUTOMÁTICA */
+        .auto-activation-info {
+            background-color: rgba(0, 255, 128, 0.1);
+            border: 1px solid #00ff80;
             border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 0 20px rgba(255, 140, 0, 0.2);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #00ff80;
+            font-size: 0.9rem;
+            line-height: 1.4;
         }
         
-        .admin-panel.active {
-            display: block;
-        }
-        
-        /* Selector de jornada */
         .jornada-selector {
             display: flex;
             align-items: center;
@@ -178,7 +137,6 @@
             box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
         }
         
-        /* Panel de stats */
         .stats-panel {
             background-color: rgba(0, 0, 0, 0.7);
             border: 1px solid #ff8c00;
@@ -188,7 +146,6 @@
             box-shadow: 0 0 20px rgba(255, 140, 0, 0.2);
         }
         
-        /* Tabla de estadísticas */
         .stats-table {
             width: 100%;
             border-collapse: separate;
@@ -222,7 +179,6 @@
             min-width: 200px;
         }
         
-        /* Inputs para estadísticas */
         .stat-input {
             width: 60px;
             background-color: rgba(0, 0, 0, 0.5);
@@ -240,7 +196,6 @@
             box-shadow: 0 0 8px rgba(255, 140, 0, 0.5);
         }
         
-        /* Checkbox para Victoria */
         .victory-checkbox {
             appearance: none;
             width: 20px;
@@ -267,7 +222,6 @@
             font-size: 14px;
         }
         
-        /* Botones de acción */
         .action-buttons {
             display: flex;
             justify-content: center;
@@ -301,7 +255,18 @@
             box-shadow: none;
         }
         
-        /* Loader */
+        /* 🆕 BOTÓN DE ACTIVACIÓN AUTOMÁTICA */
+        .auto-activate-button {
+            background-color: rgba(0, 255, 128, 0.1);
+            border: 1px solid #00ff80;
+            color: #00ff80;
+        }
+        
+        .auto-activate-button:hover {
+            background-color: rgba(0, 255, 128, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 128, 0.5);
+        }
+        
         .loader {
             border: 3px solid rgba(0, 240, 255, 0.3);
             border-radius: 50%;
@@ -318,7 +283,6 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Mensajes de alerta */
         .alert {
             padding: 12px 20px;
             border-radius: 5px;
@@ -340,7 +304,7 @@
             color: #ff6b6b;
         }
         
-        /* Media queries */
+        /* Media queries responsive */
         @media (max-width: 1200px) {
             .stats-table {
                 display: block;
@@ -385,7 +349,13 @@
         
         <h1 class="admin-title">PLAYER STATS MANAGER</h1>
         
-        <!-- Mensajes de alerta -->
+        <!-- 🆕 INFO DE ACTIVACIÓN AUTOMÁTICA -->
+        <div class="auto-activation-info">
+            ⚡ <strong>AUTO-ACTIVATION:</strong> When you upload stats, the selected week becomes active automatically and 
+            all user teams will be calculated in real-time based on their GREEN ZONE selections!
+        </div>
+        
+        <!-- Alertas -->
         <div id="alert-success" class="alert alert-success"></div>
         <div id="alert-error" class="alert alert-error"></div>
         
@@ -394,7 +364,6 @@
             <span class="jornada-label">SELECT GAME WEEK:</span>
             <select id="jornada-select" class="jornada-select">
                 <option value="">Select a game week...</option>
-                <!-- Opciones se cargarán dinámicamente -->
             </select>
         </div>
         
@@ -425,18 +394,16 @@
                 
                 <div class="action-buttons">
                     <button type="button" id="calculate-button" class="action-button">CALCULATE TOTALS</button>
-                    <button type="submit" id="save-button" class="action-button">SAVE ALL STATS</button>
+                    <button type="submit" id="save-button" class="action-button auto-activate-button">SAVE & AUTO-ACTIVATE WEEK</button>
                 </div>
             </form>
         </div>
     </div>
     
     <script>
-        // API URL
         const API_URL = '/api';
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Elementos del DOM
             const jornadaSelect = document.getElementById('jornada-select');
             const statsLoader = document.getElementById('stats-loader');
             const statsPanel = document.getElementById('stats-panel');
@@ -447,30 +414,24 @@
             const alertSuccess = document.getElementById('alert-success');
             const alertError = document.getElementById('alert-error');
             
-            // Verificar si el usuario está autorizado
             checkAuth();
             
-            // Event listeners
             jornadaSelect.addEventListener('change', handleJornadaChange);
             calculateButton.addEventListener('click', calculateTotals);
             statsForm.addEventListener('submit', saveStats);
             
-            // Verificar autorización
             async function checkAuth() {
                 try {
                     const token = getAuthToken();
                     
                     if (!token) {
-                        // Redirigir a login si no hay token
                         window.location.href = 'login.html';
                         return;
                     }
                     
-                    // Verificar si el usuario es administrador
                     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
                     
                     if (!userData.is_admin) {
-                        // Mostrar error y redirigir
                         showAlert('error', 'Access denied. Admin privileges required.');
                         setTimeout(() => {
                             window.location.href = 'index.html';
@@ -478,7 +439,6 @@
                         return;
                     }
                     
-                    // Si todo está bien, cargar jornadas
                     loadJornadas();
                     
                 } catch (error) {
@@ -487,13 +447,10 @@
                 }
             }
             
-            // Cargar jornadas
             async function loadJornadas() {
                 try {
-                    // Mostrar loader
                     statsLoader.style.display = 'block';
                     
-                    // Realizar la petición
                     const response = await fetch(`${API_URL}/admin/jornadas`, {
                         headers: {
                             'Authorization': `Bearer ${getAuthToken()}`
@@ -506,24 +463,27 @@
                     
                     const jornadas = await response.json();
                     
-                    // Llenar el selector
                     let options = '<option value="">Select a game week...</option>';
                     
                     jornadas.forEach(jornada => {
-                        const currentMarker = jornada.is_current ? ' (Current)' : '';
+                        const currentMarker = jornada.is_current ? ' (ACTIVE)' : '';
                         const completedMarker = jornada.is_completed ? ' - Completed' : '';
-                        options += `<option value="${jornada.id}">Week ${jornada.week_number}${currentMarker}${completedMarker}</option>`;
+                        const statsInfo = jornada.stats_count > 0 ? ` [${jornada.stats_count} stats]` : ' [No stats yet]';
+                        
+                        options += `<option value="${jornada.id}">Week ${jornada.week_number}${currentMarker}${completedMarker}${statsInfo}</option>`;
                     });
                     
                     jornadaSelect.innerHTML = options;
                     
-                    // Ocultar loader
                     statsLoader.style.display = 'none';
                     
-                    // Seleccionar automáticamente la jornada actual si existe
-                    const currentJornada = jornadas.find(j => j.is_current);
-                    if (currentJornada) {
-                        jornadaSelect.value = currentJornada.id;
+                    // 🆕 Autoseleccionar la primera jornada sin stats o la actual
+                    const weekToSelect = jornadas.find(j => !j.is_completed && parseInt(j.stats_count) === 0) || 
+                                       jornadas.find(j => j.is_current) ||
+                                       jornadas[0];
+                    
+                    if (weekToSelect) {
+                        jornadaSelect.value = weekToSelect.id;
                         handleJornadaChange();
                     }
                     
@@ -534,7 +494,6 @@
                 }
             }
             
-            // Manejar cambio de jornada
             async function handleJornadaChange() {
                 const jornadaId = jornadaSelect.value;
                 
@@ -544,11 +503,9 @@
                 }
                 
                 try {
-                    // Mostrar loader
                     statsLoader.style.display = 'block';
                     statsPanel.style.display = 'none';
                     
-                    // Realizar la petición
                     const response = await fetch(`${API_URL}/admin/player-stats?jornada_id=${jornadaId}`, {
                         headers: {
                             'Authorization': `Bearer ${getAuthToken()}`
@@ -560,11 +517,8 @@
                     }
                     
                     const playerStats = await response.json();
-                    
-                    // Renderizar tabla
                     renderStatsTable(playerStats);
                     
-                    // Mostrar panel de estadísticas
                     statsLoader.style.display = 'none';
                     statsPanel.style.display = 'block';
                     
@@ -575,7 +529,6 @@
                 }
             }
             
-            // Renderizar tabla de estadísticas
             function renderStatsTable(players) {
                 let html = '';
                 
@@ -618,7 +571,6 @@
                 
                 statsTableBody.innerHTML = html;
                 
-                // Agregar event listeners a los inputs para actualizaciones inmediatas
                 document.querySelectorAll('.stat-input, .victory-checkbox').forEach(input => {
                     input.addEventListener('change', function() {
                         calculateRowTotal(this.closest('tr'));
@@ -626,7 +578,6 @@
                 });
             }
             
-            // Calcular total para una fila
             function calculateRowTotal(row) {
                 const rebounds = parseInt(row.querySelector('.rebounds-input').value) || 0;
                 const twoPoints = parseInt(row.querySelector('.two-points-input').value) || 0;
@@ -636,7 +587,6 @@
                 const blocks = parseInt(row.querySelector('.blocks-input').value) || 0;
                 const victory = row.querySelector('.victory-checkbox').checked;
                 
-                // Calcular total según la fórmula (misma que en la trigger de la BD)
                 const total = 
                     rebounds * 1 +
                     twoPoints * 2 +
@@ -646,11 +596,9 @@
                     blocks * 2 +
                     (victory ? 5 : 0);
                 
-                // Actualizar total en la UI
                 row.querySelector('.total-points').textContent = total;
             }
             
-            // Calcular totales para todas las filas
             function calculateTotals() {
                 document.querySelectorAll('#stats-table-body tr').forEach(row => {
                     calculateRowTotal(row);
@@ -659,7 +607,7 @@
                 showAlert('success', 'All totals calculated successfully!');
             }
             
-            // Guardar estadísticas
+            // 🆕 FUNCIÓN MEJORADA PARA GUARDAR Y AUTO-ACTIVAR
             async function saveStats(e) {
                 e.preventDefault();
                 
@@ -671,9 +619,8 @@
                 }
                 
                 try {
-                    // Deshabilitar botón y mostrar estado de carga
                     saveButton.disabled = true;
-                    saveButton.textContent = 'SAVING...';
+                    saveButton.textContent = 'SAVING & ACTIVATING...';
                     
                     // Recopilar datos
                     const stats = [];
@@ -709,23 +656,36 @@
                         throw new Error('Failed to save player stats');
                     }
                     
-                    // Mostrar mensaje de éxito
-                    showAlert('success', 'Player stats saved successfully!');
+                    const result = await response.json();
                     
-                    // Recargar los datos
-                    handleJornadaChange();
+                    // 🆕 MOSTRAR MENSAJE DE ÉXITO CON INFO DE ACTIVACIÓN
+                    showAlert('success', 
+                        `✅ Stats saved successfully! Week automatically activated. ` +
+                        `All user teams will now be calculated based on their GREEN ZONE selections!`
+                    );
+                    
+                    // Recargar los datos para ver la activación
+                    setTimeout(() => {
+                        loadJornadas();
+                        handleJornadaChange();
+                    }, 2000);
+                    
+                    // 🆕 SUGERIR VER LEADERBOARDS
+                    setTimeout(() => {
+                        if (confirm('Stats uploaded successfully! Do you want to view the updated leaderboards?')) {
+                            window.location.href = 'leaderboards.html';
+                        }
+                    }, 3000);
                     
                 } catch (error) {
                     console.error('Error saving player stats:', error);
                     showAlert('error', 'Error saving player stats. Please try again.');
                 } finally {
-                    // Restaurar botón
                     saveButton.disabled = false;
-                    saveButton.textContent = 'SAVE ALL STATS';
+                    saveButton.textContent = 'SAVE & AUTO-ACTIVATE WEEK';
                 }
             }
             
-            // Mostrar alerta
             function showAlert(type, message) {
                 const alert = document.getElementById(`alert-${type}`);
                 alert.textContent = message;
@@ -733,10 +693,9 @@
                 
                 setTimeout(() => {
                     alert.style.display = 'none';
-                }, 5000);
+                }, 8000); // 🆕 Más tiempo para leer el mensaje
             }
             
-            // Obtener token de autenticación
             function getAuthToken() {
                 return localStorage.getItem('authToken') || '';
             }

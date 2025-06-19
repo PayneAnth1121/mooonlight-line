@@ -113,37 +113,46 @@
             z-index: -1;
         }
         
-        /* 🆕 LOGOS DECORATIVOS DE EQUIPOS - ESTÁTICOS */
+        /* 🆕 LOGOS DECORATIVOS DE EQUIPOS - LIMPIOS Y ESTÁTICOS */
         .team-logos {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            pointer-events: auto; /* Habilitamos clicks para animación */
             z-index: 0;
         }
         
         .team-logo {
             position: absolute;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid rgba(255, 140, 0, 0.4);
-            background-color: rgba(0, 0, 0, 0.4);
+            width: 90px;
+            height: 90px;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0.7;
-            backdrop-filter: blur(3px);
-            /* SIN ANIMACIONES - COMPLETAMENTE ESTÁTICOS */
+            opacity: 0.8;
+            cursor: pointer;
+            /* SIN círculos decorativos - COMPLETAMENTE LIMPIOS */
+            transition: all 0.3s ease;
         }
         
         .team-logo img {
-            width: 70px;
-            height: 70px;
+            width: 90px;
+            height: 90px;
             object-fit: contain;
-            border-radius: 50%;
+            filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.6));
+            transition: all 0.3s ease;
+        }
+        
+        /* Animación similar al logo principal */
+        .team-logo:hover img {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.9));
+        }
+        
+        .team-logo:active img {
+            transform: scale(0.95);
         }
         
         /* Posiciones EXACTAS basadas en tu imagen marcada en rojo */
@@ -481,15 +490,15 @@
                 display: none; /* Ocultar en móviles para ahorrar espacio */
             }
             
-            /* Ajustar logos de equipos en tablets - ESTÁTICOS */
+            /* Ajustar logos de equipos en tablets - LIMPIOS */
             .team-logo {
-                width: 80px;
-                height: 80px;
+                width: 75px;
+                height: 75px;
             }
             
             .team-logo img {
-                width: 55px;
-                height: 55px;
+                width: 75px;
+                height: 75px;
             }
         }
         
@@ -514,15 +523,15 @@
                 display: none;
             }
             
-            /* Logos más pequeños en móviles - ESTÁTICOS */
+            /* Logos más pequeños en móviles - LIMPIOS */
             .team-logo {
                 width: 60px;
                 height: 60px;
             }
             
             .team-logo img {
-                width: 40px;
-                height: 40px;
+                width: 60px;
+                height: 60px;
             }
         }
     </style>
@@ -566,8 +575,8 @@
         </div>
     </div>
     
-    <!-- 🆕 AUDIO BACKGROUND MUSIC - CON AUTOPLAY -->
-    <audio id="background-audio" loop preload="auto" autoplay muted>
+    <!-- 🆕 AUDIO BACKGROUND MUSIC - CON AUTOPLAY SIN MUTE -->
+    <audio id="background-audio" loop preload="auto" autoplay>
         <source src="/assets/music/background-music.mp3" type="audio/mpeg">
         <source src="/assets/music/background-music.ogg" type="audio/ogg">
         <source src="/assets/music/background-music.wav" type="audio/wav">
@@ -671,6 +680,20 @@
                     }, 150);
                 });
             }
+            
+            // 🆕 ANIMACIÓN PARA LOGOS DE EQUIPOS
+            const teamLogos = document.querySelectorAll('.team-logo');
+            teamLogos.forEach(logo => {
+                logo.addEventListener('click', function() {
+                    const img = this.querySelector('img');
+                    if (img) {
+                        img.style.transform = 'scale(0.9)';
+                        setTimeout(() => {
+                            img.style.transform = 'scale(1)';
+                        }, 150);
+                    }
+                });
+            });
         });
         
         function checkLoginStatus() {
@@ -753,12 +776,14 @@
             let isPlaying = false;
             let userHasInteracted = false;
             
-            // 🎵 FUNCIÓN DE REPRODUCCIÓN INMEDIATA
+            // 🚀 REPRODUCIR INMEDIATAMENTE AL CARGAR - SIN MUTE
+            bgAudio.volume = 0.3; // Volumen inicial 30%
+            playAudio();
+            
+            // 🎵 FUNCIÓN DE REPRODUCCIÓN INMEDIATA - SIN MUTE
             async function playAudio() {
                 try {
-                    // Primero unmute el audio
-                    bgAudio.muted = false;
-                    bgAudio.volume = 0.3;
+                    bgAudio.volume = 0.3; // Asegurar volumen
                     
                     await bgAudio.play();
                     isPlaying = true;
@@ -782,9 +807,6 @@
                 playPauseBtn.title = 'Play Music';
                 console.log('🔇 Background music paused');
             }
-            
-            // 🚀 REPRODUCIR INMEDIATAMENTE AL CARGAR
-            playAudio();
             
             // Event listener para el botón play/pause
             playPauseBtn.addEventListener('click', function() {

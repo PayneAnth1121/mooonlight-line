@@ -119,26 +119,26 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 50px;
+            gap: 30px; /* Reducido para dar más espacio al logo */
             width: 100%;
-            max-width: 500px;
+            max-width: 800px; /* Aumentado para acomodar el logo grande */
             padding: 20px;
             position: relative;
             z-index: 1;
         }
         
-        /* 🆕 AJUSTE DE TAMAÑO DEL LOGO - MÁS GRANDE */
+        /* 🆕 LOGO MASIVO - PARA OCUPAR TODA EL ÁREA ROJA */
         .logo-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 60px;
+            margin-bottom: 20px; /* Reducido */
             width: 100%;
         }
         
         .main-logo {
-            max-width: 800px; /* AUMENTADO MUCHO MÁS */
-            width: 95%; /* Ocupa casi todo el ancho disponible */
+            max-width: 1200px; /* MASIVO - Para ocupar toda el área roja */
+            width: 100%; /* Ocupa TODO el ancho disponible */
             height: auto;
             filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.7));
             transition: all 0.3s ease;
@@ -387,11 +387,26 @@
             box-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
         }
         
-        /* Media Queries - RESPONSIVE AJUSTADO PARA EL LOGO MÁS GRANDE */
-        @media (max-width: 768px) {
+        /* Media Queries - RESPONSIVE PARA LOGO MASIVO */
+        @media (max-width: 1200px) {
+            .main-container {
+                max-width: 900px;
+            }
+            
             .main-logo {
-                max-width: 600px; /* Aumentado para tablets */
-                width: 98%;
+                max-width: 1000px;
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                max-width: 700px;
+            }
+            
+            .main-logo {
+                max-width: 700px; /* Muy grande para tablets */
+                width: 100%;
             }
             
             .neon-button {
@@ -415,8 +430,12 @@
         }
         
         @media (max-width: 480px) {
+            .main-container {
+                max-width: 100%;
+            }
+            
             .main-logo {
-                max-width: 480px; /* Aumentado para móviles pequeños */
+                max-width: 450px; /* Grande para móviles pequeños */
                 width: 100%;
             }
             
@@ -444,10 +463,11 @@
     <div class="side-glow-left"></div>
     <div class="side-glow-right"></div>
     
-    <!-- 🆕 AUDIO BACKGROUND MUSIC -->
-    <audio id="background-audio" loop preload="auto">
+    <!-- 🆕 AUDIO BACKGROUND MUSIC - MEJORADO -->
+    <audio id="background-audio" loop preload="auto" volume="0.3">
         <source src="/assets/music/background-music.mp3" type="audio/mpeg">
-        <source src="music/background-music.ogg" type="audio/ogg">
+        <source src="/assets/music/background-music.ogg" type="audio/ogg">
+        <source src="/assets/music/background-music.wav" type="audio/wav">
         Your browser does not support the audio element.
     </audio>
     
@@ -613,7 +633,7 @@
             }
         }
         
-        // 🆕 CONFIGURACIÓN MEJORADA DEL AUDIO CON CONTROLES AVANZADOS
+        // 🆕 CONFIGURACIÓN MEJORADA DEL AUDIO CON AUTO-REPRODUCCIÓN
         function setupAudio() {
             const bgAudio = document.getElementById('background-audio');
             const playPauseBtn = document.getElementById('play-pause-btn');
@@ -656,6 +676,11 @@
                 console.log('🔇 Background music paused');
             }
             
+            // 🆕 INTENTAR REPRODUCIR INMEDIATAMENTE
+            setTimeout(() => {
+                playAudio();
+            }, 1000); // Espera 1 segundo después de cargar
+            
             // Event listener para el botón play/pause
             playPauseBtn.addEventListener('click', function() {
                 userHasInteracted = true;
@@ -689,6 +714,10 @@
             
             bgAudio.addEventListener('canplaythrough', () => {
                 console.log('🎵 Audio ready to play');
+                // Intentar reproducir cuando esté listo
+                if (!userHasInteracted) {
+                    playAudio();
+                }
             });
             
             bgAudio.addEventListener('ended', () => {
@@ -698,25 +727,26 @@
             bgAudio.addEventListener('error', (e) => {
                 console.error('🎵 Audio error:', e);
                 playIcon.textContent = '❌';
-                playPauseBtn.title = 'Audio Error';
+                playPauseBtn.title = 'Audio Error - File Not Found';
             });
             
-            // Intentar reproducir automáticamente cuando el usuario interactúe con la página
-            document.addEventListener('click', function() {
-                if (!userHasInteracted) {
-                    userHasInteracted = true;
-                    playAudio();
-                }
-            }, { once: true });
+            // 🆕 MÚLTIPLES EVENTOS PARA INICIAR LA MÚSICA
+            const interactionEvents = ['click', 'keydown', 'touchstart', 'mousedown'];
             
-            // También intentar con otros eventos de interacción
-            ['keydown', 'touchstart'].forEach(event => {
-                document.addEventListener(event, function() {
+            interactionEvents.forEach(eventType => {
+                document.addEventListener(eventType, function() {
                     if (!userHasInteracted) {
                         userHasInteracted = true;
                         playAudio();
                     }
                 }, { once: true });
+            });
+            
+            // 🆕 TAMBIÉN INTENTAR CUANDO SE HACE VISIBLE LA PÁGINA
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden && !userHasInteracted) {
+                    playAudio();
+                }
             });
         }
     </script>

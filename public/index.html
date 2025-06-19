@@ -127,20 +127,35 @@
             z-index: 1;
         }
         
-        /* Title */
-        .title {
-            font-size: 5rem;
-            font-weight: 700;
-            text-align: center;
-            line-height: 1.1;
-            color: #00f0ff;
-            text-shadow: 0 0 20px rgba(0, 240, 255, 0.7);
-            letter-spacing: 2px;
+        /* 🆕 NUEVO ESTILO PARA EL LOGO */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin-bottom: 30px;
         }
         
-        .title span {
-            display: block;
+        .main-logo {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.7));
+            transition: all 0.3s ease;
+            animation: logoGlow 3s ease-in-out infinite alternate;
+        }
+        
+        .main-logo:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.9));
+        }
+        
+        @keyframes logoGlow {
+            0% { 
+                filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.7));
+            }
+            100% { 
+                filter: drop-shadow(0 0 30px rgba(0, 240, 255, 1));
+            }
         }
         
         /* User info when logged in */
@@ -286,42 +301,19 @@
             transform: rotate(45deg);
         }
         
-        /* Media Queries */
-        @media (max-width: 768px) {
-            .title {
-                font-size: 3.5rem;
-            }
-            
-            .neon-button {
-                font-size: 1.5rem;
-                padding: 15px;
-            }
-            
-            .footer {
-                padding: 0 20px;
-                font-size: 0.8rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .title {
-                font-size: 2.8rem;
-            }
-            
-            .neon-button {
-                font-size: 1.3rem;
-                padding: 12px;
-            }
-        }
-        
-        /* Añadir reproductor de audio de fondo (oculto) */
-        .audio-control {
+        /* 🆕 CONTROLES DE AUDIO MEJORADOS */
+        .audio-controls {
             position: fixed;
             bottom: 20px;
             left: 20px;
+            display: flex;
+            gap: 10px;
             z-index: 1000;
-            width: 40px;
-            height: 40px;
+        }
+        
+        .audio-control {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background-color: rgba(0, 0, 0, 0.7);
             border: 1px solid #00f0ff;
@@ -338,6 +330,97 @@
         .audio-control:hover {
             transform: scale(1.1);
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.7);
+            background-color: rgba(0, 240, 255, 0.1);
+        }
+        
+        .audio-control.active {
+            background-color: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+        }
+        
+        /* Volume slider */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00f0ff;
+            border-radius: 25px;
+            padding: 10px 15px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 100px;
+            height: 5px;
+            border-radius: 5px;
+            background: rgba(0, 240, 255, 0.3);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        
+        .volume-slider:hover {
+            opacity: 1;
+        }
+        
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #00f0ff;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
+        }
+        
+        .volume-slider::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #00f0ff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
+        }
+        
+        /* Media Queries */
+        @media (max-width: 768px) {
+            .main-logo {
+                max-width: 300px;
+            }
+            
+            .neon-button {
+                font-size: 1.5rem;
+                padding: 15px;
+            }
+            
+            .footer {
+                padding: 0 20px;
+                font-size: 0.8rem;
+            }
+            
+            .audio-controls {
+                bottom: 80px;
+                left: 10px;
+            }
+            
+            .volume-control {
+                display: none; /* Ocultar en móviles para ahorrar espacio */
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .main-logo {
+                max-width: 250px;
+            }
+            
+            .neon-button {
+                font-size: 1.3rem;
+                padding: 12px;
+            }
         }
     </style>
 </head>
@@ -358,11 +441,18 @@
     <div class="side-glow-left"></div>
     <div class="side-glow-right"></div>
     
+    <!-- 🆕 AUDIO BACKGROUND MUSIC -->
+    <audio id="background-audio" loop preload="auto">
+        <source src="/assets/music/background-music.mp3" type="audio/mpeg">
+        <source src="music/background-music.ogg" type="audio/ogg">
+        Your browser does not support the audio element.
+    </audio>
+    
     <!-- Main Content -->
     <div class="main-container">
-        <div class="title">
-            <span>DELL TECHNOLOGIES</span>
-            <span>FANTASY LEAGUE</span>
+        <!-- 🆕 LOGO REEMPLAZA AL TÍTULO DE TEXTO -->
+        <div class="logo-container">
+            <img src="/assets/images/logos/logo.png" alt="Dell Technologies Fantasy League" class="main-logo" id="main-logo">
         </div>
         
         <!-- User info (visible when logged in) -->
@@ -391,16 +481,23 @@
     <!-- Admin Settings Button (Solo visible para admins) -->
     <a href="admin.html" class="admin-settings" id="admin-btn" style="display: none;">⚙️</a>
     
+    <!-- 🆕 CONTROLES DE AUDIO MEJORADOS -->
+    <div class="audio-controls">
+        <button class="audio-control" id="play-pause-btn" title="Play/Pause Music">
+            <span id="play-icon">🔊</span>
+        </button>
+        <div class="volume-control">
+            <span style="color: #00f0ff; font-size: 0.8rem;">🔉</span>
+            <input type="range" min="0" max="100" value="30" class="volume-slider" id="volume-slider">
+            <span style="color: #00f0ff; font-size: 0.8rem;">🔊</span>
+        </div>
+    </div>
+    
     <!-- Footer -->
     <div class="footer">
         <div class="footer-left"></div>
         <div class="footer-right"></div>
     </div>
-    
-    <!-- Añadir reproductor de audio de fondo (oculto) -->
-    <audio id="background-audio" loop>
-        <source src="assets/sounds/background-music.mp3" type="audio/mpeg">
-    </audio>
     
     <script>
         // API URL
@@ -422,7 +519,7 @@
             // Verificar si el usuario es administrador
             checkAdminStatus();
             
-            // Configuración del audio de fondo
+            // 🆕 CONFIGURACIÓN MEJORADA DEL AUDIO
             setupAudio();
             
             // Configurar el botón de logout
@@ -434,6 +531,18 @@
                     
                     // Recargar la página para actualizar la interfaz
                     window.location.reload();
+                });
+            }
+            
+            // 🆕 ANIMACIÓN INTERACTIVA DEL LOGO
+            const mainLogo = document.getElementById('main-logo');
+            if (mainLogo) {
+                mainLogo.addEventListener('click', function() {
+                    // Efecto de click en el logo
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
                 });
             }
         });
@@ -501,48 +610,111 @@
             }
         }
         
+        // 🆕 CONFIGURACIÓN MEJORADA DEL AUDIO CON CONTROLES AVANZADOS
         function setupAudio() {
             const bgAudio = document.getElementById('background-audio');
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const playIcon = document.getElementById('play-icon');
+            const volumeSlider = document.getElementById('volume-slider');
             
-            if (bgAudio) {
-                // Configurar volumen (valor entre 0.0 y 1.0)
-                bgAudio.volume = 0.3;
-                
-                // Botón para controlar el audio
-                const audioButton = document.createElement('button');
-                audioButton.innerHTML = '🔊';
-                audioButton.className = 'audio-control';
-                audioButton.title = 'Toggle Sound';
-                
-                document.body.appendChild(audioButton);
-                
-                // Estado de reproducción
-                let isPlaying = false;
-                
-                // Agregar evento click al botón
-                audioButton.addEventListener('click', function() {
-                    if (isPlaying) {
-                        bgAudio.pause();
-                        audioButton.innerHTML = '🔇';
-                    } else {
-                        // Intentar reproducir el audio
-                        const playPromise = bgAudio.play();
-                        
-                        // Manejar la promesa para evitar errores
-                        if (playPromise !== undefined) {
-                            playPromise.then(_ => {
-                                audioButton.innerHTML = '🔊';
-                            })
-                            .catch(error => {
-                                console.log('Reproducción automática bloqueada por el navegador:', error);
-                                audioButton.innerHTML = '🔇';
-                            });
-                        }
-                    }
-                    
-                    isPlaying = !isPlaying;
-                });
+            if (!bgAudio || !playPauseBtn || !volumeSlider) return;
+            
+            // Configurar volumen inicial
+            bgAudio.volume = 0.3; // 30% de volumen
+            volumeSlider.value = 30;
+            
+            // Estado de reproducción
+            let isPlaying = false;
+            let userHasInteracted = false;
+            
+            // Función para reproducir audio
+            async function playAudio() {
+                try {
+                    await bgAudio.play();
+                    isPlaying = true;
+                    playIcon.textContent = '🔊';
+                    playPauseBtn.classList.add('active');
+                    playPauseBtn.title = 'Pause Music';
+                    console.log('🎵 Background music started');
+                } catch (error) {
+                    console.log('🔇 Autoplay blocked:', error.message);
+                    playIcon.textContent = '🔇';
+                    playPauseBtn.title = 'Click to Play Music';
+                }
             }
+            
+            // Función para pausar audio
+            function pauseAudio() {
+                bgAudio.pause();
+                isPlaying = false;
+                playIcon.textContent = '🔇';
+                playPauseBtn.classList.remove('active');
+                playPauseBtn.title = 'Play Music';
+                console.log('🔇 Background music paused');
+            }
+            
+            // Event listener para el botón play/pause
+            playPauseBtn.addEventListener('click', function() {
+                userHasInteracted = true;
+                
+                if (isPlaying) {
+                    pauseAudio();
+                } else {
+                    playAudio();
+                }
+            });
+            
+            // Event listener para el control de volumen
+            volumeSlider.addEventListener('input', function() {
+                const volume = this.value / 100;
+                bgAudio.volume = volume;
+                
+                // Cambiar ícono según el volumen
+                if (volume === 0) {
+                    playIcon.textContent = '🔇';
+                } else if (volume < 0.5) {
+                    playIcon.textContent = '🔉';
+                } else {
+                    playIcon.textContent = '🔊';
+                }
+            });
+            
+            // Eventos del audio
+            bgAudio.addEventListener('loadstart', () => {
+                console.log('🎵 Audio loading started');
+            });
+            
+            bgAudio.addEventListener('canplaythrough', () => {
+                console.log('🎵 Audio ready to play');
+            });
+            
+            bgAudio.addEventListener('ended', () => {
+                console.log('🎵 Audio ended (this should not happen with loop)');
+            });
+            
+            bgAudio.addEventListener('error', (e) => {
+                console.error('🎵 Audio error:', e);
+                playIcon.textContent = '❌';
+                playPauseBtn.title = 'Audio Error';
+            });
+            
+            // Intentar reproducir automáticamente cuando el usuario interactúe con la página
+            document.addEventListener('click', function() {
+                if (!userHasInteracted) {
+                    userHasInteracted = true;
+                    playAudio();
+                }
+            }, { once: true });
+            
+            // También intentar con otros eventos de interacción
+            ['keydown', 'touchstart'].forEach(event => {
+                document.addEventListener(event, function() {
+                    if (!userHasInteracted) {
+                        userHasInteracted = true;
+                        playAudio();
+                    }
+                }, { once: true });
+            });
         }
     </script>
 </body>

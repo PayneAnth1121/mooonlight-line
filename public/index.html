@@ -119,28 +119,28 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 30px; /* Reducido para dar más espacio al logo */
+            gap: 40px; /* Restaurado */
             width: 100%;
-            max-width: 800px; /* Aumentado para acomodar el logo grande */
+            max-width: 600px; /* Tamaño medio */
             padding: 20px;
             position: relative;
             z-index: 1;
         }
         
-        /* 🆕 LOGO MASIVO - PARA OCUPAR TODA EL ÁREA ROJA */
+        /* 🆕 LOGO TAMAÑO PERFECTO - Ni muy grande ni muy pequeño */
         .logo-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px; /* Reducido */
+            margin-bottom: 30px;
             width: 100%;
         }
         
         .main-logo {
-            max-width: 1200px; /* MASIVO - Para ocupar toda el área roja */
-            width: 100%; /* Ocupa TODO el ancho disponible */
+            max-width: 550px; /* TAMAÑO PERFECTO */
+            width: 90%; /* Buen balance */
             height: auto;
-            filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.7));
+            filter: drop-shadow(0 0 25px rgba(0, 240, 255, 0.7));
             transition: all 0.3s ease;
             animation: logoGlow 3s ease-in-out infinite alternate;
         }
@@ -387,26 +387,15 @@
             box-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
         }
         
-        /* Media Queries - RESPONSIVE PARA LOGO MASIVO */
-        @media (max-width: 1200px) {
-            .main-container {
-                max-width: 900px;
-            }
-            
-            .main-logo {
-                max-width: 1000px;
-                width: 100%;
-            }
-        }
-        
+        /* Media Queries - RESPONSIVE BALANCEADO */
         @media (max-width: 768px) {
             .main-container {
-                max-width: 700px;
+                max-width: 500px;
             }
             
             .main-logo {
-                max-width: 700px; /* Muy grande para tablets */
-                width: 100%;
+                max-width: 450px; /* Buen tamaño para tablets */
+                width: 95%;
             }
             
             .neon-button {
@@ -435,7 +424,7 @@
             }
             
             .main-logo {
-                max-width: 450px; /* Grande para móviles pequeños */
+                max-width: 350px; /* Razonable para móviles */
                 width: 100%;
             }
             
@@ -463,8 +452,8 @@
     <div class="side-glow-left"></div>
     <div class="side-glow-right"></div>
     
-    <!-- 🆕 AUDIO BACKGROUND MUSIC - MEJORADO -->
-    <audio id="background-audio" loop preload="auto" volume="0.3">
+    <!-- 🆕 AUDIO BACKGROUND MUSIC - CON AUTOPLAY -->
+    <audio id="background-audio" loop preload="auto" autoplay muted>
         <source src="/assets/music/background-music.mp3" type="audio/mpeg">
         <source src="/assets/music/background-music.ogg" type="audio/ogg">
         <source src="/assets/music/background-music.wav" type="audio/wav">
@@ -633,7 +622,7 @@
             }
         }
         
-        // 🆕 CONFIGURACIÓN MEJORADA DEL AUDIO CON AUTO-REPRODUCCIÓN
+        // 🆕 AUDIO CON REPRODUCCIÓN INMEDIATA
         function setupAudio() {
             const bgAudio = document.getElementById('background-audio');
             const playPauseBtn = document.getElementById('play-pause-btn');
@@ -650,15 +639,19 @@
             let isPlaying = false;
             let userHasInteracted = false;
             
-            // Función para reproducir audio
+            // 🎵 FUNCIÓN DE REPRODUCCIÓN INMEDIATA
             async function playAudio() {
                 try {
+                    // Primero unmute el audio
+                    bgAudio.muted = false;
+                    bgAudio.volume = 0.3;
+                    
                     await bgAudio.play();
                     isPlaying = true;
                     playIcon.textContent = '🔊';
                     playPauseBtn.classList.add('active');
                     playPauseBtn.title = 'Pause Music';
-                    console.log('🎵 Background music started');
+                    console.log('🎵 Background music started successfully!');
                 } catch (error) {
                     console.log('🔇 Autoplay blocked:', error.message);
                     playIcon.textContent = '🔇';
@@ -676,10 +669,8 @@
                 console.log('🔇 Background music paused');
             }
             
-            // 🆕 INTENTAR REPRODUCIR INMEDIATAMENTE
-            setTimeout(() => {
-                playAudio();
-            }, 1000); // Espera 1 segundo después de cargar
+            // 🚀 REPRODUCIR INMEDIATAMENTE AL CARGAR
+            playAudio();
             
             // Event listener para el botón play/pause
             playPauseBtn.addEventListener('click', function() {
@@ -708,46 +699,43 @@
             });
             
             // Eventos del audio
-            bgAudio.addEventListener('loadstart', () => {
-                console.log('🎵 Audio loading started');
+            bgAudio.addEventListener('loadeddata', () => {
+                console.log('🎵 Audio loaded, attempting to play...');
+                playAudio();
             });
             
             bgAudio.addEventListener('canplaythrough', () => {
                 console.log('🎵 Audio ready to play');
-                // Intentar reproducir cuando esté listo
-                if (!userHasInteracted) {
-                    playAudio();
-                }
+                playAudio();
             });
             
-            bgAudio.addEventListener('ended', () => {
-                console.log('🎵 Audio ended (this should not happen with loop)');
+            bgAudio.addEventListener('play', () => {
+                console.log('🎵 Audio started playing');
+                isPlaying = true;
+                playIcon.textContent = '🔊';
+                playPauseBtn.classList.add('active');
+            });
+            
+            bgAudio.addEventListener('pause', () => {
+                console.log('🎵 Audio paused');
+                isPlaying = false;
+                playIcon.textContent = '🔇';
+                playPauseBtn.classList.remove('active');
             });
             
             bgAudio.addEventListener('error', (e) => {
                 console.error('🎵 Audio error:', e);
                 playIcon.textContent = '❌';
-                playPauseBtn.title = 'Audio Error - File Not Found';
+                playPauseBtn.title = 'Audio Error - Check file path';
             });
             
-            // 🆕 MÚLTIPLES EVENTOS PARA INICIAR LA MÚSICA
-            const interactionEvents = ['click', 'keydown', 'touchstart', 'mousedown'];
-            
-            interactionEvents.forEach(eventType => {
-                document.addEventListener(eventType, function() {
-                    if (!userHasInteracted) {
-                        userHasInteracted = true;
-                        playAudio();
-                    }
-                }, { once: true });
-            });
-            
-            // 🆕 TAMBIÉN INTENTAR CUANDO SE HACE VISIBLE LA PÁGINA
-            document.addEventListener('visibilitychange', function() {
-                if (!document.hidden && !userHasInteracted) {
+            // 🎯 BACKUP: Si el usuario interactúa y no está sonando
+            document.addEventListener('click', function() {
+                if (!isPlaying && !userHasInteracted) {
+                    userHasInteracted = true;
                     playAudio();
                 }
-            });
+            }, { once: true });
         }
     </script>
 </body>

@@ -127,34 +127,35 @@
             z-index: 1;
         }
         
-        /* 🆕 NUEVO ESTILO PARA EL LOGO */
+        /* 🆕 AJUSTE DE TAMAÑO DEL LOGO - MÁS GRANDE */
         .logo-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            width: 100%;
         }
         
         .main-logo {
-            max-width: px;
-            width: 100%;
+            max-width: 800px; /* AUMENTADO MUCHO MÁS */
+            width: 95%; /* Ocupa casi todo el ancho disponible */
             height: auto;
-            filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.7));
+            filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.7));
             transition: all 0.3s ease;
             animation: logoGlow 3s ease-in-out infinite alternate;
         }
         
         .main-logo:hover {
-            transform: scale(1.05);
-            filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.9));
+            transform: scale(1.02); /* Reducido aún más para evitar que se salga */
+            filter: drop-shadow(0 0 40px rgba(0, 240, 255, 0.9));
         }
         
         @keyframes logoGlow {
             0% { 
-                filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.7));
+                filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.7));
             }
             100% { 
-                filter: drop-shadow(0 0 30px rgba(0, 240, 255, 1));
+                filter: drop-shadow(0 0 40px rgba(0, 240, 255, 1));
             }
         }
         
@@ -386,10 +387,11 @@
             box-shadow: 0 0 5px rgba(0, 240, 255, 0.8);
         }
         
-        /* Media Queries */
+        /* Media Queries - RESPONSIVE AJUSTADO PARA EL LOGO MÁS GRANDE */
         @media (max-width: 768px) {
             .main-logo {
-                max-width: 300px;
+                max-width: 600px; /* Aumentado para tablets */
+                width: 98%;
             }
             
             .neon-button {
@@ -414,7 +416,8 @@
         
         @media (max-width: 480px) {
             .main-logo {
-                max-width: 250px;
+                max-width: 480px; /* Aumentado para móviles pequeños */
+                width: 100%;
             }
             
             .neon-button {
@@ -705,7 +708,7 @@
                     playAudio();
                 }
             }, { once: true });
-            //
+            
             // También intentar con otros eventos de interacción
             ['keydown', 'touchstart'].forEach(event => {
                 document.addEventListener(event, function() {

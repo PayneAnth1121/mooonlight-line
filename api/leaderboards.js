@@ -1,4 +1,4 @@
-// api/leaderboards.js - FIXED: Mejor detección de jornada activa
+// api/leaderboards.js - FIXED: Mejor detección de jornada activa + RECÁLCULO AUTOMÁTICO
 const { Pool } = require('pg');
 
 const pool = new Pool({
@@ -29,9 +29,9 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { jornada_id } = req.query;
+    const { jornada_id, force_refresh } = req.query;
 
-    console.log('🔍 Leaderboards request for jornada_id:', jornada_id);
+    console.log('🔍 Leaderboards request for jornada_id:', jornada_id, 'force_refresh:', force_refresh);
 
     // 🆕 LÓGICA MEJORADA PARA DETECTAR JORNADA
     let targetJornada = jornada_id;
@@ -111,7 +111,8 @@ module.exports = async function handler(req, res) {
       SELECT 
         COUNT(DISTINCT ps.id) as stats_count,
         COUNT(DISTINCT ut.id) as teams_count,
-        COUNT(DISTINCT u.id) as users_count
+        COUNT(DISTINCT u.id) as users_count,
+        SUM(ut.total_points) as total_team_points
       FROM jornadas j
       LEFT JOIN player_stats ps ON j.id = ps.jornada_id
       LEFT JOIN user_teams ut ON j.id = ut.jornada_id
@@ -121,6 +122,52 @@ module.exports = async function handler(req, res) {
     
     const dataInfo = dataCheck.rows[0];
     console.log('📊 Data check:', dataInfo);
+
+    // 🔧 FUNCIÓN PARA FORZAR RECÁLCULO SI ES NECESARIO
+    async function forceRecalculateIfNeeded(jornadaId) {
+      try {
+        console.log('🔍 Checking if recalculation is needed for jornada:', jornadaId);
+        
+        // Verificar si hay estadísticas pero los equipos tienen 0 puntos
+        const checkResult = await pool.query(`
+          SELECT 
+            COUNT(DISTINCT ps.id) as stats_count,
+            COUNT(DISTINCT ut.id) as teams_count,
+            SUM(ut.total_points) as total_team_points
+          FROM jornadas j
+          LEFT JOIN player_stats ps ON j.id = ps.jornada_id
+          LEFT JOIN user_teams ut ON j.id = ut.jornada_id
+          WHERE j.id = $1
+        `, [jornadaId]);
+        
+        const data = checkResult.rows[0];
+        
+        if (parseInt(data.stats_count) > 0 && 
+            parseInt(data.teams_count) > 0 && 
+            parseInt(data.total_team_points) === 0) {
+          
+          console.log('⚠️ Stats exist but teams have 0 points - forcing recalculation...');
+          
+          const recalcResult = await pool.query(
+            'SELECT * FROM recalculate_all_team_points($1)',
+            [jornadaId]
+          );
+          
+          console.log('✅ Recalculation result:', recalcResult.rows[0]);
+          return true;
+        }
+        
+        return false;
+      } catch (error) {
+        console.error('Error in forceRecalculateIfNeeded:', error);
+        return false;
+      }
+    }
+
+    // 🆕 FORZAR RECÁLCULO SI ES NECESARIO O SI SE SOLICITA
+    if (force_refresh === 'true' || parseInt(dataInfo.total_team_points) === 0) {
+      await forceRecalculateIfNeeded(targetJornada);
+    }
 
     // 🆕 USAR FUNCIÓN get_leaderboard MEJORADA
     let leaderboardData = [];
@@ -159,7 +206,7 @@ module.exports = async function handler(req, res) {
       console.log('✅ Direct query result:', directResult.rows.length, 'entries');
     }
 
-    // 🆕 FORZAR RECÁLCULO SI NO HAY PUNTOS
+    // 🆕 FORZAR RECÁLCULO SI NO HAY PUNTOS PERO HAY ESTADÍSTICAS
     const totalPointsInLeaderboard = leaderboardData.reduce((sum, entry) => sum + parseInt(entry.points), 0);
     
     if (totalPointsInLeaderboard === 0 && parseInt(dataInfo.stats_count) > 0) {
@@ -201,7 +248,8 @@ module.exports = async function handler(req, res) {
         teams_count: parseInt(dataInfo.teams_count),
         users_count: parseInt(dataInfo.users_count),
         total_points_shown: leaderboardData.reduce((sum, entry) => sum + parseInt(entry.points), 0),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        recalculated: force_refresh === 'true' || totalPointsInLeaderboard === 0
       }
     };
 

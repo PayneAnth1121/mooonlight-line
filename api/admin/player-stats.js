@@ -1,21 +1,18 @@
-// api/admin/player-stats.js - CONSOLIDADO: Manage player statistics + individual jornada stats
+// api/admin/player-stats.js - MEJORADO con recálculo automático
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 
-// Configuración de la base de datos
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
-// CORS headers
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
-// Middleware to verify JWT token and admin status
 function authenticateAdmin(req) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -36,7 +33,6 @@ function authenticateAdmin(req) {
 }
 
 module.exports = async function handler(req, res) {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     Object.keys(corsHeaders).forEach(key => {
       res.setHeader(key, corsHeaders[key]);
@@ -44,29 +40,24 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({});
   }
 
-  // Set CORS headers
   Object.keys(corsHeaders).forEach(key => {
     res.setHeader(key, corsHeaders[key]);
   });
 
   try {
-    // Authenticate admin
     authenticateAdmin(req);
 
-    // Check if this is a specific jornada request (former [jornadaId].js functionality)
     if (req.query.jornadaId) {
       return await handleSpecificJornada(req, res);
     }
 
     if (req.method === 'GET') {
-      // Get player stats for a specific jornada
       const { jornada_id } = req.query;
       
       if (!jornada_id) {
         return res.status(400).json({ message: 'Jornada ID is required' });
       }
 
-      // Get all active players with their stats for this jornada (if any)
       const result = await pool.query(`
         SELECT 
           p.id as player_id,
@@ -92,7 +83,6 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === 'POST') {
-      // Save/update player stats for a jornada
       const { jornada_id, stats } = req.body;
       
       if (!jornada_id || !stats || !Array.isArray(stats)) {
@@ -101,7 +91,6 @@ module.exports = async function handler(req, res) {
         });
       }
 
-      // Validate jornada exists
       const jornadaCheck = await pool.query(
         'SELECT id FROM jornadas WHERE id = $1',
         [jornada_id]
@@ -116,8 +105,10 @@ module.exports = async function handler(req, res) {
       try {
         await client.query('BEGIN');
         
+        console.log(`📊 Saving stats for jornada ${jornada_id}`);
         const results = [];
         
+        // Guardar estadísticas
         for (const stat of stats) {
           const { 
             player_id, 
@@ -134,7 +125,6 @@ module.exports = async function handler(req, res) {
             throw new Error('Player ID is required for each stat entry');
           }
           
-          // Validate player exists
           const playerCheck = await client.query(
             'SELECT id FROM players WHERE id = $1 AND is_active = TRUE',
             [player_id]
@@ -144,13 +134,11 @@ module.exports = async function handler(req, res) {
             throw new Error(`Player with ID ${player_id} not found or inactive`);
           }
           
-          // Validate stat values
           if (rebounds < 0 || two_points < 0 || three_points < 0 || 
               free_throws < 0 || assists < 0 || blocks < 0) {
             throw new Error('Statistics cannot be negative');
           }
           
-          // Upsert player stats (insert or update if exists)
           const upsertResult = await client.query(`
             INSERT INTO player_stats (
               player_id, 
@@ -189,12 +177,31 @@ module.exports = async function handler(req, res) {
           results.push(upsertResult.rows[0]);
         }
         
+        // 🔒 BLOQUEAR EDICIÓN DE LINEUPS
+        await client.query(`
+          UPDATE jornadas 
+          SET lineup_locked = TRUE, 
+              is_current = TRUE,
+              updated_at = NOW()
+          WHERE id = $1
+        `, [jornada_id]);
+        
+        // ⚡ FORZAR RECÁLCULO DE TODOS LOS EQUIPOS
+        console.log(`🔄 Forcing recalculation for jornada ${jornada_id}`);
+        const recalcResult = await client.query(
+          'SELECT * FROM recalculate_all_team_points($1)',
+          [jornada_id]
+        );
+        
         await client.query('COMMIT');
         
+        console.log(`✅ Stats saved and points recalculated: ${recalcResult.rows[0].message}`);
+        
         return res.json({
-          message: 'Player stats saved successfully',
+          message: 'Player stats saved and team points updated successfully',
           updated_count: results.length,
-          stats: results
+          stats: results,
+          recalculation: recalcResult.rows[0]
         });
         
       } catch (error) {
@@ -206,7 +213,6 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      // Delete all stats for a specific jornada
       const { jornada_id } = req.body;
       
       if (!jornada_id) {
@@ -238,13 +244,11 @@ module.exports = async function handler(req, res) {
   }
 };
 
-// Handle specific jornada request (former [jornadaId].js functionality)
 async function handleSpecificJornada(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  // Get jornada ID from query params
   const { jornadaId } = req.query;
   
   if (!jornadaId || isNaN(parseInt(jornadaId))) {
@@ -253,7 +257,6 @@ async function handleSpecificJornada(req, res) {
 
   const jornada_id = parseInt(jornadaId);
 
-  // Validate jornada exists
   const jornadaCheck = await pool.query(
     'SELECT id, week_number, is_current, is_completed FROM jornadas WHERE id = $1',
     [jornada_id]
@@ -263,7 +266,6 @@ async function handleSpecificJornada(req, res) {
     return res.status(404).json({ message: 'Jornada not found' });
   }
 
-  // Get all active players with their stats for this jornada (if any)
   const result = await pool.query(`
     SELECT 
       p.id as player_id,
@@ -291,10 +293,8 @@ async function handleSpecificJornada(req, res) {
       p.name ASC
   `, [jornada_id]);
   
-  // Get jornada info for context
   const jornadaInfo = jornadaCheck.rows[0];
   
-  // Get summary statistics
   const summaryResult = await pool.query(`
     SELECT 
       COUNT(*) as total_players_with_stats,

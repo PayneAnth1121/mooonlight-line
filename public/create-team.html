@@ -1239,7 +1239,72 @@
                     throw new Error('Unable to determine current game week. Please try again or contact administrator.');
                 }
             }
+                    // 🔒 VERIFICAR SI EL LINEUP ESTÁ BLOQUEADO
+async function checkLineupLocked() {
+    try {
+        const authToken = localStorage.getItem('authToken');
+        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+        
+        if (!authToken || !userData.id) return;
+        
+        const currentJornada = await getCurrentJornada();
+        if (!currentJornada) return;
+        
+        const response = await fetch(`/api/user-teams?user_id=${userData.id}&jornada_id=${currentJornada.id}`, {
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            
+            if (data.lineup_locked) {
+                // Deshabilitar todos los slots y botones
+                document.querySelectorAll('.player-slot, .bench-slot').forEach(slot => {
+                    slot.style.pointerEvents = 'none';
+                    slot.style.opacity = '0.7';
+                });
+                
+                document.getElementById('save-team-btn').disabled = true;
+                document.getElementById('save-team-btn-2').disabled = true;
+                document.getElementById('clear-team-btn').disabled = true;
+                
+                // Mostrar mensaje
+                const warningDiv = document.createElement('div');
+                warningDiv.style.cssText = `
+                    background-color: rgba(255, 107, 107, 0.1);
+                    border: 1px solid #ff6b6b;
+                    color: #ff6b6b;
+                    padding: 15px;
+                    margin: 20px auto;
+                    text-align: center;
+                    border-radius: 10px;
+                    max-width: 600px;
+                    font-weight: 600;
+                `;
+                warningDiv.innerHTML = `
+                    🔒 LINEUPS ARE LOCKED FOR WEEK ${currentJornada.week_number}<br>
+                    <small>You cannot modify your team after stats have been uploaded</small>
+                `;
+                document.querySelector('.section-subtitle').appendChild(warningDiv);
+            }
+        }
+    } catch (error) {
+        console.error('Error checking lineup lock:', error);
+    }
+}
 
+// Llamar a la función cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    // ... código existente ...
+    
+    // Agregar al final del DOMContentLoaded:
+    setTimeout(() => {
+        checkLineupLocked();
+    }, 1000);
+});
+            
             // Nueva función para activar jornada
             async function activateJornada(jornadaId) {
                 try {

@@ -1,4 +1,4 @@
-// api/admin/users.js - CONSOLIDADO: Manage users + individual user details
+// api/admin/users.js - CONSOLIDADO: Manage users + individual user details + draft control
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 
@@ -74,6 +74,7 @@ module.exports = async function handler(req, res) {
           u.email,
           u.team_name,
           u.is_admin,
+          u.has_drafted,
           u.created_at,
           u.updated_at
         FROM users u
@@ -89,6 +90,7 @@ module.exports = async function handler(req, res) {
             u.email,
             u.team_name,
             u.is_admin,
+            u.has_drafted,
             u.created_at,
             u.updated_at,
             (
@@ -131,6 +133,7 @@ module.exports = async function handler(req, res) {
           COUNT(*) as total_users,
           COUNT(CASE WHEN is_admin = true THEN 1 END) as total_admins,
           COUNT(CASE WHEN is_admin = false THEN 1 END) as total_regular_users,
+          COUNT(CASE WHEN has_drafted = true THEN 1 END) as users_drafted,
           (
             SELECT COUNT(*) 
             FROM user_teams 
@@ -156,6 +159,7 @@ module.exports = async function handler(req, res) {
           total_users: parseInt(summary.total_users) || 0,
           total_admins: parseInt(summary.total_admins) || 0,
           total_regular_users: parseInt(summary.total_regular_users) || 0,
+          users_drafted: parseInt(summary.users_drafted) || 0,
           total_active_teams: parseInt(summary.total_active_teams) || 0,
           avg_team_size: parseFloat(summary.avg_team_size) || 0
         }
@@ -163,8 +167,8 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === 'PUT') {
-      // Update user (admin can modify user roles, etc.)
-      const { user_id, is_admin, team_name } = req.body;
+      // Update user (admin can modify user roles, draft status, etc.)
+      const { user_id, is_admin, team_name, has_drafted } = req.body;
       
       if (!user_id) {
         return res.status(400).json({ message: 'User ID is required' });
@@ -197,6 +201,13 @@ module.exports = async function handler(req, res) {
         paramIndex++;
       }
 
+      // 🆕 AGREGAR CONTROL DE DRAFT STATUS
+      if (typeof has_drafted === 'boolean') {
+        updateFields.push(`has_drafted = $${paramIndex}`);
+        updateValues.push(has_drafted);
+        paramIndex++;
+      }
+
       if (updateFields.length === 0) {
         return res.status(400).json({ message: 'No valid fields to update' });
       }
@@ -208,7 +219,7 @@ module.exports = async function handler(req, res) {
         UPDATE users 
         SET ${updateFields.join(', ')}
         WHERE id = $${paramIndex}
-        RETURNING id, username, email, team_name, is_admin, updated_at
+        RETURNING id, username, email, team_name, is_admin, has_drafted, updated_at
       `;
 
       const result = await pool.query(updateQuery, updateValues);
@@ -323,6 +334,7 @@ async function handleSpecificUser(req, res) {
       email,
       team_name,
       is_admin,
+      has_drafted,
       created_at,
       updated_at
     FROM users 

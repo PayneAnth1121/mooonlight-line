@@ -6,7 +6,7 @@
     <title>Moonlight Line - Manage Game Weeks</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* [Mantener todos los estilos existentes...] */
+        /* [Mantener estilos base existentes...] */
         * {
             margin: 0;
             padding: 0;
@@ -88,15 +88,45 @@
         
         .admin-title {
             font-size: 2rem;
-            color: #ff8c00;
+            color: #00f0ff;
             margin-bottom: 30px;
-            text-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
             text-transform: uppercase;
             letter-spacing: 2px;
             text-align: center;
         }
         
-        /* 🆕 NUEVO ESTILO PARA FORMULARIO SIMPLIFICADO */
+        /* 🆕 PANEL DE CONTROL RÁPIDO */
+        .quick-actions {
+            background-color: rgba(0, 255, 128, 0.1);
+            border: 1px solid #00ff80;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .quick-action-btn {
+            background-color: rgba(0, 255, 128, 0.1);
+            border: 1px solid #00ff80;
+            color: #00ff80;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .quick-action-btn:hover {
+            background-color: rgba(0, 255, 128, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 128, 0.5);
+        }
+        
         .create-form {
             background-color: rgba(0, 0, 0, 0.7);
             border: 1px solid #00ff80;
@@ -188,7 +218,6 @@
             transform: translateY(-2px);
         }
         
-        /* Estilos para tabla de jornadas */
         .jornadas-list {
             background-color: rgba(0, 0, 0, 0.7);
             border: 1px solid #ff8c00;
@@ -256,6 +285,12 @@
             border: 1px solid #ff8c00;
         }
         
+        .locked {
+            background-color: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+        
         .action-buttons {
             display: flex;
             gap: 5px;
@@ -280,6 +315,26 @@
         .edit-btn:hover {
             background-color: rgba(0, 240, 255, 0.15);
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        
+        .activate-btn {
+            border-color: #00ff80;
+            color: #00ff80;
+        }
+        
+        .activate-btn:hover {
+            background-color: rgba(0, 255, 128, 0.15);
+            box-shadow: 0 0 10px rgba(0, 255, 128, 0.5);
+        }
+        
+        .unlock-btn {
+            border-color: #ff8c00;
+            color: #ff8c00;
+        }
+        
+        .unlock-btn:hover {
+            background-color: rgba(255, 140, 0, 0.15);
+            box-shadow: 0 0 10px rgba(255, 140, 0, 0.5);
         }
         
         .delete-btn {
@@ -329,6 +384,105 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* 🆕 MODAL PARA EDICIÓN */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .modal-content {
+            background-color: rgba(6, 17, 31, 0.95);
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #00f0ff;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+        }
+        
+        .modal-title {
+            color: #00f0ff;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        
+        .modal-form-group {
+            margin-bottom: 15px;
+        }
+        
+        .modal-label {
+            display: block;
+            color: #00f0ff;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .modal-input {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.5);
+            border-radius: 5px;
+            padding: 10px;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .modal-input:focus {
+            outline: none;
+            border-color: #00f0ff;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .modal-save {
+            background-color: rgba(0, 255, 128, 0.1);
+            border: 1px solid #00ff80;
+            color: #00ff80;
+        }
+        
+        .modal-save:hover {
+            background-color: rgba(0, 255, 128, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 128, 0.5);
+        }
+        
+        .modal-cancel {
+            background-color: rgba(255, 107, 107, 0.1);
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+        }
+        
+        .modal-cancel:hover {
+            background-color: rgba(255, 107, 107, 0.2);
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
+        }
+        
         /* Responsive */
         @media (max-width: 768px) {
             .simple-form-row {
@@ -338,6 +492,15 @@
             
             .form-input {
                 width: 200px;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 2px;
             }
         }
     </style>
@@ -357,11 +520,19 @@
         
         <h1 class="admin-title">MANAGE GAME WEEKS</h1>
         
+        <!-- 🆕 ACCIONES RÁPIDAS -->
+        <div class="quick-actions">
+            <button class="quick-action-btn" id="force-recalc-btn">🔄 FORCE RECALCULATE ALL</button>
+            <button class="quick-action-btn" id="unlock-all-btn">🔓 UNLOCK ALL LINEUPS</button>
+            <button class="quick-action-btn" id="check-integrity-btn">🔍 CHECK DATA INTEGRITY</button>
+            <a href="leaderboards.html?force_refresh=true" class="quick-action-btn">📊 VIEW LEADERBOARDS</a>
+        </div>
+        
         <!-- Alertas -->
         <div id="alert-success" class="alert alert-success"></div>
         <div id="alert-error" class="alert alert-error"></div>
         
-        <!-- 🆕 FORMULARIO SIMPLIFICADO -->
+        <!-- Formulario simplificado -->
         <div class="create-form">
             <h3 class="form-title">CREATE NEW GAME WEEK</h3>
             
@@ -392,8 +563,9 @@
                     <tr>
                         <th>WEEK #</th>
                         <th>STATUS</th>
-                        <th>STATS COUNT</th>
-                        <th>TEAMS COUNT</th>
+                        <th>LINEUP</th>
+                        <th>STATS</th>
+                        <th>TEAMS</th>
                         <th>ACTIONS</th>
                     </tr>
                 </thead>
@@ -401,6 +573,44 @@
                     <!-- Filas se cargarán dinámicamente -->
                 </tbody>
             </table>
+        </div>
+    </div>
+    
+    <!-- 🆕 MODAL PARA EDICIÓN -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">EDIT GAME WEEK</h3>
+            <form id="edit-form">
+                <input type="hidden" id="edit-jornada-id">
+                
+                <div class="modal-form-group">
+                    <label class="modal-label" for="edit-week-number">Week Number</label>
+                    <input type="number" id="edit-week-number" class="modal-input" min="1" max="52" required>
+                </div>
+                
+                <div class="modal-form-group">
+                    <label class="modal-label">
+                        <input type="checkbox" id="edit-is-current"> Set as Current Week
+                    </label>
+                </div>
+                
+                <div class="modal-form-group">
+                    <label class="modal-label">
+                        <input type="checkbox" id="edit-is-completed"> Mark as Completed
+                    </label>
+                </div>
+                
+                <div class="modal-form-group">
+                    <label class="modal-label">
+                        <input type="checkbox" id="edit-lineup-locked"> Lock User Lineups
+                    </label>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="submit" class="modal-btn modal-save">SAVE CHANGES</button>
+                    <button type="button" class="modal-btn modal-cancel" id="cancel-edit">CANCEL</button>
+                </div>
+            </form>
         </div>
     </div>
     
@@ -413,10 +623,25 @@
             const jornadasTableBody = document.getElementById('jornadas-table-body');
             const alertSuccess = document.getElementById('alert-success');
             const alertError = document.getElementById('alert-error');
+            const editModal = document.getElementById('edit-modal');
+            const editForm = document.getElementById('edit-form');
+            const cancelEditBtn = document.getElementById('cancel-edit');
+            
+            // 🆕 BOTONES DE ACCIONES RÁPIDAS
+            const forceRecalcBtn = document.getElementById('force-recalc-btn');
+            const unlockAllBtn = document.getElementById('unlock-all-btn');
+            const checkIntegrityBtn = document.getElementById('check-integrity-btn');
             
             checkAuth();
             
             createForm.addEventListener('submit', createJornada);
+            editForm.addEventListener('submit', updateJornada);
+            cancelEditBtn.addEventListener('click', closeEditModal);
+            
+            // 🆕 EVENT LISTENERS PARA ACCIONES RÁPIDAS
+            forceRecalcBtn.addEventListener('click', forceRecalculateAll);
+            unlockAllBtn.addEventListener('click', unlockAllLineups);
+            checkIntegrityBtn.addEventListener('click', checkDataIntegrity);
             
             function checkAuth() {
                 const userData = JSON.parse(localStorage.getItem('userData') || '{}');
@@ -462,22 +687,34 @@
                 let html = '';
                 
                 if (jornadas.length === 0) {
-                    html = '<tr><td colspan="5">No game weeks found</td></tr>';
+                    html = '<tr><td colspan="6">No game weeks found</td></tr>';
                 } else {
                     jornadas.forEach(jornada => {
-                        const status = getStatusInfo(jornada);
+                        const statusInfo = getStatusInfo(jornada);
+                        const lineupStatus = getLineupStatus(jornada);
                         
                         html += `
                             <tr>
                                 <td><strong>Week ${jornada.week_number}</strong></td>
-                                <td>${status.badge}</td>
-                                <td>${status.statsCount}</td>
-                                <td>${status.teamsCount}</td>
+                                <td>${statusInfo.badge}</td>
+                                <td>${lineupStatus.badge}</td>
+                                <td>${statusInfo.statsCount}</td>
+                                <td>${statusInfo.teamsCount}</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="action-btn edit-btn" onclick="editJornada(${jornada.id})">
+                                        <button class="action-btn edit-btn" onclick="openEditModal(${jornada.id})">
                                             EDIT
                                         </button>
+                                        ${!jornada.is_current ? `
+                                        <button class="action-btn activate-btn" onclick="activateJornada(${jornada.id})">
+                                            ACTIVATE
+                                        </button>
+                                        ` : ''}
+                                        ${jornada.lineup_locked ? `
+                                        <button class="action-btn unlock-btn" onclick="unlockLineups(${jornada.id})">
+                                            UNLOCK
+                                        </button>
+                                        ` : ''}
                                         <button class="action-btn delete-btn" onclick="deleteJornada(${jornada.id}, ${jornada.week_number})">
                                             DELETE
                                         </button>
@@ -492,9 +729,9 @@
             }
             
             function getStatusInfo(jornada) {
-                // Simular conteos (en producción vendrían de la API)
-                const statsCount = Math.floor(Math.random() * 20);
-                const teamsCount = Math.floor(Math.random() * 10);
+                // Usar datos reales de la API
+                const statsCount = jornada.stats_count || 0;
+                const teamsCount = jornada.teams_count || 0;
                 
                 let badge;
                 if (jornada.is_current) {
@@ -512,7 +749,17 @@
                 };
             }
             
-            // 🆕 CREAR JORNADA SIMPLIFICADA
+            function getLineupStatus(jornada) {
+                let badge;
+                if (jornada.lineup_locked) {
+                    badge = '<span class="status-badge locked">LOCKED</span>';
+                } else {
+                    badge = '<span class="status-badge pending">OPEN</span>';
+                }
+                
+                return { badge };
+            }
+            
             async function createJornada(e) {
                 e.preventDefault();
                 
@@ -526,9 +773,9 @@
                     
                     const data = {
                         week_number: weekNumber,
-                        start_date: null,  // 🆕 Sin fechas
-                        end_date: null,    // 🆕 Sin fechas
-                        is_current: false  // 🆕 Se activará automáticamente al subir stats
+                        start_date: null,
+                        end_date: null,
+                        is_current: false
                     };
                     
                     const response = await fetch(`${API_URL}/admin/jornadas`, {
@@ -545,11 +792,10 @@
                         throw new Error(error.message || 'Failed to create game week');
                     }
                     
-                    showAlert('success', `Week ${weekNumber} created! Now go to Stats Manager to upload player results.`);
+                    showAlert('success', `Week ${weekNumber} created successfully!`);
                     createForm.reset();
                     loadJornadas();
                     
-                    // 🆕 Sugerir próximo paso
                     setTimeout(() => {
                         if (confirm('Week created successfully! Do you want to go to Stats Manager to upload player results?')) {
                             window.location.href = 'stats-manager.html';
@@ -562,13 +808,150 @@
                 }
             }
             
-            // Funciones globales para editar/eliminar (mantener las existentes)
-            window.editJornada = async function(id) {
-                showAlert('success', `Edit functionality coming soon for week ${id}`);
+            // 🆕 FUNCIONES MEJORADAS PARA EDICIÓN Y CONTROL
+            window.openEditModal = async function(id) {
+                try {
+                    const response = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch jornada details');
+                    }
+                    
+                    const jornada = await response.json();
+                    
+                    document.getElementById('edit-jornada-id').value = jornada.id;
+                    document.getElementById('edit-week-number').value = jornada.week_number;
+                    document.getElementById('edit-is-current').checked = jornada.is_current;
+                    document.getElementById('edit-is-completed').checked = jornada.is_completed;
+                    document.getElementById('edit-lineup-locked').checked = jornada.lineup_locked || false;
+                    
+                    editModal.style.display = 'block';
+                    
+                } catch (error) {
+                    console.error('Error loading jornada for edit:', error);
+                    showAlert('error', 'Error loading game week details.');
+                }
             };
             
+            async function updateJornada(e) {
+                e.preventDefault();
+                
+                try {
+                    const id = document.getElementById('edit-jornada-id').value;
+                    const weekNumber = parseInt(document.getElementById('edit-week-number').value);
+                    const isCurrent = document.getElementById('edit-is-current').checked;
+                    const isCompleted = document.getElementById('edit-is-completed').checked;
+                    const lineupLocked = document.getElementById('edit-lineup-locked').checked;
+                    
+                    const data = {
+                        week_number: weekNumber,
+                        is_current: isCurrent,
+                        is_completed: isCompleted,
+                        lineup_locked: lineupLocked
+                    };
+                    
+                    const response = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.message || 'Failed to update game week');
+                    }
+                    
+                    showAlert('success', 'Game week updated successfully!');
+                    closeEditModal();
+                    loadJornadas();
+                    
+                } catch (error) {
+                    console.error('Error updating game week:', error);
+                    showAlert('error', error.message || 'Error updating game week.');
+                }
+            }
+            
+            function closeEditModal() {
+                editModal.style.display = 'none';
+            }
+            
+            window.activateJornada = async function(id) {
+                try {
+                    const response = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        },
+                        body: JSON.stringify({
+                            is_current: true
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to activate game week');
+                    }
+                    
+                    showAlert('success', 'Game week activated successfully!');
+                    loadJornadas();
+                    
+                } catch (error) {
+                    console.error('Error activating game week:', error);
+                    showAlert('error', 'Error activating game week.');
+                }
+            };
+            
+            window.unlockLineups = async function(id) {
+                if (!confirm('Are you sure you want to unlock lineups for this week? Users will be able to modify their teams.')) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        },
+                        body: JSON.stringify({
+                            lineup_locked: false
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to unlock lineups');
+                    }
+                    
+                    showAlert('success', 'Lineups unlocked successfully!');
+                    loadJornadas();
+                    
+                } catch (error) {
+                    console.error('Error unlocking lineups:', error);
+                    showAlert('error', 'Error unlocking lineups.');
+                }
+            };
+            
+            // 🆕 FUNCIÓN MEJORADA PARA ELIMINAR
             window.deleteJornada = async function(id, weekNumber) {
-                if (!confirm(`Are you sure you want to delete Week ${weekNumber}? This action cannot be undone.`)) {
+                if (!confirm(`Are you sure you want to delete Week ${weekNumber}?\n\nThis will permanently delete:\n• All player statistics for this week\n• All user teams for this week\n• All associated data\n\nThis action CANNOT be undone!`)) {
+                    return;
+                }
+                
+                // Doble confirmación para eliminar
+                if (!confirm(`FINAL CONFIRMATION: Delete Week ${weekNumber}?\n\nType "DELETE" in the next prompt to confirm.`)) {
+                    return;
+                }
+                
+                const confirmText = prompt(`Type "DELETE" to confirm deletion of Week ${weekNumber}:`);
+                if (confirmText !== 'DELETE') {
+                    showAlert('error', 'Deletion cancelled - confirmation text did not match.');
                     return;
                 }
                 
@@ -585,14 +968,101 @@
                         throw new Error(error.message || 'Failed to delete game week');
                     }
                     
-                    showAlert('success', 'Game week deleted successfully!');
+                    showAlert('success', `Week ${weekNumber} deleted successfully!`);
                     loadJornadas();
                     
                 } catch (error) {
                     console.error('Error deleting game week:', error);
-                    showAlert('error', error.message || 'Error deleting game week. Please try again.');
+                    showAlert('error', error.message || 'Error deleting game week.');
                 }
             };
+            
+            // 🆕 FUNCIONES DE ACCIONES RÁPIDAS
+            async function forceRecalculateAll() {
+                if (!confirm('Force recalculate all team points? This may take a few moments.')) {
+                    return;
+                }
+                
+                try {
+                    forceRecalcBtn.disabled = true;
+                    forceRecalcBtn.textContent = '🔄 CALCULATING...';
+                    
+                    // Recalcular todos los puntos
+                    const response = await fetch(`${API_URL}/admin/recalculate-all`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    showAlert('success', 'All team points recalculated successfully!');
+                    loadJornadas();
+                    
+                } catch (error) {
+                    console.error('Error during recalculation:', error);
+                    showAlert('error', 'Error during recalculation.');
+                } finally {
+                    forceRecalcBtn.disabled = false;
+                    forceRecalcBtn.textContent = '🔄 FORCE RECALCULATE ALL';
+                }
+            }
+            
+            async function unlockAllLineups() {
+                if (!confirm('Unlock all lineups for all weeks? Users will be able to modify all their teams.')) {
+                    return;
+                }
+                
+                try {
+                    unlockAllBtn.disabled = true;
+                    unlockAllBtn.textContent = '🔓 UNLOCKING...';
+                    
+                    // Unlock all lineups
+                    const response = await fetch(`${API_URL}/admin/unlock-all-lineups`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    showAlert('success', 'All lineups unlocked successfully!');
+                    loadJornadas();
+                    
+                } catch (error) {
+                    console.error('Error unlocking lineups:', error);
+                    showAlert('error', 'Error unlocking lineups.');
+                } finally {
+                    unlockAllBtn.disabled = false;
+                    unlockAllBtn.textContent = '🔓 UNLOCK ALL LINEUPS';
+                }
+            }
+            
+            async function checkDataIntegrity() {
+                try {
+                    checkIntegrityBtn.disabled = true;
+                    checkIntegrityBtn.textContent = '🔍 CHECKING...';
+                    
+                    // Check data integrity
+                    const response = await fetch(`${API_URL}/admin/check-integrity`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        showAlert('success', `Data integrity check completed. ${result.message || 'All systems normal.'}`);
+                    } else {
+                        throw new Error('Integrity check failed');
+                    }
+                    
+                } catch (error) {
+                    console.error('Error during integrity check:', error);
+                    showAlert('error', 'Error during data integrity check.');
+                } finally {
+                    checkIntegrityBtn.disabled = false;
+                    checkIntegrityBtn.textContent = '🔍 CHECK DATA INTEGRITY';
+                }
+            }
             
             function showAlert(type, message) {
                 const alert = document.getElementById(`alert-${type}`);
@@ -607,6 +1077,13 @@
             function getAuthToken() {
                 return localStorage.getItem('authToken') || '';
             }
+            
+            // Cerrar modal si se hace click fuera
+            window.onclick = function(event) {
+                if (event.target == editModal) {
+                    closeEditModal();
+                }
+            };
         });
     </script>
 </body>

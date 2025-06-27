@@ -6,7 +6,7 @@
     <title>Moonlight Line - Create Team</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Reset y estilos base */
+        /* [Mantener todos los estilos base existentes...] */
         * {
             margin: 0;
             padding: 0;
@@ -35,7 +35,6 @@
             padding-bottom: 40px;
         }
         
-        /* Grid Lines */
         .grid-lines {
             position: fixed;
             top: 0;
@@ -50,7 +49,6 @@
             z-index: -1;
         }
         
-        /* Navegación */
         .navigation {
             display: flex;
             justify-content: space-between;
@@ -93,7 +91,7 @@
             transform: translateY(-2px);
         }
         
-        /* Botón Draft Players */
+        /* 🆕 ESTILO PARA DRAFT BUTTON CONDICIONAL */
         .draft-button {
             background-color: rgba(0, 0, 0, 0.5);
             border: 1px solid #ff8c00;
@@ -115,7 +113,19 @@
             transform: translateY(-2px);
         }
         
-        /* Título de sección */
+        .draft-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #666;
+            color: #666;
+        }
+        
+        .draft-button.disabled:hover {
+            background-color: transparent;
+            box-shadow: none;
+            transform: none;
+        }
+        
         .section-title {
             font-size: 2rem;
             color: #00f0ff;
@@ -126,7 +136,39 @@
             text-align: center;
         }
         
-        /* Subtítulo explicativo */
+        /* 🆕 ALERTA DE ESTADO DE JORNADA */
+        .jornada-status {
+            background-color: rgba(0, 255, 128, 0.1);
+            border: 1px solid #00ff80;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #00ff80;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .jornada-status.locked {
+            background-color: rgba(255, 107, 107, 0.1);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+        
+        .jornada-status.warning {
+            background-color: rgba(255, 140, 0, 0.1);
+            border-color: #ff8c00;
+            color: #ff8c00;
+        }
+        
+        .status-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+        
         .section-subtitle {
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.7);
@@ -176,7 +218,6 @@
             color: #ff6b6b;
         }
         
-        /* Cancha de baloncesto */
         .court-container {
             width: 100%;
             max-width: 1200px;
@@ -195,7 +236,7 @@
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
         }
         
-        /* Líneas de la cancha */
+        /* Elementos de la cancha - mantener iguales */
         .center-line,
         .free-throw-left,
         .free-throw-right,
@@ -339,7 +380,6 @@
             height: 2px;
         }
         
-        /* Slots para jugadores */
         .player-slots {
             position: absolute;
             top: 0;
@@ -375,7 +415,22 @@
             border-color: #00ff80;
         }
         
-        /* Posiciones de los slots */
+        /* 🆕 ESTILOS PARA SLOTS BLOQUEADOS */
+        .player-slot.locked,
+        .bench-slot.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .player-slot.locked:hover,
+        .bench-slot.locked:hover {
+            background-color: rgba(0, 255, 128, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 128, 0.3);
+            transform: none;
+        }
+        
+        /* Posiciones de los slots - mantener iguales */
         .slot-left {
             top: 25%;
             left: 20%;
@@ -406,7 +461,6 @@
             transform: translate(-50%, -50%);
         }
         
-        /* Banca */
         .bench-container,
         .bench-container-2 {
             width: 100%;
@@ -448,7 +502,7 @@
             border-color: #ff6b6b;
         }
         
-        /* === CARTAS PIXEL ART PEQUEÑAS === */
+        /* Player card styles - mantener iguales del archivo original */
         .player-card {
             width: 90px;
             height: 130px;
@@ -476,7 +530,6 @@
                 inset 0 0 8px rgba(255, 140, 0, 0.2);
         }
 
-        /* Bordes decorativos pequeños */
         .card-border {
             position: absolute;
             top: 3px;
@@ -487,7 +540,6 @@
             pointer-events: none;
         }
 
-        /* Esquinas decorativas pequeñas */
         .corner {
             position: absolute;
             width: 8px;
@@ -519,7 +571,6 @@
             clip-path: polygon(100% 0, 100% 100%, 0 100%);
         }
 
-        /* Nombre del jugador pequeño */
         .player-name {
             background: linear-gradient(90deg, #ff8c00, #ffa500, #ff8c00);
             color: #000;
@@ -534,7 +585,6 @@
             text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
         }
 
-        /* Posición del jugador pequeña */
         .player-position {
             background: rgba(255, 140, 0, 0.2);
             color: #ffa500;
@@ -548,7 +598,6 @@
             text-transform: uppercase;
         }
 
-        /* Contenedor de imagen pequeño */
         .player-image-container {
             width: 60px;
             height: 50px;
@@ -580,7 +629,6 @@
                 linear-gradient(135deg, #1a4c80, #2a5c90);
         }
 
-        /* Stats mini */
         .stats-container {
             padding: 0 6px;
             display: grid;
@@ -610,8 +658,7 @@
             min-width: 12px;
             text-align: right;
         }
-
-        /* Botones de acción */
+        
         .action-buttons {
             display: flex;
             gap: 20px;
@@ -621,7 +668,6 @@
             margin: 20px 0;
         }
         
-        /* Placeholder styles */
         .empty-slot {
             color: rgba(255, 255, 255, 0.5);
             font-size: 0.7rem;
@@ -635,7 +681,23 @@
             text-align: center;
         }
 
-        /* Elementos decorativos */
+        /* 🆕 ESTILOS PARA BOTONES BLOQUEADOS */
+        .nav-button.disabled,
+        .draft-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            border-color: #666;
+            color: #666;
+        }
+        
+        .nav-button.disabled:hover,
+        .draft-button.disabled:hover {
+            background-color: rgba(0, 0, 0, 0.5);
+            box-shadow: none;
+            transform: none;
+        }
+        
+        /* Elementos decorativos - mantener iguales */
         .circle-glow {
             position: fixed;
             border-radius: 50%;
@@ -668,7 +730,7 @@
             100% { transform: translate(-20px, 40px); }
         }
         
-        /* Media Queries */
+        /* Media Queries - mantener iguales */
         @media (max-width: 1200px) {
             .navigation {
                 max-width: 100%;
@@ -761,13 +823,19 @@
         <div class="navigation">
             <div class="logo">MOONLIGHT LINE</div>
             <div class="nav-buttons">
-                <a href="draft-players.html" class="draft-button">DRAFT PLAYERS</a>
+                <a href="draft-players.html" class="draft-button" id="draft-button">DRAFT PLAYERS</a>
                 <a href="index.html" class="nav-button">BACK</a>
                 <button class="nav-button" id="save-team-btn">SAVE TEAM</button>
             </div>
         </div>
         
         <h2 class="section-title">CREATE YOUR TEAM</h2>
+        
+        <!-- 🆕 ESTADO DE LA JORNADA -->
+        <div class="jornada-status" id="jornada-status" style="display: none;">
+            <span class="status-icon">ℹ️</span>
+            <span id="status-message">Loading game week status...</span>
+        </div>
         
         <!-- Explicación de zonas -->
         <div class="section-subtitle">
@@ -788,7 +856,7 @@
         <!-- Cancha de baloncesto -->
         <div class="court-container">
             <div class="court">
-                <!-- Líneas de la cancha -->
+                <!-- Líneas de la cancha - mantener todas iguales -->
                 <div class="center-line"></div>
                 <div class="center-circle"></div>
                 
@@ -887,9 +955,14 @@
             const clearTeamBtn = document.getElementById('clear-team-btn');
             const saveTeamBtn = document.getElementById('save-team-btn');
             const saveTeamBtn2 = document.getElementById('save-team-btn-2');
+            const draftButton = document.getElementById('draft-button');
+            const jornadaStatus = document.getElementById('jornada-status');
+            const statusMessage = document.getElementById('status-message');
             
             let draggedCard = null;
-            let playersData = {}; // Para almacenar datos de jugadores
+            let playersData = {};
+            let currentJornada = null;
+            let isLineupLocked = false;
             
             // Team data
             let teamData = {
@@ -910,45 +983,186 @@
                 bench10: null
             };
             
-            // Cargar datos de jugadores y equipo guardado
-            loadPlayersData();
-            loadSavedTeam();
+            // 🆕 INICIALIZACIÓN CON VERIFICACIONES
+            init();
             
-            // Set up drag and drop
-            setupDragAndDrop();
-            
-            // Clear team button
-            if (clearTeamBtn) {
-                clearTeamBtn.addEventListener('click', function() {
-                    clearTeam();
-                });
-            }
-            
-            // Save team buttons
-            if (saveTeamBtn) {
-                saveTeamBtn.addEventListener('click', function() {
-                    saveTeam();
-                });
-            }
-            
-            if (saveTeamBtn2) {
-                saveTeamBtn2.addEventListener('click', function() {
-                    saveTeam();
-                });
-            }
-            
-            // Efecto de movimiento de los resplandores
-            const glowEffects = document.querySelectorAll('.circle-glow');
-            window.addEventListener('mousemove', function(e) {
-                glowEffects.forEach((glow, index) => {
-                    const offsetX = (e.clientX / window.innerWidth - 0.5) * 100;
-                    const offsetY = (e.clientY / window.innerHeight - 0.5) * 100;
+            async function init() {
+                try {
+                    // Verificar estado de draft del usuario
+                    await checkUserDraftStatus();
                     
-                    setTimeout(() => {
-                        glow.style.transform = `translate(${offsetX * (index + 1) * 0.2}px, ${offsetY * (index + 1) * 0.2}px)`;
-                    }, index * 100);
+                    // Cargar datos de jugadores
+                    await loadPlayersData();
+                    
+                    // Verificar estado de jornada actual
+                    await checkJornadaStatus();
+                    
+                    // Cargar equipo guardado
+                    await loadSavedTeam();
+                    
+                    // Setup drag and drop si no está bloqueado
+                    if (!isLineupLocked) {
+                        setupDragAndDrop();
+                    }
+                    
+                    // Configurar event listeners
+                    setupEventListeners();
+                    
+                } catch (error) {
+                    console.error('Error during initialization:', error);
+                    showJornadaStatus('error', '❌ Error loading data. Please refresh the page.');
+                }
+            }
+            
+            // 🆕 VERIFICAR ESTADO DE DRAFT
+            async function checkUserDraftStatus() {
+                try {
+                    const authToken = localStorage.getItem('authToken');
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    
+                    if (!authToken || !userData.id) {
+                        // No hay sesión, deshabilitar draft button
+                        if (draftButton) {
+                            draftButton.classList.add('disabled');
+                            draftButton.setAttribute('title', 'Please login to draft players');
+                            draftButton.href = 'login.html';
+                        }
+                        return;
+                    }
+                    
+                    // Verificar si ya hizo draft
+                    if (userData.has_drafted) {
+                        // Ya hizo draft, deshabilitar botón
+                        if (draftButton) {
+                            draftButton.classList.add('disabled');
+                            draftButton.textContent = 'DRAFT COMPLETED';
+                            draftButton.setAttribute('title', 'You have already completed your draft');
+                            draftButton.removeAttribute('href');
+                            draftButton.onclick = (e) => {
+                                e.preventDefault();
+                                alert('You have already completed your player draft. Each manager can only draft once.');
+                            };
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('Error checking draft status:', error);
+                }
+            }
+            
+            // 🆕 VERIFICAR ESTADO DE JORNADA
+            async function checkJornadaStatus() {
+                try {
+                    currentJornada = await getCurrentJornada();
+                    
+                    if (!currentJornada) {
+                        showJornadaStatus('warning', '⚠️ No active game week found. Administrator needs to create a game week.');
+                        disableTeamActions();
+                        return;
+                    }
+                    
+                    // Verificar si la jornada está bloqueada
+                    if (currentJornada.lineup_locked) {
+                        isLineupLocked = true;
+                        showJornadaStatus('locked', 
+                            `🔒 Lineups are LOCKED for Week ${currentJornada.week_number}. ` +
+                            `You cannot modify your team after stats have been uploaded.`
+                        );
+                        disableTeamActions();
+                        lockAllSlots();
+                    } else {
+                        showJornadaStatus('success', 
+                            `✅ Week ${currentJornada.week_number} is ACTIVE. You can modify your team lineup.`
+                        );
+                    }
+                    
+                } catch (error) {
+                    console.error('Error checking jornada status:', error);
+                    showJornadaStatus('error', '❌ Error checking game week status.');
+                }
+            }
+            
+            function showJornadaStatus(type, message) {
+                jornadaStatus.style.display = 'block';
+                statusMessage.textContent = message;
+                
+                // Resetear clases
+                jornadaStatus.classList.remove('locked', 'warning', 'success');
+                
+                // Agregar clase según tipo
+                if (type === 'locked') {
+                    jornadaStatus.classList.add('locked');
+                } else if (type === 'warning') {
+                    jornadaStatus.classList.add('warning');
+                }
+                // 'success' usa los estilos por defecto (verde)
+            }
+            
+            function disableTeamActions() {
+                // Deshabilitar botones de acción
+                if (saveTeamBtn) {
+                    saveTeamBtn.classList.add('disabled');
+                    saveTeamBtn.disabled = true;
+                    saveTeamBtn.textContent = 'LOCKED';
+                }
+                if (saveTeamBtn2) {
+                    saveTeamBtn2.classList.add('disabled');
+                    saveTeamBtn2.disabled = true;
+                    saveTeamBtn2.textContent = 'LOCKED';
+                }
+                if (clearTeamBtn) {
+                    clearTeamBtn.classList.add('disabled');
+                    clearTeamBtn.disabled = true;
+                }
+            }
+            
+            function lockAllSlots() {
+                // Agregar clase locked a todos los slots
+                playerSlots.forEach(slot => {
+                    slot.classList.add('locked');
                 });
-            });
+            }
+            
+            function setupEventListeners() {
+                // Clear team button
+                if (clearTeamBtn && !clearTeamBtn.disabled) {
+                    clearTeamBtn.addEventListener('click', function() {
+                        if (!isLineupLocked) {
+                            clearTeam();
+                        }
+                    });
+                }
+                
+                // Save team buttons
+                if (saveTeamBtn && !saveTeamBtn.disabled) {
+                    saveTeamBtn.addEventListener('click', function() {
+                        if (!isLineupLocked) {
+                            saveTeam();
+                        }
+                    });
+                }
+                
+                if (saveTeamBtn2 && !saveTeamBtn2.disabled) {
+                    saveTeamBtn2.addEventListener('click', function() {
+                        if (!isLineupLocked) {
+                            saveTeam();
+                        }
+                    });
+                }
+                
+                // Efecto de movimiento de los resplandores
+                const glowEffects = document.querySelectorAll('.circle-glow');
+                window.addEventListener('mousemove', function(e) {
+                    glowEffects.forEach((glow, index) => {
+                        const offsetX = (e.clientX / window.innerWidth - 0.5) * 100;
+                        const offsetY = (e.clientY / window.innerHeight - 0.5) * 100;
+                        
+                        setTimeout(() => {
+                            glow.style.transform = `translate(${offsetX * (index + 1) * 0.2}px, ${offsetY * (index + 1) * 0.2}px)`;
+                        }, index * 100);
+                    });
+                });
+            }
             
             // Cargar datos de jugadores desde la API
             async function loadPlayersData() {
@@ -969,6 +1183,9 @@
             
             function setupDragAndDrop() {
                 playerSlots.forEach(slot => {
+                    // Solo setup si no está bloqueado
+                    if (slot.classList.contains('locked')) return;
+                    
                     slot.addEventListener('dragover', function(e) {
                         e.preventDefault();
                         this.style.borderColor = '#00f0ff';
@@ -987,6 +1204,11 @@
                     
                     slot.addEventListener('drop', function(e) {
                         e.preventDefault();
+                        
+                        // No permitir drop si está bloqueado
+                        if (isLineupLocked || this.classList.contains('locked')) {
+                            return;
+                        }
                         
                         // Reset slot styling to original colors
                         if (parseInt(this.dataset.position) <= 5) {
@@ -1036,7 +1258,7 @@
                 
                 const card = document.createElement('div');
                 card.className = 'player-card';
-                card.draggable = true;
+                card.draggable = !isLineupLocked; // No draggable si está bloqueado
                 card.dataset.playerId = playerId;
                 card.dataset.originalPosition = position;
                 
@@ -1077,17 +1299,19 @@
                     </div>
                 `;
                 
-                // Set up drag events
-                card.addEventListener('dragstart', function(e) {
-                    draggedCard = this;
-                    setTimeout(() => {
-                        this.style.opacity = '0.4';
-                    }, 0);
-                });
-                
-                card.addEventListener('dragend', function() {
-                    this.style.opacity = '1';
-                });
+                // Set up drag events solo si no está bloqueado
+                if (!isLineupLocked) {
+                    card.addEventListener('dragstart', function(e) {
+                        draggedCard = this;
+                        setTimeout(() => {
+                            this.style.opacity = '0.4';
+                        }, 0);
+                    });
+                    
+                    card.addEventListener('dragend', function() {
+                        this.style.opacity = '1';
+                    });
+                }
                 
                 return card;
             }
@@ -1130,6 +1354,11 @@
             }
             
             function clearTeam() {
+                if (isLineupLocked) {
+                    alert('Cannot clear team - lineups are locked for this week.');
+                    return;
+                }
+                
                 playerSlots.forEach(slot => {
                     resetSlotToEmpty(slot);
                 });
@@ -1149,8 +1378,8 @@
                     courtContainer.style.boxShadow = '';
                 }, 500);
             }
-
-            // 🔧 FUNCIÓN MEJORADA PARA OBTENER JORNADA ACTUAL
+            
+            // 🆕 FUNCIÓN MEJORADA PARA OBTENER JORNADA ACTUAL
             async function getCurrentJornada() {
                 try {
                     console.log('🔍 Looking for current jornada...');
@@ -1167,9 +1396,8 @@
                         // Fallback: intentar sin autenticación para usuarios regulares
                         const publicResponse = await fetch('/api/leaderboards');
                         if (publicResponse.ok) {
-                            // Si leaderboards funciona, significa que hay jornadas
                             console.log('📊 Leaderboards accessible, using fallback jornada detection');
-                            return { id: 1, week_number: 1, message: 'Using fallback jornada' };
+                            return { id: 1, week_number: 1, lineup_locked: false, message: 'Using fallback jornada' };
                         }
                         throw new Error('Cannot access game weeks');
                     }
@@ -1189,37 +1417,10 @@
                         return currentJornada;
                     }
 
-                    // 2. Si no hay activa, buscar la más reciente con estadísticas
-                    const jornadasWithStats = jornadas.filter(j => parseInt(j.stats_count) > 0);
-                    
-                    if (jornadasWithStats.length > 0) {
-                        currentJornada = jornadasWithStats[0]; // Ya ordenado por week_number DESC
-                        console.log('⚠️ Using latest jornada with stats:', currentJornada.week_number);
-                        
-                        // Activar esta jornada automáticamente
-                        try {
-                            await activateJornada(currentJornada.id);
-                            currentJornada.is_current = true;
-                        } catch (activationError) {
-                            console.error('Failed to activate jornada:', activationError);
-                        }
-                        
-                        return currentJornada;
-                    }
-
-                    // 3. Si no hay estadísticas, usar la más reciente
+                    // 2. Si no hay activa, usar la más reciente
                     if (jornadas.length > 0) {
                         currentJornada = jornadas[0]; // Ya ordenado por week_number DESC
-                        console.log('⚠️ Using latest jornada (no stats yet):', currentJornada.week_number);
-                        
-                        // Activar esta jornada para que los usuarios puedan crear equipos
-                        try {
-                            await activateJornada(currentJornada.id);
-                            currentJornada.is_current = true;
-                        } catch (activationError) {
-                            console.error('Failed to activate jornada:', activationError);
-                        }
-                        
+                        console.log('⚠️ Using latest jornada:', currentJornada.week_number);
                         return currentJornada;
                     }
 
@@ -1227,114 +1428,17 @@
 
                 } catch (error) {
                     console.error('❌ Error getting current jornada:', error);
-                    
-                    if (error.message === 'NO_JORNADAS_EXIST') {
-                        throw new Error('No game weeks exist. Administrator needs to create a game week first.');
-                    }
-                    
-                    if (error.message === 'NO_JORNADAS_AVAILABLE') {
-                        throw new Error('No game weeks available. Contact administrator.');
-                    }
-                    
-                    throw new Error('Unable to determine current game week. Please try again or contact administrator.');
-                }
-            }
-                    // 🔒 VERIFICAR SI EL LINEUP ESTÁ BLOQUEADO
-async function checkLineupLocked() {
-    try {
-        const authToken = localStorage.getItem('authToken');
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        
-        if (!authToken || !userData.id) return;
-        
-        const currentJornada = await getCurrentJornada();
-        if (!currentJornada) return;
-        
-        const response = await fetch(`/api/user-teams?user_id=${userData.id}&jornada_id=${currentJornada.id}`, {
-            headers: {
-                'Authorization': `Bearer ${authToken}`
-            }
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            
-            if (data.lineup_locked) {
-                // Deshabilitar todos los slots y botones
-                document.querySelectorAll('.player-slot, .bench-slot').forEach(slot => {
-                    slot.style.pointerEvents = 'none';
-                    slot.style.opacity = '0.7';
-                });
-                
-                document.getElementById('save-team-btn').disabled = true;
-                document.getElementById('save-team-btn-2').disabled = true;
-                document.getElementById('clear-team-btn').disabled = true;
-                
-                // Mostrar mensaje
-                const warningDiv = document.createElement('div');
-                warningDiv.style.cssText = `
-                    background-color: rgba(255, 107, 107, 0.1);
-                    border: 1px solid #ff6b6b;
-                    color: #ff6b6b;
-                    padding: 15px;
-                    margin: 20px auto;
-                    text-align: center;
-                    border-radius: 10px;
-                    max-width: 600px;
-                    font-weight: 600;
-                `;
-                warningDiv.innerHTML = `
-                    🔒 LINEUPS ARE LOCKED FOR WEEK ${currentJornada.week_number}<br>
-                    <small>You cannot modify your team after stats have been uploaded</small>
-                `;
-                document.querySelector('.section-subtitle').appendChild(warningDiv);
-            }
-        }
-    } catch (error) {
-        console.error('Error checking lineup lock:', error);
-    }
-}
-
-// Llamar a la función cuando se carga la página
-document.addEventListener('DOMContentLoaded', function() {
-    // ... código existente ...
-    
-    // Agregar al final del DOMContentLoaded:
-    setTimeout(() => {
-        checkLineupLocked();
-    }, 1000);
-});
-            
-            // Nueva función para activar jornada
-            async function activateJornada(jornadaId) {
-                try {
-                    const authToken = localStorage.getItem('authToken');
-                    const response = await fetch(`/api/admin/jornadas?id=${jornadaId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${authToken}`
-                        },
-                        body: JSON.stringify({
-                            is_current: true
-                        })
-                    });
-
-                    if (response.ok) {
-                        console.log(`✅ Jornada ${jornadaId} activated successfully`);
-                        return true;
-                    } else {
-                        console.log(`⚠️ Could not activate jornada ${jornadaId}:`, response.status);
-                        return false;
-                    }
-                } catch (error) {
-                    console.error('Error activating jornada:', error);
-                    return false;
+                    return null;
                 }
             }
             
-            // 🔧 FUNCIÓN CORREGIDA PARA GUARDAR EQUIPO CON MEJOR MANEJO DE ERRORES
+            // 🆕 FUNCIÓN CORREGIDA PARA GUARDAR EQUIPO CON VERIFICACIÓN DE BLOQUEO
             async function saveTeam() {
+                if (isLineupLocked) {
+                    alert('Cannot save team - lineups are locked for this week. Please wait for administrator to unlock or create a new week.');
+                    return;
+                }
+                
                 try {
                     // Verificar si el usuario está logueado
                     const authToken = localStorage.getItem('authToken');
@@ -1365,20 +1469,28 @@ document.addEventListener('DOMContentLoaded', function() {
                         return;
                     }
 
-                    // 🆕 MEJORAR OBTENCIÓN DE JORNADA ACTUAL
-                    let currentJornada;
-                    try {
+                    // Verificar jornada actual
+                    if (!currentJornada) {
                         currentJornada = await getCurrentJornada();
-                        console.log('📅 Using jornada:', currentJornada);
-                    } catch (jornadaError) {
-                        console.error('❌ Jornada error:', jornadaError);
-                        
-                        // Mostrar mensaje específico según el error
-                        if (jornadaError.message.includes('No game weeks exist')) {
-                            alert('❌ No game weeks exist!\n\nAn administrator needs to:\n1. Go to Admin Panel\n2. Create a game week\n3. Then you can save your team');
+                        if (!currentJornada) {
+                            alert('❌ No active game week found!\n\nAn administrator needs to create a game week first.');
                             return;
-                        } else {
-                            alert(`❌ Game Week Error:\n\n${jornadaError.message}\n\nPlease contact an administrator or try refreshing the page.`);
+                        }
+                    }
+
+                    // 🆕 VERIFICAR NUEVAMENTE SI SE BLOQUEÓ DURANTE LA SESIÓN
+                    const jornadaCheck = await fetch(`/api/admin/jornadas?id=${currentJornada.id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+                    
+                    if (jornadaCheck.ok) {
+                        const updatedJornada = await jornadaCheck.json();
+                        if (updatedJornada.lineup_locked) {
+                            alert('⚠️ Lineups were just locked for this week!\n\nYou can no longer modify your team until administrator unlocks it.');
+                            // Recargar la página para reflejar el estado actual
+                            window.location.reload();
                             return;
                         }
                     }
@@ -1432,6 +1544,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (!response.ok) {
                         const errorData = await response.json();
+                        
+                        // Manejar error específico de lineup bloqueado
+                        if (errorData.message && errorData.message.includes('locked')) {
+                            alert('⚠️ ' + errorData.message);
+                            // Recargar para mostrar estado bloqueado
+                            window.location.reload();
+                            return;
+                        }
+                        
                         throw new Error(errorData.message || 'Failed to save team');
                     }
 
@@ -1487,7 +1608,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const authToken = localStorage.getItem('authToken');
                     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
                     
-                    if (authToken && userData.id) {
+                    if (authToken && userData.id && currentJornada) {
                         await loadTeamFromAPI();
                     }
 
@@ -1515,8 +1636,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     const authToken = localStorage.getItem('authToken');
                     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
                     
-                    // Obtener jornada actual
-                    const currentJornada = await getCurrentJornada();
                     if (!currentJornada) {
                         console.log('No current jornada found');
                         return;
@@ -1549,6 +1668,17 @@ document.addEventListener('DOMContentLoaded', function() {
                             });
                             
                             console.log('Team data loaded from API:', teamData);
+                            
+                            // 🆕 VERIFICAR SI ESTÁ BLOQUEADO DESDE LA API
+                            if (teamFromAPI.lineup_locked) {
+                                isLineupLocked = true;
+                                showJornadaStatus('locked', 
+                                    `🔒 Lineups are LOCKED for Week ${currentJornada.week_number}. ` +
+                                    `You cannot modify your team after stats have been uploaded.`
+                                );
+                                disableTeamActions();
+                                lockAllSlots();
+                            }
                         }
                     }
                 } catch (error) {
@@ -1586,7 +1716,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const btns = [saveTeamBtn, saveTeamBtn2];
                 
                 btns.forEach(btn => {
-                    if (btn) {
+                    if (btn && !btn.disabled) {
                         const originalText = btn.textContent;
                         btn.innerHTML = '✓ TEAM SAVED!';
                         btn.style.backgroundColor = 'rgba(0, 255, 128, 0.3)';

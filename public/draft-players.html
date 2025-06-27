@@ -6,7 +6,7 @@
     <title>Moonlight Line - Draft Players</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* Reset y estilos base */
+        /* [Mantener todos los estilos existentes...] */
         * {
             margin: 0;
             padding: 0;
@@ -28,7 +28,6 @@
             position: relative;
         }
         
-        /* Grid Lines */
         .grid-lines {
             position: fixed;
             top: 0;
@@ -43,7 +42,47 @@
             z-index: -1;
         }
         
-        /* Navegación */
+        /* 🆕 ESTILO PARA MENSAJE DE DRAFT BLOQUEADO */
+        .draft-blocked-message {
+            background-color: rgba(255, 107, 107, 0.1);
+            border: 2px solid #ff6b6b;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            margin: 50px auto;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+        }
+        
+        .blocked-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #ff6b6b;
+        }
+        
+        .blocked-title {
+            font-size: 2rem;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .blocked-message {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .blocked-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* Resto de estilos mantener igual que el archivo original */
         .navigation {
             display: flex;
             justify-content: space-between;
@@ -86,7 +125,6 @@
             transform: translateY(-2px);
         }
         
-        /* Título de sección */
         .section-title {
             font-size: 2rem;
             color: #00f0ff;
@@ -97,7 +135,6 @@
             text-align: center;
         }
         
-        /* Filtros de búsqueda */
         .filters-container {
             width: 100%;
             max-width: 1400px;
@@ -125,7 +162,6 @@
             box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
         }
         
-        /* Resumen de selecciones */
         .selection-summary {
             width: 100%;
             max-width: 1400px;
@@ -152,7 +188,6 @@
             display: none;
         }
         
-        /* Contenedor de grid de jugadores */
         .player-grid-container {
             width: 100%;
             max-width: 1400px;
@@ -164,17 +199,16 @@
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
         }
         
-        /* GRID CORREGIDO - Columnas fijas como en tu imagen */
         .player-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr); /* 6 columnas fijas */
+            grid-template-columns: repeat(6, 1fr);
             gap: 15px;
             width: 100%;
             justify-items: center;
             place-items: start;
         }
         
-        /* === CARTAS PIXEL ART === */
+        /* Player card styles mantener iguales */
         .player-card {
             width: 180px;
             height: 250px;
@@ -206,7 +240,6 @@
             background: linear-gradient(145deg, #1a2830, #0f1a20);
         }
 
-        /* Bordes decorativos */
         .card-border {
             position: absolute;
             top: 6px;
@@ -221,7 +254,6 @@
             border-color: #00f0ff;
         }
 
-        /* Esquinas decorativas */
         .corner {
             position: absolute;
             width: 12px;
@@ -257,7 +289,6 @@
             clip-path: polygon(100% 0, 100% 100%, 0 100%);
         }
 
-        /* Nombre del jugador */
         .player-name {
             background: linear-gradient(90deg, #ff8c00, #ffa500, #ff8c00);
             color: #000;
@@ -277,7 +308,6 @@
             border-color: #00d4ff;
         }
 
-        /* Posición del jugador */
         .player-position {
             background: rgba(255, 140, 0, 0.2);
             color: #ffa500;
@@ -297,7 +327,6 @@
             border-color: #00f0ff;
         }
 
-        /* Contenedor de imagen */
         .player-image-container {
             width: 120px;
             height: 90px;
@@ -333,7 +362,6 @@
                 linear-gradient(135deg, #1a4c80, #2a5c90);
         }
 
-        /* Contenedor de estadísticas */
         .stats-container {
             padding: 0 10px;
             display: grid;
@@ -368,7 +396,6 @@
             text-align: right;
         }
 
-        /* Badge de selección */
         .selection-badge {
             position: absolute;
             top: 5px;
@@ -392,7 +419,6 @@
             opacity: 1;
         }
 
-        /* Botones de acción */
         .action-buttons {
             display: flex;
             gap: 20px;
@@ -428,10 +454,10 @@
             box-shadow: none;
         }
 
-        /* Responsive - GRID AJUSTADO */
+        /* Media queries mantener iguales */
         @media (max-width: 1200px) {
             .player-grid {
-                grid-template-columns: repeat(5, 1fr); /* 5 columnas en pantallas medianas */
+                grid-template-columns: repeat(5, 1fr);
             }
             
             .player-card {
@@ -442,7 +468,7 @@
 
         @media (max-width: 900px) {
             .player-grid {
-                grid-template-columns: repeat(4, 1fr); /* 4 columnas en tablets */
+                grid-template-columns: repeat(4, 1fr);
             }
             
             .player-card {
@@ -477,7 +503,7 @@
             }
             
             .player-grid {
-                grid-template-columns: repeat(3, 1fr); /* 3 columnas en móviles */
+                grid-template-columns: repeat(3, 1fr);
                 gap: 10px;
             }
             
@@ -498,7 +524,7 @@
 
         @media (max-width: 480px) {
             .player-grid {
-                grid-template-columns: repeat(2, 1fr); /* 2 columnas en móviles pequeños */
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .player-card {
@@ -520,35 +546,55 @@
             </div>
         </div>
         
-        <h2 class="section-title">DRAFT PLAYERS</h2>
-        
-        <!-- Filtros y búsqueda -->
-        <div class="filters-container">
-            <input type="text" class="filter-input" id="search-input" placeholder="Search by name...">
-        </div>
-        
-        <!-- Resumen de selección -->
-        <div class="selection-summary">
-            <div class="selected-count">Selected: <span id="selection-count">0</span>/10</div>
-            <div class="selection-warning" id="selection-warning">Maximum selection reached (10/10)</div>
-        </div>
-        
-        <!-- Grid de jugadores -->
-        <div class="player-grid-container">
-            <div class="player-grid" id="player-grid">
-                <!-- Las cartas de jugadores se generarán dinámicamente -->
+        <!-- 🆕 MENSAJE DE DRAFT BLOQUEADO (inicialmente oculto) -->
+        <div class="draft-blocked-message" id="draft-blocked-message" style="display: none;">
+            <div class="blocked-icon">🔒</div>
+            <div class="blocked-title">DRAFT ALREADY COMPLETED</div>
+            <div class="blocked-message">
+                You have already completed your player draft. Each manager can only draft once to ensure fairness.<br><br>
+                You can still modify your team lineup by going to "MY TEAM" and arranging your drafted players.
+            </div>
+            <div class="blocked-actions">
+                <a href="create-team.html" class="nav-button">GO TO MY TEAM</a>
+                <a href="index.html" class="nav-button">BACK TO HOME</a>
             </div>
         </div>
         
-        <!-- Botones de acción -->
-        <div class="action-buttons">
-            <button class="nav-button" id="clear-selections-btn">CLEAR SELECTIONS</button>
-            <button class="confirm-button" id="confirm-draft-btn" disabled>CONFIRM DRAFT</button>
+        <!-- CONTENIDO NORMAL DEL DRAFT (se oculta si ya hizo draft) -->
+        <div id="draft-content">
+            <h2 class="section-title">DRAFT PLAYERS</h2>
+            
+            <!-- Filtros y búsqueda -->
+            <div class="filters-container">
+                <input type="text" class="filter-input" id="search-input" placeholder="Search by name...">
+            </div>
+            
+            <!-- Resumen de selección -->
+            <div class="selection-summary">
+                <div class="selected-count">Selected: <span id="selection-count">0</span>/10</div>
+                <div class="selection-warning" id="selection-warning">Maximum selection reached (10/10)</div>
+            </div>
+            
+            <!-- Grid de jugadores -->
+            <div class="player-grid-container">
+                <div class="player-grid" id="player-grid">
+                    <!-- Las cartas de jugadores se generarán dinámicamente -->
+                </div>
+            </div>
+            
+            <!-- Botones de acción -->
+            <div class="action-buttons">
+                <button class="nav-button" id="clear-selections-btn">CLEAR SELECTIONS</button>
+                <button class="confirm-button" id="confirm-draft-btn" disabled>CONFIRM DRAFT</button>
+            </div>
         </div>
     </div>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // 🆕 VERIFICAR PRIMERO SI EL USUARIO YA HIZO DRAFT
+            checkDraftStatus();
+            
             const playerGrid = document.getElementById('player-grid');
             const searchInput = document.getElementById('search-input');
             const selectionCount = document.getElementById('selection-count');
@@ -559,12 +605,66 @@
             let players = [];
             let selectedPlayers = [];
             
-            loadPlayers();
-            loadPreviousSelections();
+            async function checkDraftStatus() {
+                try {
+                    // Verificar si el usuario está logueado
+                    const authToken = localStorage.getItem('authToken');
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    
+                    if (!authToken || !userData.id) {
+                        alert('You need to be logged in to draft players');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    // 🆕 VERIFICAR SI YA HIZO DRAFT
+                    const response = await fetch(`/api/admin/users?id=${userData.id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const userDetails = await response.json();
+                        
+                        // Verificar campo has_drafted o si ya tiene equipos previos
+                        if (userDetails.user && userDetails.user.has_drafted) {
+                            showDraftBlocked();
+                            return;
+                        }
+                        
+                        // Verificar si ya tiene equipos en jornadas anteriores (fallback)
+                        if (userDetails.teams && userDetails.teams.length > 0) {
+                            showDraftBlocked();
+                            return;
+                        }
+                    }
+                    
+                    // Si llegamos aquí, puede hacer draft
+                    initializeDraft();
+                    
+                } catch (error) {
+                    console.error('Error checking draft status:', error);
+                    // En caso de error, permitir draft pero mostrar advertencia
+                    console.log('Could not verify draft status, allowing draft...');
+                    initializeDraft();
+                }
+            }
             
-            searchInput.addEventListener('input', applyFilters);
-            clearSelectionsBtn.addEventListener('click', clearSelections);
-            confirmDraftBtn.addEventListener('click', confirmDraft);
+            function showDraftBlocked() {
+                document.getElementById('draft-blocked-message').style.display = 'block';
+                document.getElementById('draft-content').style.display = 'none';
+            }
+            
+            function initializeDraft() {
+                // Continuar con la lógica normal del draft
+                loadPlayers();
+                loadPreviousSelections();
+                
+                searchInput.addEventListener('input', applyFilters);
+                clearSelectionsBtn.addEventListener('click', clearSelections);
+                confirmDraftBtn.addEventListener('click', confirmDraft);
+            }
             
             async function loadPlayers() {
                 try {
@@ -709,10 +809,44 @@
                 }, 1500);
             }
             
-            function confirmDraft() {
-                if (selectedPlayers.length > 0) {
+            // 🆕 FUNCIÓN MEJORADA PARA CONFIRMAR DRAFT ÚNICO
+            async function confirmDraft() {
+                if (selectedPlayers.length === 0) return;
+                
+                try {
+                    const authToken = localStorage.getItem('authToken');
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    
+                    if (!authToken || !userData.id) {
+                        alert('You need to be logged in to confirm draft');
+                        window.location.href = 'login.html';
+                        return;
+                    }
+                    
+                    // Guardar selección localmente
                     localStorage.setItem('draftedPlayers', JSON.stringify(selectedPlayers));
                     
+                    // 🆕 MARCAR USUARIO COMO DRAFTEADO EN LA BASE DE DATOS
+                    try {
+                        await fetch(`/api/admin/users`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authToken}`
+                            },
+                            body: JSON.stringify({
+                                user_id: userData.id,
+                                has_drafted: true
+                            })
+                        });
+                        
+                        console.log('✅ User marked as drafted successfully');
+                    } catch (markError) {
+                        console.error('Warning: Could not mark user as drafted:', markError);
+                        // Continuar de todos modos para no bloquear al usuario
+                    }
+                    
+                    // Preparar datos del equipo
                     const teamData = {};
                     for (let i = 1; i <= 5; i++) {
                         teamData[`position${i}`] = null;
@@ -728,13 +862,21 @@
                     
                     localStorage.setItem('basketballTeam', JSON.stringify(teamData));
                     
+                    // Actualizar userData para reflejar que ya hizo draft
+                    userData.has_drafted = true;
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    
                     const confirmBtn = document.getElementById('confirm-draft-btn');
-                    confirmBtn.textContent = 'CONFIRMED!';
+                    confirmBtn.textContent = 'DRAFT CONFIRMED!';
                     confirmBtn.style.boxShadow = '0 0 20px rgba(255, 140, 0, 0.7)';
                     
                     setTimeout(() => {
                         window.location.href = 'create-team.html';
                     }, 1500);
+                    
+                } catch (error) {
+                    console.error('Error confirming draft:', error);
+                    alert('Error confirming draft. Please try again.');
                 }
             }
             

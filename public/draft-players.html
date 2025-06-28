@@ -535,12 +535,13 @@
 
             /* 🆕 ESTILOS PARA LOGOS DE EQUIPOS EN DRAFT */
             .team-logo-image {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: contain !important;
                 filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.6));
                 transition: all 0.3s ease;
                 padding: 8px;
+                display: block !important;
             }
 
             .player-card.selected .team-logo-image {
@@ -555,6 +556,7 @@
                 bottom: 0;
                 background: linear-gradient(45deg, rgba(255, 140, 0, 0.1), transparent);
                 pointer-events: none;
+                z-index: 1;
             }
 
             .player-card.selected .team-logo-overlay {
@@ -567,10 +569,26 @@
 
             /* Actualizar container para mejor presentación */
             .player-image-container {
-                background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+                width: 120px;
+                height: 90px;
+                margin: 0 auto 8px auto;
+                background: linear-gradient(135deg, #1a1a1a, #2a2a2a) !important;
+                border: 2px solid #ff8c00;
                 position: relative;
                 overflow: hidden;
                 box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .player-card.selected .player-image-container {
+                border-color: #00f0ff;
+            }
+
+            /* Remover el placeholder anterior */
+            .image-placeholder {
+                display: none !important;
             }
         }
     </style>
@@ -709,12 +727,20 @@
             
             async function loadPlayers() {
                 try {
+                    console.log('🔄 Loading players for draft...');
                     const response = await fetch('/api/players');
                     if (!response.ok) {
                         throw new Error('Failed to fetch players');
                     }
                     
                     players = await response.json();
+                    console.log('📊 Draft players loaded:', players.length);
+                    console.log('📋 Sample draft player:', players[0]); // Debug
+                    
+                    // Verificar equipos en draft
+                    const teamsInDraft = [...new Set(players.map(p => p.team).filter(Boolean))];
+                    console.log('🏀 Teams in draft:', teamsInDraft);
+                    
                     renderPlayers(players);
                 } catch (error) {
                     console.error('Error loading players:', error);
@@ -725,9 +751,16 @@
             function createPlayerCard(player) {
                 const isSelected = selectedPlayers.some(p => p.id === player.id);
                 const selectionIndex = isSelected ? selectedPlayers.findIndex(p => p.id === player.id) + 1 : '';
-                const teamName = player.team || 'Unknown';
-                const teamLogoPath = getTeamLogoPath(teamName);
-                const teamColor = getTeamColor(teamName);
+                const teamName = player.team || 'Warriors';
+                
+                console.log('🎴 Draft card for:', player.name, 'Team:', teamName); // Debug
+                
+                // Obtener logo path
+                let logoPath = '/assets/images/logos/warriors.png'; // Default
+                if (typeof getTeamLogoPath === 'function') {
+                    logoPath = getTeamLogoPath(teamName);
+                    console.log('🖼️ Draft logo path:', logoPath);
+                }
                 
                 return `
                     <div class="player-card ${isSelected ? 'selected' : ''}" data-id="${player.id}" data-name="${player.name}">
@@ -741,10 +774,13 @@
                         <div class="player-name">${player.name.toUpperCase()}</div>
                         <div class="player-position">${player.position || 'SF'} - ${teamName}</div>
                         
-                        <div class="player-image-container" style="border-color: ${teamColor};">
-                            <img src="${teamLogoPath}" alt="${teamName} Logo" class="team-logo-image"
-                                onerror="this.src='/assets/images/logos/default-team.png'">
-                            <div class="team-logo-overlay"></div>
+                        <div class="player-image-container">
+                            <img src="${logoPath}" 
+                                alt="${teamName} Logo" 
+                                class="team-logo-image"
+                                onload="console.log('✅ Draft logo loaded:', '${logoPath}', 'for:', '${player.name}')"
+                                onerror="console.error('❌ Draft logo failed:', '${logoPath}'); this.style.border='3px solid red';"
+                                style="width: 100%; height: 100%; object-fit: contain; display: block;">
                         </div>
                         
                         <div class="stats-container">

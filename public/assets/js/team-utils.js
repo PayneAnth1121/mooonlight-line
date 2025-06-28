@@ -1,36 +1,51 @@
-// public/assets/js/team-utils.js - TEAM LOGO UTILITIES
+// public/assets/js/team-utils.js - TEAM LOGO UTILITIES WITH DEBUGGING
 /**
  * Mapea el nombre del equipo al archivo del logo correspondiente
  */
 function getTeamLogoPath(teamName) {
-    if (!teamName) return '/assets/images/logos/default-team.png';
+    console.log('Getting logo for team:', teamName); // Debug
+    
+    if (!teamName) {
+        console.log('No team name provided, using default');
+        return '/assets/images/logos/warriors.png'; // Usar un logo existente como default
+    }
+    
+    // Normalizar el nombre del equipo (quitar espacios extra, convertir a mayúsculas)
+    const normalizedTeam = teamName.trim().toUpperCase();
     
     const teamLogoMap = {
-        'Angel Bees': '/assets/images/logos/angelbee.png',
-        'Warriors': '/assets/images/logos/warriors.png',
-        'TMT': '/assets/images/logos/tmt.png',
-        'Titans': '/assets/images/logos/titans.png',
-        'Raptors': '/assets/images/logos/raptors.png',
-        'Armonia': '/assets/images/logos/armonia.png'
+        'ANGEL BEES': '/public/assets/images/logos/angelbee.png',
+        'WARRIORS': '/public/assets/images/logos/warriors.png',
+        'TMT': 'public/assets/images/logos/tmt.png',
+        'TITANS': '/assets/images/logos/titans.png',
+        'RAPTORS': '/assets/images/logos/raptors.png',
+        'ARMONIA': '/assets/images/logos/armonia.png'
     };
     
-    return teamLogoMap[teamName] || '/assets/images/logos/default-team.png';
+    const logoPath = teamLogoMap[normalizedTeam] || '/public/assets/images/logos/warriors.png';
+    console.log('Team:', normalizedTeam, 'Logo path:', logoPath); // Debug
+    
+    return logoPath;
 }
 
 /**
  * Obtiene el color principal del equipo para efectos visuales
  */
 function getTeamColor(teamName) {
+    if (!teamName) return '#ff8c00';
+    
+    const normalizedTeam = teamName.trim().toUpperCase();
+    
     const teamColorMap = {
-        'Angel Bees': '#FFD700', // Dorado
-        'Warriors': '#1D428A', // Azul Warriors
+        'ANGEL BEES': '#FFD700', // Dorado
+        'WARRIORS': '#1D428A', // Azul Warriors
         'TMT': '#CE1141', // Rojo
-        'Titans': '#002B5C', // Azul oscuro
-        'Raptors': '#CE1141', // Rojo Raptors
-        'Armonia': '#00788C' // Verde azulado
+        'TITANS': '#002B5C', // Azul oscuro
+        'RAPTORS': '#CE1141', // Rojo Raptors
+        'ARMONIA': '#00788C' // Verde azulado
     };
     
-    return teamColorMap[teamName] || '#ff8c00'; // Naranja por defecto
+    return teamColorMap[normalizedTeam] || '#ff8c00'; // Naranja por defecto
 }
 
 /**
@@ -43,7 +58,7 @@ function createTeamLogoElement(teamName, playerName) {
     return `
         <div class="team-logo-container" style="border-color: ${teamColor};">
             <img src="${logoPath}" alt="${teamName} Logo" class="team-logo" 
-                 onerror="this.src='/assets/images/logos/default-team.png'">
+                 onerror="this.src='/public/assets/images/logos/warriors.png'; console.log('Error loading logo for ${teamName}');">
             <div class="team-logo-overlay" style="background: linear-gradient(45deg, ${teamColor}22, ${teamColor}11);"></div>
         </div>
     `;
@@ -53,3 +68,5 @@ function createTeamLogoElement(teamName, playerName) {
 window.getTeamLogoPath = getTeamLogoPath;
 window.getTeamColor = getTeamColor;
 window.createTeamLogoElement = createTeamLogoElement;
+
+console.log('Team utils loaded successfully'); // Debug

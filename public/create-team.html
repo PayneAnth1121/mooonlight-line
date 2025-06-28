@@ -814,14 +814,16 @@
                 height: 95px;
             }
         
-        /* 🆕 ESTILOS PARA LOGOS DE EQUIPOS EN CARTAS */
+        /* 🆕 ESTILOS PARA LOGOS DE EQUIPOS EN CARTAS - UPDATED */
             .team-logo-image {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
+                width: 100% !important;
+                height: 100% !important;
+                object-fit: contain !important;
                 filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.6));
                 transition: all 0.3s ease;
                 padding: 5px;
+                display: block !important;
+                background: transparent;
             }
 
             .team-logo-overlay {
@@ -832,6 +834,7 @@
                 bottom: 0;
                 background: linear-gradient(45deg, rgba(255, 140, 0, 0.1), transparent);
                 pointer-events: none;
+                z-index: 1;
             }
 
             .player-card:hover .team-logo-image {
@@ -841,11 +844,22 @@
 
             /* Actualizar container para mejor presentación del logo */
             .player-image-container {
-                background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+                width: 120px;
+                height: 90px;
+                margin: 0 auto 8px auto;
+                background: linear-gradient(135deg, #1a1a1a, #2a2a2a) !important;
                 border: 2px solid #ff8c00;
                 position: relative;
                 overflow: hidden;
                 box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            /* Remover el placeholder anterior */
+            .image-placeholder {
+                display: none !important;
             }
         }
     </style>
@@ -983,15 +997,6 @@
     <div class="circle-glow top-left"></div>
     <div class="circle-glow bottom-right"></div>
     
-    <div style="position: fixed; top: 10px; right: 10px; background: white; padding: 10px; z-index: 9999;">
-    <h3 style="color: black;">Test de logos:</h3>
-    <img src="/assets/images/logos/warriors.png" style="width: 50px; height: 50px;" alt="Warriors">
-    <img src="/assets/images/logos/angelbee.png" style="width: 50px; height: 50px;" alt="Angel Bees">
-    <img src="/assets/images/logos/tmt.png" style="width: 50px; height: 50px;" alt="TMT">
-    <img src="/assets/images/logos/titans.png" style="width: 50px; height: 50px;" alt="Titans">
-    <img src="/assets/images/logos/raptors.png" style="width: 50px; height: 50px;" alt="Raptors">
-    <img src="/assets/images/logos/armonia.png" style="width: 50px; height: 50px;" alt="Armonia">
-    </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Variables
@@ -1299,9 +1304,18 @@
             function createPlayerCard(playerId, position) {
                 const playerInfo = playersData[playerId];
                 const playerName = playerInfo ? playerInfo.name : `Player ${playerId}`;
-                const teamName = playerInfo ? playerInfo.team : 'Unknown';
-                const teamLogoPath = getTeamLogoPath(teamName);
-                const teamColor = getTeamColor(teamName);
+                const teamName = playerInfo ? playerInfo.team : 'Warriors'; // Default a Warriors
+                
+                // Debug logging
+                console.log('Creating card for:', playerName, 'Team:', teamName);
+                
+                // Obtener rutas usando las funciones utilitarias
+                const teamLogoPath = typeof getTeamLogoPath === 'function' ? 
+                    getTeamLogoPath(teamName) : '/assets/images/logos/warriors.png';
+                const teamColor = typeof getTeamColor === 'function' ? 
+                    getTeamColor(teamName) : '#ff8c00';
+                
+                console.log('Logo path for', playerName, ':', teamLogoPath);
                 
                 const card = document.createElement('div');
                 card.className = 'player-card';
@@ -1320,8 +1334,11 @@
                     <div class="player-position">${playerInfo?.position || 'SF'} - ${teamName}</div>
                     
                     <div class="player-image-container" style="border-color: ${teamColor};">
-                        <img src="${teamLogoPath}" alt="${teamName} Logo" class="team-logo-image"
-                            onerror="this.src='/assets/images/logos/default-team.png'">
+                        <img src="${teamLogoPath}" 
+                            alt="${teamName} Logo" 
+                            class="team-logo-image"
+                            onload="console.log('Logo loaded successfully for ${playerName}')"
+                            onerror="console.log('Error loading logo:', this.src); this.src='/assets/images/logos/warriors.png';">
                         <div class="team-logo-overlay"></div>
                     </div>
                     

@@ -14,15 +14,15 @@ function getTeamLogoPath(teamName) {
     const normalizedTeam = teamName.trim().toUpperCase();
     
     const teamLogoMap = {
-        'ANGEL BEES': '/public/assets/images/logos/angelbee.png',
-        'WARRIORS': '/public/assets/images/logos/warriors.png',
-        'TMT': 'public/assets/images/logos/tmt.png',
+        'ANGEL BEES': '/assets/images/logos/angelbee.png',
+        'WARRIORS': '/assets/images/logos/warriors.png',
+        'TMT': '/assets/images/logos/tmt.png',
         'TITANS': '/assets/images/logos/titans.png',
         'RAPTORS': '/assets/images/logos/raptors.png',
         'ARMONIA': '/assets/images/logos/armonia.png'
     };
     
-    const logoPath = teamLogoMap[normalizedTeam] || '/public/assets/images/logos/warriors.png';
+    const logoPath = teamLogoMap[normalizedTeam] || '/assets/images/logos/warriors.png';
     console.log('Team:', normalizedTeam, 'Logo path:', logoPath); // Debug
     
     return logoPath;
@@ -58,7 +58,7 @@ function createTeamLogoElement(teamName, playerName) {
     return `
         <div class="team-logo-container" style="border-color: ${teamColor};">
             <img src="${logoPath}" alt="${teamName} Logo" class="team-logo" 
-                 onerror="this.src='/public/assets/images/logos/warriors.png'; console.log('Error loading logo for ${teamName}');">
+                 onerror="this.src='/assets/images/logos/warriors.png'; console.log('Error loading logo for ${teamName}');">
             <div class="team-logo-overlay" style="background: linear-gradient(45deg, ${teamColor}22, ${teamColor}11);"></div>
         </div>
     `;

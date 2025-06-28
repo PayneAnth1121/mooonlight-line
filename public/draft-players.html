@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moonlight Line - Draft Players</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="/assets/js/team-utils.js"></script>
     <style>
         /* [Mantener todos los estilos existentes...] */
         * {
@@ -531,6 +532,46 @@
                 width: 120px;
                 height: 180px;
             }
+
+            /* 🆕 ESTILOS PARA LOGOS DE EQUIPOS EN DRAFT */
+            .team-logo-image {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.6));
+                transition: all 0.3s ease;
+                padding: 8px;
+            }
+
+            .player-card.selected .team-logo-image {
+                filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.8));
+            }
+
+            .team-logo-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg, rgba(255, 140, 0, 0.1), transparent);
+                pointer-events: none;
+            }
+
+            .player-card.selected .team-logo-overlay {
+                background: linear-gradient(45deg, rgba(0, 240, 255, 0.1), transparent);
+            }
+
+            .player-card:hover .team-logo-image {
+                transform: scale(1.05);
+            }
+
+            /* Actualizar container para mejor presentación */
+            .player-image-container {
+                background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+                position: relative;
+                overflow: hidden;
+                box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            }
         }
     </style>
 </head>
@@ -684,6 +725,9 @@
             function createPlayerCard(player) {
                 const isSelected = selectedPlayers.some(p => p.id === player.id);
                 const selectionIndex = isSelected ? selectedPlayers.findIndex(p => p.id === player.id) + 1 : '';
+                const teamName = player.team || 'Unknown';
+                const teamLogoPath = getTeamLogoPath(teamName);
+                const teamColor = getTeamColor(teamName);
                 
                 return `
                     <div class="player-card ${isSelected ? 'selected' : ''}" data-id="${player.id}" data-name="${player.name}">
@@ -695,13 +739,12 @@
                         <div class="selection-badge">${selectionIndex}</div>
                         
                         <div class="player-name">${player.name.toUpperCase()}</div>
-                        <div class="player-position">${player.position || 'SF'} - ${player.nickname || 'PLAYER'}</div>
+                        <div class="player-position">${player.position || 'SF'} - ${teamName}</div>
                         
-                        <div class="player-image-container">
-                            ${player.imageUrl ? 
-                                `<img src="${player.imageUrl}" alt="${player.name}" class="player-image">` :
-                                `<div class="image-placeholder">👤</div>`
-                            }
+                        <div class="player-image-container" style="border-color: ${teamColor};">
+                            <img src="${teamLogoPath}" alt="${teamName} Logo" class="team-logo-image"
+                                onerror="this.src='/assets/images/logos/default-team.png'">
+                            <div class="team-logo-overlay"></div>
                         </div>
                         
                         <div class="stats-container">

@@ -1,4 +1,4 @@
-// api/players.js - CONVERTED TO COMMONJS
+// api/players.js - UPDATED TO INCLUDE TEAM INFO
 const { Pool } = require('pg');
 
 // Configuración de la base de datos con mejor error handling
@@ -42,17 +42,18 @@ module.exports = async function handler(req, res) {
     await pool.query('SELECT 1');
     console.log('Database connection successful');
 
-    // Get all active players including image_url
+    // 🆕 UPDATED QUERY TO INCLUDE TEAM INFORMATION
     const result = await pool.query(`
       SELECT 
         id,
         name,
+        team,
         image_url,
         is_active,
         created_at
       FROM players 
       WHERE is_active = TRUE
-      ORDER BY name ASC
+      ORDER BY team, name ASC
     `);
     
     console.log(`Found ${result.rows.length} players`);
@@ -69,6 +70,7 @@ module.exports = async function handler(req, res) {
     const players = result.rows.map(player => ({
       id: player.id,
       name: player.name,
+      team: player.team, // 🆕 INCLUDE TEAM INFO
       image: player.image_url || `/images/players/default-player.png`,
       imageUrl: player.image_url,
       isActive: player.is_active,
@@ -79,7 +81,7 @@ module.exports = async function handler(req, res) {
       signatureMove: getRandomSignatureMove()
     }));
 
-    console.log('Players transformed successfully');
+    console.log('Players transformed successfully with team info');
 
     res.status(200).json(players);
 

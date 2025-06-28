@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moonlight Line - Create Team</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="/assets/js/team-utils.js"></script>
     <style>
         /* [Mantener todos los estilos base existentes...] */
         * {
@@ -812,6 +813,40 @@
                 width: 65px;
                 height: 95px;
             }
+        
+        /* 🆕 ESTILOS PARA LOGOS DE EQUIPOS EN CARTAS */
+            .team-logo-image {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.6));
+                transition: all 0.3s ease;
+                padding: 5px;
+            }
+
+            .team-logo-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg, rgba(255, 140, 0, 0.1), transparent);
+                pointer-events: none;
+            }
+
+            .player-card:hover .team-logo-image {
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 12px rgba(255, 140, 0, 0.8));
+            }
+
+            /* Actualizar container para mejor presentación del logo */
+            .player-image-container {
+                background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+                border: 2px solid #ff8c00;
+                position: relative;
+                overflow: hidden;
+                box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            }
         }
     </style>
 </head>
@@ -1255,10 +1290,13 @@
             function createPlayerCard(playerId, position) {
                 const playerInfo = playersData[playerId];
                 const playerName = playerInfo ? playerInfo.name : `Player ${playerId}`;
+                const teamName = playerInfo ? playerInfo.team : 'Unknown';
+                const teamLogoPath = getTeamLogoPath(teamName);
+                const teamColor = getTeamColor(teamName);
                 
                 const card = document.createElement('div');
                 card.className = 'player-card';
-                card.draggable = !isLineupLocked; // No draggable si está bloqueado
+                card.draggable = !isLineupLocked;
                 card.dataset.playerId = playerId;
                 card.dataset.originalPosition = position;
                 
@@ -1270,13 +1308,12 @@
                     <div class="corner bottom-right"></div>
                     
                     <div class="player-name">${playerName.toUpperCase()}</div>
-                    <div class="player-position">${playerInfo?.position || 'SF'} - ${playerInfo?.nickname || 'PLAYER'}</div>
+                    <div class="player-position">${playerInfo?.position || 'SF'} - ${teamName}</div>
                     
-                    <div class="player-image-container">
-                        ${playerInfo?.imageUrl ? 
-                            `<img src="${playerInfo.imageUrl}" alt="${playerName}" class="player-image">` :
-                            `<div class="image-placeholder">👤</div>`
-                        }
+                    <div class="player-image-container" style="border-color: ${teamColor};">
+                        <img src="${teamLogoPath}" alt="${teamName} Logo" class="team-logo-image"
+                            onerror="this.src='/assets/images/logos/default-team.png'">
+                        <div class="team-logo-overlay"></div>
                     </div>
                     
                     <div class="stats-container">

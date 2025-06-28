@@ -7,17 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="/assets/js/team-utils.js"></script>
     <script src="/assets/js/background-music.js"></script>
-    <script>
-    console.log('Testing team utils loading...');
-    setTimeout(() => {
-        console.log('getTeamLogoPath available:', typeof getTeamLogoPath);
-        if (typeof getTeamLogoPath === 'function') {
-            console.log('Testing Warriors logo:', getTeamLogoPath('Warriors'));
-        }
-    }, 1000);
-</script>
     <style>
-        /* [Mantener todos los estilos base existentes...] */
         * {
             margin: 0;
             padding: 0;
@@ -41,11 +31,42 @@
             padding: 20px;
             overflow-x: hidden;
             overflow-y: auto;
-            padding-bottom: 20px;
-            position: relative;
             padding-bottom: 40px;
+            position: relative;
         }
         
+        /* 🎬 FONDO GIF ANIMADO IGUAL AL INDEX */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            overflow: hidden;
+        }
+        
+        .bg-gif {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        /* Overlay oscuro para legibilidad */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: -2;
+        }
+        
+        /* Grid Lines */
         .grid-lines {
             position: fixed;
             top: 0;
@@ -60,21 +81,183 @@
             z-index: -1;
         }
         
+        /* 🌟 LOGOS DECORATIVOS DE EQUIPOS FLOTANTES */
+        .team-logos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .team-logo {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        .team-logo img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.4));
+            transition: all 0.3s ease;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30px, -20px) rotate(5deg); }
+            50% { transform: translate(-20px, 30px) rotate(-3deg); }
+            75% { transform: translate(20px, -10px) rotate(2deg); }
+        }
+        
+        .logo-angelbee {
+            top: 15%;
+            left: 8%;
+            animation-delay: 0s;
+        }
+        
+        .logo-armonia {
+            top: 60%;
+            left: 5%;
+            animation-delay: 3s;
+        }
+        
+        .logo-raptors {
+            top: 80%;
+            left: 15%;
+            animation-delay: 6s;
+        }
+        
+        .logo-titans {
+            top: 20%;
+            right: 8%;
+            animation-delay: 2s;
+        }
+        
+        .logo-tmt {
+            top: 65%;
+            right: 5%;
+            animation-delay: 5s;
+        }
+        
+        .logo-warriors {
+            top: 85%;
+            right: 15%;
+            animation-delay: 8s;
+        }
+        
+        /* 🔥 EFECTOS GLOW LATERALES */
+        .side-glow-left {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #00f0ff, transparent);
+            box-shadow: 0 0 30px 8px rgba(0, 240, 255, 0.6);
+            opacity: 0.8;
+            z-index: 0;
+        }
+        
+        .side-glow-right {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #ff8c00, transparent);
+            box-shadow: 0 0 30px 8px rgba(255, 140, 0, 0.6);
+            opacity: 0.8;
+            z-index: 0;
+        }
+        
+        /* ✨ CÍRCULOS DECORATIVOS FLOTANTES */
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            z-index: 0;
+            opacity: 0.3;
+            pointer-events: none;
+            animation: pulse-glow 6s ease-in-out infinite alternate;
+        }
+        
+        .circle-top-left {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0) 70%);
+            animation-delay: 0s;
+        }
+        
+        .circle-bottom-right {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -150px;
+            background: radial-gradient(circle, rgba(255, 140, 0, 0.15) 0%, rgba(255, 140, 0, 0) 70%);
+            animation-delay: 3s;
+        }
+        
+        .circle-center {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(140, 0, 255, 0.1) 0%, rgba(140, 0, 255, 0) 70%);
+            animation-delay: 1.5s;
+        }
+        
+        @keyframes pulse-glow {
+            0% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+            50% { transform: scale(1.1) rotate(180deg); opacity: 0.5; }
+            100% { transform: scale(1) rotate(360deg); opacity: 0.3; }
+        }
+        
+        /* CONTENIDO PRINCIPAL */
+        .team-creation-screen {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1200px;
+        }
+        
         .navigation {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            max-width: 1200px;
             margin-bottom: 30px;
             align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
         }
         
         .logo {
             font-size: 1.8rem;
             color: #00f0ff;
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
             font-weight: 700;
             letter-spacing: 1px;
+            animation: logo-glow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes logo-glow {
+            0% { text-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
+            100% { text-shadow: 0 0 30px rgba(0, 240, 255, 1), 0 0 40px rgba(0, 240, 255, 0.5); }
         }
         
         .nav-buttons {
@@ -82,180 +265,257 @@
             gap: 15px;
         }
         
-        .nav-button {
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 1px solid #00f0ff;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .nav-button:hover {
-            background-color: rgba(0, 240, 255, 0.15);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
-            transform: translateY(-2px);
-        }
-        
-        /* 🆕 ESTILO PARA DRAFT BUTTON CONDICIONAL */
-        .draft-button {
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 1px solid #ff8c00;
-            color: #ff8c00;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-right: 15px;
-        }
-        
-        .draft-button:hover {
-            background-color: rgba(255, 140, 0, 0.15);
-            box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
-            transform: translateY(-2px);
-        }
-        
-        .draft-button.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            border-color: #666;
-            color: #666;
-        }
-        
-        .draft-button.disabled:hover {
-            background-color: transparent;
-            box-shadow: none;
-            transform: none;
-        }
-        
-        .section-title {
-            font-size: 2rem;
-            color: #00f0ff;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: center;
-        }
-        
-        /* 🆕 ALERTA DE ESTADO DE JORNADA */
-        .jornada-status {
-            background-color: rgba(0, 255, 128, 0.1);
-            border: 1px solid #00ff80;
-            border-radius: 10px;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #00ff80;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .jornada-status.locked {
-            background-color: rgba(255, 107, 107, 0.1);
-            border-color: #ff6b6b;
-            color: #ff6b6b;
-        }
-        
-        .jornada-status.warning {
-            background-color: rgba(255, 140, 0, 0.1);
-            border-color: #ff8c00;
-            color: #ff8c00;
-        }
-        
-        .status-icon {
-            font-size: 1.2rem;
-            margin-right: 8px;
-        }
-        
-        .section-subtitle {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 30px;
-            text-align: center;
-            line-height: 1.5;
-        }
-        
-        .zone-explanation {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .zone-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .zone-color {
-            width: 15px;
-            height: 15px;
-            border-radius: 3px;
-            border: 1px solid;
-        }
-        
-        .green-zone {
-            background-color: rgba(0, 255, 128, 0.3);
-            border-color: #00ff80;
-        }
-        
-        .red-zone {
-            background-color: rgba(255, 107, 107, 0.3);
-            border-color: #ff6b6b;
-        }
-        
-        .zone-text-green {
-            color: #00ff80;
-        }
-        
-        .zone-text-red {
-            color: #ff6b6b;
-        }
-        
-        .court-container {
-            width: 100%;
-            max-width: 1200px;
-            position: relative;
-            margin-bottom: 30px;
-        }
-        
-        .court {
-            width: 100%;
-            aspect-ratio: 2/1;
-            background-color: rgba(0, 0, 0, 0.5);
+        .nav-button, .draft-button {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
             border: 2px solid #00f0ff;
-            border-radius: 10px;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             position: relative;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
         }
         
-        /* Elementos de la cancha - mantener iguales */
-        .center-line,
-        .free-throw-left,
-        .free-throw-right,
-        .backboard-left,
-        .backboard-right {
+        .nav-button::before, .draft-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .nav-button:hover::before, .draft-button:hover::before {
+            left: 100%;
+        }
+        
+        .nav-button:hover, .draft-button:hover {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(0, 240, 255, 0.2));
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.6), inset 0 0 20px rgba(0, 240, 255, 0.1);
+            transform: translateY(-3px) scale(1.05);
+            border-color: #00f0ff;
+        }
+        
+        .draft-button {
+            border-color: #ff8c00;
+            color: #ff8c00;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
+        }
+        
+        .draft-button:hover {
+            background: linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.2));
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.6), inset 0 0 20px rgba(255, 140, 0, 0.1);
+            border-color: #ff8c00;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            color: #00f0ff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
+            animation: title-pulse 4s ease-in-out infinite alternate;
+        }
+        
+        @keyframes title-pulse {
+            0% { 
+                text-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
+                transform: scale(1);
+            }
+            100% { 
+                text-shadow: 0 0 30px rgba(0, 240, 255, 1), 0 0 50px rgba(0, 240, 255, 0.5);
+                transform: scale(1.02);
+            }
+        }
+        
+        /* STATUS DE JORNADA MEJORADO */
+        .jornada-status {
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.1), rgba(0, 255, 128, 0.05));
+            border: 2px solid #00ff80;
+            border-radius: 15px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #00ff80;
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 255, 128, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .jornada-status::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 128, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .jornada-status.locked {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 107, 107, 0.05));
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
+        }
+        
+        .jornada-status.warning {
+            background: linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.05));
+            border-color: #ff8c00;
+            color: #ff8c00;
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.3);
+        }
+        
+        .status-icon {
+            font-size: 1.4rem;
+            margin-right: 10px;
+            animation: icon-bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes icon-bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* CANCHA MEJORADA */
+        .court-container {
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.2);
+        }
+        
+        .court {
+            width: 100%;
+            aspect-ratio: 2/1;
+            background: linear-gradient(135deg, rgba(0, 50, 30, 0.8), rgba(0, 30, 20, 0.9));
+            border: 3px solid #00f0ff;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 0 30px rgba(0, 240, 255, 0.4),
+                inset 0 0 50px rgba(0, 240, 255, 0.1);
+        }
+        
+        /* SLOTS DE JUGADORES MEJORADOS */
+        .player-slot, .bench-slot {
+            position: absolute;
+            width: 100px;
+            height: 140px;
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.15), rgba(0, 255, 128, 0.05));
+            border: 3px solid #00ff80;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 255, 128, 0.4);
+            backdrop-filter: blur(5px);
+        }
+        
+        .player-slot:hover, .bench-slot:hover {
+            transform: scale(1.05) translateY(-5px);
+            border-color: #00ff80;
+            box-shadow: 0 10px 30px rgba(0, 255, 128, 0.6);
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.25), rgba(0, 255, 128, 0.15));
+        }
+        
+        .bench-slot {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 107, 107, 0.05));
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+        }
+        
+        .bench-slot:hover {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.25), rgba(255, 107, 107, 0.15));
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.6);
+            border-color: #ff6b6b;
+        }
+        
+        /* CARTAS DE JUGADORES MEJORADAS */
+        .player-card {
+            width: 90px;
+            height: 130px;
+            background: linear-gradient(145deg, rgba(20, 30, 40, 0.9), rgba(10, 20, 30, 0.95));
+            border: 3px solid transparent;
+            border-image: linear-gradient(45deg, #ff8c00, #ffa500, #ff7f00, #ff8c00) 1;
+            position: relative;
+            box-shadow: 
+                0 0 15px rgba(255, 140, 0, 0.4),
+                inset 0 0 8px rgba(255, 140, 0, 0.1);
+            font-family: 'Orbitron', monospace;
+            overflow: hidden;
+            cursor: grab;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .player-card:active {
+            cursor: grabbing;
+        }
+
+        .player-card:hover {
+            transform: scale(1.08) translateY(-8px);
+            box-shadow: 
+                0 15px 30px rgba(255, 140, 0, 0.6),
+                inset 0 0 12px rgba(255, 140, 0, 0.2);
+        }
+        
+        /* BOTONES DE ACCIÓN MEJORADOS */
+        .action-buttons {
+            display: flex;
+            gap: 25px;
+            width: 100%;
+            max-width: 1200px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .action-buttons .nav-button {
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        
+        /* Mantener todas las posiciones y lógica existente */
+        .center-line, .free-throw-left, .free-throw-right, .backboard-left, .backboard-right {
             position: absolute;
             background-color: #00f0ff;
-            box-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
         }
         
         .center-line {
@@ -265,13 +525,11 @@
             width: 2px;
         }
         
-        .center-circle,
-        .free-throw-circle-left,
-        .free-throw-circle-right {
+        .center-circle, .free-throw-circle-left, .free-throw-circle-right {
             position: absolute;
             border: 2px solid #00f0ff;
             border-radius: 50%;
-            box-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
         }
         
         .center-circle {
@@ -282,14 +540,12 @@
             height: 150px;
         }
         
-        .three-point-left,
-        .three-point-right,
-        .key-left,
-        .key-right {
+        /* Mantener todas las demás posiciones de la cancha */
+        .three-point-left, .three-point-right, .key-left, .key-right {
             position: absolute;
             top: 50%;
             border: 2px solid #00f0ff;
-            box-shadow: 0 0 5px rgba(0, 240, 255, 0.5);
+            box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
             transform: translateY(-50%);
         }
         
@@ -323,125 +579,7 @@
             border-right: none;
         }
         
-        .free-throw-left,
-        .free-throw-right {
-            top: 50%;
-            transform: translateY(-50%);
-            width: 19%;
-            height: 2px;
-        }
-        
-        .free-throw-left {
-            left: 0;
-        }
-        
-        .free-throw-right {
-            right: 0;
-        }
-        
-        .free-throw-circle-left {
-            left: 19%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 100px;
-            height: 100px;
-        }
-        
-        .free-throw-circle-right {
-            right: 19%;
-            top: 50%;
-            transform: translate(50%, -50%);
-            width: 100px;
-            height: 100px;
-        }
-        
-        .basket-left,
-        .basket-right {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            border: 2px solid #00f0ff;
-            border-radius: 50%;
-            box-shadow: 0 0 8px rgba(0, 240, 255, 0.8);
-        }
-        
-        .basket-left {
-            left: 5%;
-        }
-        
-        .basket-right {
-            right: 5%;
-        }
-        
-        .backboard-left {
-            left: 2%;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 2px;
-        }
-        
-        .backboard-right {
-            right: 2%;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 40px;
-            height: 2px;
-        }
-        
-        .player-slots {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        
-        .player-slot {
-            position: absolute;
-            width: 100px;
-            height: 140px;
-            background-color: rgba(0, 255, 128, 0.1);
-            border: 2px solid #00ff80;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            box-shadow: 0 0 10px rgba(0, 255, 128, 0.3);
-        }
-        
-        .player-slot:hover {
-            border-color: #00ff80;
-            box-shadow: 0 0 15px rgba(0, 255, 128, 0.5);
-            background-color: rgba(0, 255, 128, 0.2);
-        }
-        
-        .player-slot.has-player {
-            background-color: rgba(0, 255, 128, 0.2);
-            border-color: #00ff80;
-        }
-        
-        /* 🆕 ESTILOS PARA SLOTS BLOQUEADOS */
-        .player-slot.locked,
-        .bench-slot.locked {
-            opacity: 0.6;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-        
-        .player-slot.locked:hover,
-        .bench-slot.locked:hover {
-            background-color: rgba(0, 255, 128, 0.1);
-            box-shadow: 0 0 10px rgba(0, 255, 128, 0.3);
-            transform: none;
-        }
-        
-        /* Posiciones de los slots - mantener iguales */
+        /* Posiciones de slots - mantener todas */
         .slot-left {
             top: 25%;
             left: 20%;
@@ -472,8 +610,65 @@
             transform: translate(-50%, -50%);
         }
         
-        .bench-container,
-        .bench-container-2 {
+        /* Resto de elementos de cancha */
+        .free-throw-left, .free-throw-right {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 19%;
+            height: 2px;
+        }
+        
+        .free-throw-left { left: 0; }
+        .free-throw-right { right: 0; }
+        
+        .free-throw-circle-left {
+            left: 19%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+        }
+        
+        .free-throw-circle-right {
+            right: 19%;
+            top: 50%;
+            transform: translate(50%, -50%);
+            width: 100px;
+            height: 100px;
+        }
+        
+        .basket-left, .basket-right {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00f0ff;
+            border-radius: 50%;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.8);
+        }
+        
+        .basket-left { left: 5%; }
+        .basket-right { right: 5%; }
+        
+        .backboard-left {
+            left: 2%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 2px;
+        }
+        
+        .backboard-right {
+            right: 2%;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 2px;
+        }
+        
+        /* Áreas de bench */
+        .bench-container, .bench-container-2 {
             width: 100%;
             display: flex;
             justify-content: space-between;
@@ -485,400 +680,88 @@
             margin-bottom: 15px;
         }
         
-        .bench-slot {
-            width: 100px;
-            height: 140px;
-            background-color: rgba(255, 107, 107, 0.1);
-            border: 2px solid #ff6b6b;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex: 1;
-            max-width: 110px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
-        }
-        
-        .bench-slot:hover {
-            border-color: #ff6b6b;
-            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
-            background-color: rgba(255, 107, 107, 0.2);
-        }
-        
-        .bench-slot.has-player {
-            background-color: rgba(255, 107, 107, 0.2);
-            border-color: #ff6b6b;
-        }
-        
-        /* Player card styles - mantener iguales del archivo original */
-        .player-card {
-            width: 90px;
-            height: 130px;
-            background: linear-gradient(145deg, #2a1810, #1a0f08);
-            border: 2px solid transparent;
-            border-image: linear-gradient(45deg, #ff8c00, #ffa500, #ff7f00, #ff8c00) 1;
-            position: relative;
-            box-shadow: 
-                0 0 10px rgba(255, 140, 0, 0.3),
-                inset 0 0 5px rgba(255, 140, 0, 0.1);
-            font-family: 'Orbitron', monospace;
-            overflow: hidden;
-            cursor: grab;
-            transition: all 0.3s ease;
-        }
-
-        .player-card:active {
-            cursor: grabbing;
-        }
-
-        .player-card:hover {
-            transform: scale(1.05);
-            box-shadow: 
-                0 5px 15px rgba(255, 140, 0, 0.4),
-                inset 0 0 8px rgba(255, 140, 0, 0.2);
-        }
-
-        .card-border {
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            right: 3px;
-            bottom: 3px;
-            border: 1px solid #ff8c00;
-            pointer-events: none;
-        }
-
-        .corner {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: linear-gradient(45deg, #ff8c00, #ffa500);
-        }
-
-        .corner.top-left {
-            top: 0;
-            left: 0;
-            clip-path: polygon(0 0, 100% 0, 0 100%);
-        }
-
-        .corner.top-right {
-            top: 0;
-            right: 0;
-            clip-path: polygon(0 0, 100% 0, 100% 100%);
-        }
-
-        .corner.bottom-left {
-            bottom: 0;
-            left: 0;
-            clip-path: polygon(0 0, 100% 100%, 0 100%);
-        }
-
-        .corner.bottom-right {
-            bottom: 0;
-            right: 0;
-            clip-path: polygon(100% 0, 100% 100%, 0 100%);
-        }
-
-        .player-name {
-            background: linear-gradient(90deg, #ff8c00, #ffa500, #ff8c00);
-            color: #000;
-            text-align: center;
-            padding: 2px 4px;
-            margin: 4px 4px 2px 4px;
-            font-weight: 900;
-            font-size: 7px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            border: 1px solid #ff7f00;
-            text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
-        }
-
-        .player-position {
-            background: rgba(255, 140, 0, 0.2);
-            color: #ffa500;
-            text-align: center;
-            padding: 1px 2px;
-            margin: 0 4px 4px 4px;
-            font-weight: 600;
-            font-size: 6px;
-            letter-spacing: 0.3px;
-            border: 1px solid #ff8c00;
-            text-transform: uppercase;
-        }
-
-        .player-image-container {
-            width: 60px;
-            height: 50px;
-            margin: 0 auto 4px auto;
-            background: linear-gradient(135deg, #1a4c80, #2a5c90, #1a4c80);
-            border: 1px solid #ff8c00;
-            position: relative;
-            overflow: hidden;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
-        }
-
-        .player-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: contrast(1.1) saturate(1.1);
-        }
-
-        .image-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 18px;
-            background: 
-                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-                linear-gradient(135deg, #1a4c80, #2a5c90);
-        }
-
-        .stats-container {
-            padding: 0 6px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1px 3px;
-            margin-bottom: 4px;
-        }
-
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 5px;
-            font-weight: 600;
-            color: #e6d7c3;
-            letter-spacing: 0.2px;
-            text-transform: uppercase;
-        }
-
-        .stat-label {
-            color: #ffa500;
-        }
-
-        .stat-value {
-            color: #e6d7c3;
-            font-weight: 700;
-            min-width: 12px;
-            text-align: right;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        
-        .empty-slot {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.7rem;
-            text-align: center;
-            font-weight: 600;
-        }
-        
-        .loading-message {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.8rem;
-            text-align: center;
-        }
-
-        /* 🆕 ESTILOS PARA BOTONES BLOQUEADOS */
-        .nav-button.disabled,
-        .draft-button.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            border-color: #666;
-            color: #666;
-        }
-        
-        .nav-button.disabled:hover,
-        .draft-button.disabled:hover {
-            background-color: rgba(0, 0, 0, 0.5);
-            box-shadow: none;
-            transform: none;
-        }
-        
-        /* Elementos decorativos - mantener iguales */
-        .circle-glow {
-            position: fixed;
-            border-radius: 50%;
-            z-index: -1;
-            opacity: 0.4;
-            pointer-events: none;
-        }
-        
-        .top-left {
-            width: 400px;
-            height: 400px;
-            top: -100px;
-            left: -100px;
-            background: radial-gradient(circle, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0) 70%);
-            animation: float 15s ease-in-out infinite alternate;
-        }
-        
-        .bottom-right {
-            width: 500px;
-            height: 500px;
-            bottom: -150px;
-            right: -150px;
-            background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0) 70%);
-            animation: float 18s ease-in-out infinite alternate-reverse;
-        }
-        
-        @keyframes float {
-            0% { transform: translate(0, 0); }
-            50% { transform: translate(30px, -20px); }
-            100% { transform: translate(-20px, 40px); }
-        }
-        
-        /* Media Queries - mantener iguales */
-        @media (max-width: 1200px) {
-            .navigation {
-                max-width: 100%;
-                padding: 0 15px;
-            }
-            
-            .court-container {
-                max-width: 100%;
-                padding: 0 15px;
-            }
-        }
-        
+        /* RESPONSIVE MEJORADO */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
+            .team-logos { opacity: 0.3; }
             
             .navigation {
                 flex-direction: column;
                 gap: 15px;
-            }
-            
-            .logo {
-                font-size: 1.4rem;
-            }
-            
-            .nav-button, .draft-button {
-                padding: 8px 15px;
-                font-size: 0.8rem;
+                padding: 15px;
             }
             
             .section-title {
-                font-size: 1.5rem;
+                font-size: 2rem;
             }
             
-            .zone-explanation {
-                flex-direction: column;
-                gap: 10px;
+            .nav-button, .draft-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
             }
             
-            .bench-container,
-            .bench-container-2 {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 8px;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .player-slot, .bench-slot {
-                width: 80px;
-                height: 120px;
-            }
-
-            .player-card {
-                width: 75px;
-                height: 110px;
+            .decorative-circle {
+                opacity: 0.2;
             }
         }
 
         @media (max-width: 480px) {
-            .logo {
-                font-size: 1.2rem;
+            .team-logos .team-logo {
+                width: 80px;
+                height: 80px;
             }
             
-            .section-title {
-                font-size: 1.3rem;
-            }
-            
-            .player-slot, .bench-slot {
-                width: 70px;
-                height: 100px;
-            }
-
-            .player-card {
-                width: 65px;
-                height: 95px;
-            }
-        
-        /* 🆕 ESTILOS PARA LOGOS DE EQUIPOS EN CARTAS - UPDATED */
-            .team-logo-image {
-                width: 100% !important;
-                height: 100% !important;
-                object-fit: contain !important;
-                filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.6));
-                transition: all 0.3s ease;
-                padding: 5px;
-                display: block !important;
-                background: transparent;
-            }
-
-            .team-logo-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(45deg, rgba(255, 140, 0, 0.1), transparent);
-                pointer-events: none;
-                z-index: 1;
-            }
-
-            .player-card:hover .team-logo-image {
-                transform: scale(1.05);
-                filter: drop-shadow(0 0 12px rgba(255, 140, 0, 0.8));
-            }
-
-            /* Actualizar container para mejor presentación del logo */
-            .player-image-container {
-                width: 120px;
-                height: 90px;
-                margin: 0 auto 8px auto;
-                background: linear-gradient(135deg, #1a1a1a, #2a2a2a) !important;
-                border: 2px solid #ff8c00;
-                position: relative;
-                overflow: hidden;
-                box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-            }
-
-            /* Remover el placeholder anterior */
-            .image-placeholder {
-                display: none !important;
+            .team-logo img {
+                width: 60px;
+                height: 60px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Fondo GIF igual al index -->
+    <div class="bg-container">
+        <img src="https://i.pinimg.com/originals/64/a8/08/64a8083d07b8c98923311cbc88fecafe.gif" alt="Basketball Court Background" class="bg-gif">
+    </div>
+    
+    <!-- Overlay oscuro -->
+    <div class="overlay"></div>
+    
+    <!-- Grid Lines -->
     <div class="grid-lines"></div>
     
+    <!-- Logos decorativos flotantes -->
+    <div class="team-logos">
+        <div class="team-logo logo-angelbee">
+            <img src="/assets/images/logos/angelbee.png" alt="Angel Bee Team">
+        </div>
+        <div class="team-logo logo-armonia">
+            <img src="/assets/images/logos/armonia.png" alt="Armonia Team">
+        </div>
+        <div class="team-logo logo-raptors">
+            <img src="/assets/images/logos/raptors.png" alt="Raptors Team">
+        </div>
+        <div class="team-logo logo-titans">
+            <img src="/assets/images/logos/titans.png" alt="Titans Team">
+        </div>
+        <div class="team-logo logo-tmt">
+            <img src="/assets/images/logos/tmt.png" alt="TMT Team">
+        </div>
+        <div class="team-logo logo-warriors">
+            <img src="/assets/images/logos/warriors.png" alt="Warriors Team">
+        </div>
+    </div>
+    
+    <!-- Efectos glow laterales -->
+    <div class="side-glow-left"></div>
+    <div class="side-glow-right"></div>
+    
+    <!-- Círculos decorativos -->
+    <div class="decorative-circle circle-top-left"></div>
+    <div class="decorative-circle circle-bottom-right"></div>
+    <div class="decorative-circle circle-center"></div>
+    
     <div class="team-creation-screen">
-        <!-- Navegación -->
+        <!-- Navegación mejorada -->
         <div class="navigation">
             <div class="logo">MOONLIGHT LINE</div>
             <div class="nav-buttons">
@@ -890,32 +773,32 @@
         
         <h2 class="section-title">CREATE YOUR TEAM</h2>
         
-        <!-- 🆕 ESTADO DE LA JORNADA -->
+        <!-- Estado de la jornada -->
         <div class="jornada-status" id="jornada-status" style="display: none;">
             <span class="status-icon">ℹ️</span>
             <span id="status-message">Loading game week status...</span>
         </div>
         
         <!-- Explicación de zonas -->
-        <div class="section-subtitle">
-            Place your players strategically! Only players in the <strong>green zone</strong> will earn points.
+        <div class="section-subtitle" style="font-size: 1.1rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 30px; text-align: center; line-height: 1.6;">
+            Place your players strategically! Only players in the <strong style="color: #00ff80;">GREEN ZONE</strong> will earn points.
         </div>
         
-        <div class="zone-explanation">
-            <div class="zone-info">
-                <div class="zone-color green-zone"></div>
-                <span class="zone-text-green">GREEN ZONE: Starters (5 players) - EARN POINTS</span>
+        <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 25px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 20px; height: 20px; background: rgba(0, 255, 128, 0.3); border: 2px solid #00ff80; border-radius: 5px;"></div>
+                <span style="color: #00ff80; font-weight: 600; font-size: 1rem;">GREEN ZONE: Starters (5 players) - EARN POINTS</span>
             </div>
-            <div class="zone-info">
-                <div class="zone-color red-zone"></div>
-                <span class="zone-text-red">RED ZONE: Bench (up to 10 players) - NO POINTS</span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 20px; height: 20px; background: rgba(255, 107, 107, 0.3); border: 2px solid #ff6b6b; border-radius: 5px;"></div>
+                <span style="color: #ff6b6b; font-weight: 600; font-size: 1rem;">RED ZONE: Bench (up to 10 players) - NO POINTS</span>
             </div>
         </div>
         
-        <!-- Cancha de baloncesto -->
+        <!-- Cancha de baloncesto mejorada -->
         <div class="court-container">
             <div class="court">
-                <!-- Líneas de la cancha - mantener todas iguales -->
+                <!-- Líneas de la cancha -->
                 <div class="center-line"></div>
                 <div class="center-circle"></div>
                 
@@ -940,72 +823,68 @@
                 <!-- Posiciones de jugadores (ZONA VERDE - TITULARES) -->
                 <div class="player-slots">
                     <div class="player-slot slot-top" data-position="1" id="position-1">
-                        <div class="empty-slot">STARTER 1<br><small>✅ EARNS POINTS</small></div>
+                        <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; text-align: center; font-weight: 600;">STARTER 1<br><small style="color: #00ff80;">✅ EARNS POINTS</small></div>
                     </div>
                     <div class="player-slot slot-bottom" data-position="2" id="position-2">
-                        <div class="empty-slot">STARTER 2<br><small>✅ EARNS POINTS</small></div>
+                        <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; text-align: center; font-weight: 600;">STARTER 2<br><small style="color: #00ff80;">✅ EARNS POINTS</small></div>
                     </div>
                     <div class="player-slot slot-center" data-position="3" id="position-3">
-                        <div class="empty-slot">STARTER 3<br><small>✅ EARNS POINTS</small></div>
+                        <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; text-align: center; font-weight: 600;">STARTER 3<br><small style="color: #00ff80;">✅ EARNS POINTS</small></div>
                     </div>
                     <div class="player-slot slot-left" data-position="4" id="position-4">
-                        <div class="empty-slot">STARTER 4<br><small>✅ EARNS POINTS</small></div>
+                        <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; text-align: center; font-weight: 600;">STARTER 4<br><small style="color: #00ff80;">✅ EARNS POINTS</small></div>
                     </div>
                     <div class="player-slot slot-right" data-position="5" id="position-5">
-                        <div class="empty-slot">STARTER 5<br><small>✅ EARNS POINTS</small></div>
+                        <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.8rem; text-align: center; font-weight: 600;">STARTER 5<br><small style="color: #00ff80;">✅ EARNS POINTS</small></div>
                     </div>
                 </div>
             </div>
             
-            <!-- Área de banca (ZONA ROJA - SUPLENTES) primera fila - 5 slots -->
+            <!-- Área de banca (ZONA ROJA - SUPLENTES) primera fila -->
             <div class="bench-container">
                 <div class="bench-slot" data-position="6" id="bench-1">
-                    <div class="empty-slot">BENCH 1<br><small>❌ NO POINTS</small></div>
+                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 1<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="7" id="bench-2">
-                    <div class="empty-slot">BENCH 2<br><small>❌ NO POINTS</small></div>
+                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 2<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="8" id="bench-3">
-                    <div class="empty-slot">BENCH 3<br><small>❌ NO POINTS</small></div>
+                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 3<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="9" id="bench-4">
-                    <div class="empty-slot">BENCH 4<br><small>❌ NO POINTS</small></div>
+                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 4<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="10" id="bench-5">
-                    <div class="empty-slot">BENCH 5<br><small>❌ NO POINTS</small></div>
+                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 5<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
             </div>
             
-            <!-- Área de banca adicional (ZONA ROJA - SUPLENTES) segunda fila - 5 slots -->
+            <!-- Área de banca adicional segunda fila -->
             <div class="bench-container-2">
                 <div class="bench-slot" data-position="11" id="bench-6">
-                    <div class="empty-slot">BENCH 6<br><small>❌ NO POINTS</small></div>
+                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 6<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="12" id="bench-7">
-                    <div class="empty-slot">BENCH 7<br><small>❌ NO POINTS</small></div>
+                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 7<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="13" id="bench-8">
-                    <div class="empty-slot">BENCH 8<br><small>❌ NO POINTS</small></div>
+                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 8<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="14" id="bench-9">
-                    <div class="empty-slot">BENCH 9<br><small>❌ NO POINTS</small></div>
+                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 9<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="15" id="bench-10">
-                    <div class="empty-slot">BENCH 10<br><small>❌ NO POINTS</small></div>
+                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 10<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
             </div>
         </div>
         
-        <!-- Botones de acción -->
+        <!-- Botones de acción mejorados -->
         <div class="action-buttons">
             <button class="nav-button" id="clear-team-btn">CLEAR TEAM</button>
-            <button class="draft-button" id="save-team-btn-2">SAVE TEAM</button>
+            <button class="nav-button" id="save-team-btn-2" style="border-color: #00ff80; color: #00ff80; box-shadow: 0 0 20px rgba(0, 255, 128, 0.3);">SAVE TEAM</button>
         </div>
     </div>
-    
-    <!-- Elementos decorativos -->
-    <div class="circle-glow top-left"></div>
-    <div class="circle-glow bottom-right"></div>
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {

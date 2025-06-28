@@ -8,7 +8,6 @@
     <script src="/assets/js/team-utils.js"></script>
     <script src="/assets/js/background-music.js"></script>
     <style>
-        /* [Mantener todos los estilos existentes...] */
         * {
             margin: 0;
             padding: 0;
@@ -30,6 +29,38 @@
             position: relative;
         }
         
+        /* 🎬 FONDO GIF ANIMADO IGUAL AL INDEX */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -3;
+            overflow: hidden;
+        }
+        
+        .bg-gif {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        /* Overlay oscuro para legibilidad */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: -2;
+        }
+        
+        /* Grid Lines */
         .grid-lines {
             position: fixed;
             top: 0;
@@ -44,62 +75,193 @@
             z-index: -1;
         }
         
-        /* 🆕 ESTILO PARA MENSAJE DE DRAFT BLOQUEADO */
-        .draft-blocked-message {
-            background-color: rgba(255, 107, 107, 0.1);
-            border: 2px solid #ff6b6b;
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            max-width: 600px;
-            margin: 50px auto;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+        /* 🌟 LOGOS DECORATIVOS DE EQUIPOS FLOTANTES */
+        .team-logos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
         }
         
-        .blocked-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: #ff6b6b;
-        }
-        
-        .blocked-title {
-            font-size: 2rem;
-            color: #ff6b6b;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        
-        .blocked-message {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .blocked-actions {
+        .team-logo {
+            position: absolute;
+            width: 100px;
+            height: 100px;
             display: flex;
-            gap: 20px;
+            align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+            animation: float 25s ease-in-out infinite;
         }
         
-        /* Resto de estilos mantener igual que el archivo original */
+        .team-logo img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 12px rgba(255, 140, 0, 0.5));
+            transition: all 0.3s ease;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -15px) rotate(3deg); }
+            50% { transform: translate(-15px, 25px) rotate(-2deg); }
+            75% { transform: translate(15px, -10px) rotate(1deg); }
+        }
+        
+        .logo-angelbee {
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+        
+        .logo-armonia {
+            top: 70%;
+            left: 3%;
+            animation-delay: 4s;
+        }
+        
+        .logo-raptors {
+            top: 90%;
+            left: 12%;
+            animation-delay: 8s;
+        }
+        
+        .logo-titans {
+            top: 15%;
+            right: 5%;
+            animation-delay: 2s;
+        }
+        
+        .logo-tmt {
+            top: 75%;
+            right: 3%;
+            animation-delay: 6s;
+        }
+        
+        .logo-warriors {
+            top: 95%;
+            right: 12%;
+            animation-delay: 10s;
+        }
+        
+        /* 🔥 EFECTOS GLOW LATERALES */
+        .side-glow-left {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #ff8c00, transparent);
+            box-shadow: 0 0 25px 6px rgba(255, 140, 0, 0.6);
+            opacity: 0.8;
+            z-index: 0;
+        }
+        
+        .side-glow-right {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #8c00ff, transparent);
+            box-shadow: 0 0 25px 6px rgba(140, 0, 255, 0.6);
+            opacity: 0.8;
+            z-index: 0;
+        }
+        
+        /* ✨ CÍRCULOS DECORATIVOS FLOTANTES */
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            z-index: 0;
+            opacity: 0.2;
+            pointer-events: none;
+            animation: pulse-rotate 8s ease-in-out infinite alternate;
+        }
+        
+        .circle-top-left {
+            width: 350px;
+            height: 350px;
+            top: -80px;
+            left: -80px;
+            background: radial-gradient(circle, rgba(255, 140, 0, 0.2) 0%, rgba(255, 140, 0, 0) 70%);
+            animation-delay: 0s;
+        }
+        
+        .circle-bottom-right {
+            width: 450px;
+            height: 450px;
+            bottom: -120px;
+            right: -120px;
+            background: radial-gradient(circle, rgba(140, 0, 255, 0.15) 0%, rgba(140, 0, 255, 0) 70%);
+            animation-delay: 2s;
+        }
+        
+        .circle-center-draft {
+            width: 250px;
+            height: 250px;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, rgba(0, 240, 255, 0) 70%);
+            animation-delay: 4s;
+        }
+        
+        @keyframes pulse-rotate {
+            0% { 
+                transform: scale(1) rotate(0deg); 
+                opacity: 0.2; 
+            }
+            50% { 
+                transform: scale(1.2) rotate(180deg); 
+                opacity: 0.4; 
+            }
+            100% { 
+                transform: scale(1) rotate(360deg); 
+                opacity: 0.2; 
+            }
+        }
+        
+        /* CONTENIDO PRINCIPAL */
+        .draft-screen {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1400px;
+        }
+        
+        /* NAVEGACIÓN MEJORADA */
         .navigation {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            max-width: 1400px;
             margin-bottom: 30px;
             align-items: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 18px 30px;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 40px rgba(255, 140, 0, 0.2);
         }
         
         .logo {
             font-size: 1.8rem;
-            color: #00f0ff;
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+            color: #ff8c00;
+            text-shadow: 0 0 20px rgba(255, 140, 0, 0.8);
             font-weight: 700;
             letter-spacing: 1px;
+            animation: logo-glow-orange 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes logo-glow-orange {
+            0% { text-shadow: 0 0 20px rgba(255, 140, 0, 0.8); }
+            100% { text-shadow: 0 0 30px rgba(255, 140, 0, 1), 0 0 40px rgba(255, 140, 0, 0.5); }
         }
         
         .nav-buttons {
@@ -108,138 +270,304 @@
         }
         
         .nav-button {
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 1px solid #00f0ff;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
+            border: 2px solid #ff8c00;
             color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
+            padding: 12px 25px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            transition: all 0.4s ease;
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
+        }
+        
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 140, 0, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .nav-button:hover::before {
+            left: 100%;
         }
         
         .nav-button:hover {
-            background-color: rgba(0, 240, 255, 0.15);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.2));
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.6), inset 0 0 20px rgba(255, 140, 0, 0.1);
+            transform: translateY(-3px) scale(1.05);
+            border-color: #ff8c00;
         }
         
+        /* TÍTULO MEJORADO */
         .section-title {
-            font-size: 2rem;
-            color: #00f0ff;
-            margin-bottom: 30px;
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            font-size: 2.5rem;
+            color: #ff8c00;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(255, 140, 0, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
+            animation: title-pulse-orange 4s ease-in-out infinite alternate;
+        }
+        
+        @keyframes title-pulse-orange {
+            0% { 
+                text-shadow: 0 0 20px rgba(255, 140, 0, 0.8);
+                transform: scale(1);
+            }
+            100% { 
+                text-shadow: 0 0 30px rgba(255, 140, 0, 1), 0 0 50px rgba(255, 140, 0, 0.5);
+                transform: scale(1.02);
+            }
+        }
+        
+        /* MENSAJE DE DRAFT BLOQUEADO MEJORADO */
+        .draft-blocked-message {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 107, 107, 0.05));
+            border: 3px solid #ff6b6b;
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            max-width: 700px;
+            margin: 60px auto;
+            box-shadow: 0 0 40px rgba(255, 107, 107, 0.3);
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .draft-blocked-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.2), transparent);
+            animation: shimmer-error 3s infinite;
+        }
+        
+        @keyframes shimmer-error {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .blocked-icon {
+            font-size: 5rem;
+            margin-bottom: 25px;
+            color: #ff6b6b;
+            animation: icon-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes icon-pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(5deg); }
+        }
+        
+        .blocked-title {
+            font-size: 2.2rem;
+            color: #ff6b6b;
+            margin-bottom: 20px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            text-align: center;
+            text-shadow: 0 0 15px rgba(255, 107, 107, 0.8);
         }
         
+        .blocked-message {
+            font-size: 1.2rem;
+            line-height: 1.7;
+            margin-bottom: 35px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .blocked-actions {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* FILTROS MEJORADOS */
         .filters-container {
             width: 100%;
             max-width: 1400px;
             display: flex;
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             justify-content: center;
         }
         
         .filter-input {
             flex: 1;
-            max-width: 500px;
-            background-color: rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(0, 240, 255, 0.5);
-            border-radius: 4px;
+            max-width: 600px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
+            border: 2px solid rgba(255, 140, 0, 0.5);
+            border-radius: 15px;
             color: white;
-            padding: 12px 15px;
-            font-size: 0.9rem;
+            padding: 15px 20px;
+            font-size: 1rem;
             outline: none;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.2);
         }
         
         .filter-input:focus {
-            border-color: #00f0ff;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            border-color: #ff8c00;
+            box-shadow: 0 0 25px rgba(255, 140, 0, 0.5);
+            background: linear-gradient(135deg, rgba(255, 140, 0, 0.05), rgba(255, 140, 0, 0.1));
         }
         
+        /* RESUMEN DE SELECCIÓN MEJORADO */
         .selection-summary {
             width: 100%;
             max-width: 1400px;
-            background-color: rgba(0, 0, 0, 0.7);
-            border: 1px solid #00f0ff;
-            border-radius: 10px;
-            padding: 15px 20px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9));
+            border: 2px solid #ff8c00;
+            border-radius: 20px;
+            padding: 20px 25px;
             margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.2);
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .selection-summary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 140, 0, 0.2), transparent);
+            animation: shimmer-selection 4s infinite;
+        }
+        
+        @keyframes shimmer-selection {
+            0% { left: -100%; }
+            100% { left: 100%; }
         }
         
         .selected-count {
-            font-size: 1.2rem;
-            color: #00f0ff;
+            font-size: 1.4rem;
+            color: #ff8c00;
             letter-spacing: 1px;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 140, 0, 0.8);
+            position: relative;
+            z-index: 2;
         }
         
         .selection-warning {
-            color: #ff8c00;
-            font-size: 1rem;
+            color: #ff6b6b;
+            font-size: 1.1rem;
             display: none;
+            font-weight: 600;
+            animation: warning-pulse 1s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
         }
         
+        @keyframes warning-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* CONTENEDOR DE GRID MEJORADO */
         .player-grid-container {
             width: 100%;
             max-width: 1400px;
-            background-color: rgba(0, 0, 0, 0.7);
-            border: 1px solid #00f0ff;
-            border-radius: 10px;
-            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9));
+            border: 2px solid #ff8c00;
+            border-radius: 20px;
+            padding: 35px;
             margin-bottom: 30px;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 40px rgba(255, 140, 0, 0.2);
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .player-grid-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255, 140, 0, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(140, 0, 255, 0.1) 0%, transparent 50%);
+            z-index: 1;
+            pointer-events: none;
         }
         
         .player-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 15px;
+            gap: 20px;
             width: 100%;
             justify-items: center;
             place-items: start;
+            position: relative;
+            z-index: 2;
         }
         
-        /* Player card styles mantener iguales */
+        /* CARTAS DE JUGADORES MEJORADAS */
         .player-card {
             width: 180px;
-            height: 250px;
-            background: linear-gradient(145deg, #2a1810, #1a0f08);
+            height: 260px;
+            background: linear-gradient(145deg, rgba(30, 20, 10, 0.95), rgba(15, 10, 5, 0.98));
             border: 3px solid transparent;
             border-image: linear-gradient(45deg, #ff8c00, #ffa500, #ff7f00, #ff8c00) 1;
             position: relative;
             box-shadow: 
-                0 0 15px rgba(255, 140, 0, 0.3),
-                inset 0 0 8px rgba(255, 140, 0, 0.1);
+                0 0 20px rgba(255, 140, 0, 0.4),
+                inset 0 0 10px rgba(255, 140, 0, 0.1);
             font-family: 'Orbitron', monospace;
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
         }
 
         .player-card:hover {
-            transform: translateY(-5px) scale(1.02);
+            transform: translateY(-8px) scale(1.03);
             box-shadow: 
-                0 10px 25px rgba(255, 140, 0, 0.4),
-                inset 0 0 12px rgba(255, 140, 0, 0.2);
+                0 15px 35px rgba(255, 140, 0, 0.6),
+                inset 0 0 15px rgba(255, 140, 0, 0.2);
+            border-image: linear-gradient(45deg, #ffa500, #ffb500, #ffa500, #ffb500) 1;
         }
 
         .player-card.selected {
             border-image: linear-gradient(45deg, #00f0ff, #00d4ff, #00f0ff, #00d4ff) 1;
             box-shadow: 
-                0 0 20px rgba(0, 240, 255, 0.6),
-                inset 0 0 10px rgba(0, 240, 255, 0.2);
-            background: linear-gradient(145deg, #1a2830, #0f1a20);
+                0 0 30px rgba(0, 240, 255, 0.7),
+                inset 0 0 15px rgba(0, 240, 255, 0.2);
+            background: linear-gradient(145deg, rgba(10, 30, 40, 0.95), rgba(5, 20, 30, 0.98));
+        }
+
+        .player-card.selected:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 
+                0 15px 35px rgba(0, 240, 255, 0.8),
+                inset 0 0 15px rgba(0, 240, 255, 0.3);
         }
 
         .card-border {
@@ -250,6 +578,7 @@
             bottom: 6px;
             border: 1px solid #ff8c00;
             pointer-events: none;
+            border-radius: 5px;
         }
 
         .player-card.selected .card-border {
@@ -295,14 +624,15 @@
             background: linear-gradient(90deg, #ff8c00, #ffa500, #ff8c00);
             color: #000;
             text-align: center;
-            padding: 5px 6px;
-            margin: 8px 8px 4px 8px;
+            padding: 6px 8px;
+            margin: 10px 10px 6px 10px;
             font-weight: 900;
-            font-size: 10px;
+            font-size: 11px;
             letter-spacing: 1px;
             text-transform: uppercase;
             border: 1px solid #ff7f00;
             text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+            border-radius: 4px;
         }
 
         .player-card.selected .player-name {
@@ -314,13 +644,14 @@
             background: rgba(255, 140, 0, 0.2);
             color: #ffa500;
             text-align: center;
-            padding: 2px 4px;
-            margin: 0 8px 6px 8px;
+            padding: 3px 6px;
+            margin: 0 10px 8px 10px;
             font-weight: 600;
-            font-size: 8px;
+            font-size: 9px;
             letter-spacing: 0.5px;
             border: 1px solid #ff8c00;
             text-transform: uppercase;
+            border-radius: 3px;
         }
 
         .player-card.selected .player-position {
@@ -330,53 +661,55 @@
         }
 
         .player-image-container {
-            width: 120px;
-            height: 90px;
-            margin: 0 auto 8px auto;
-            background: linear-gradient(135deg, #1a4c80, #2a5c90, #1a4c80);
+            width: 130px;
+            height: 100px;
+            margin: 0 auto 10px auto;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
             border: 2px solid #ff8c00;
             position: relative;
             overflow: hidden;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.5);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .player-card.selected .player-image-container {
             border-color: #00f0ff;
         }
 
-        .player-image {
+        .team-logo-image {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            filter: contrast(1.1) saturate(1.1);
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.6));
+            transition: all 0.3s ease;
+            padding: 10px;
+            display: block;
         }
 
-        .image-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 28px;
-            background: 
-                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-                linear-gradient(135deg, #1a4c80, #2a5c90);
+        .player-card.selected .team-logo-image {
+            filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.8));
+        }
+
+        .player-card:hover .team-logo-image {
+            transform: scale(1.05);
         }
 
         .stats-container {
-            padding: 0 10px;
+            padding: 0 12px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 3px 6px;
-            margin-bottom: 8px;
+            gap: 4px 8px;
+            margin-bottom: 10px;
         }
 
         .stat-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 7px;
+            font-size: 8px;
             font-weight: 600;
             color: #e6d7c3;
             letter-spacing: 0.3px;
@@ -394,69 +727,96 @@
         .stat-value {
             color: #e6d7c3;
             font-weight: 700;
-            min-width: 18px;
+            min-width: 20px;
             text-align: right;
         }
 
         .selection-badge {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background-color: #00f0ff;
+            top: 8px;
+            right: 8px;
+            background: linear-gradient(135deg, #00f0ff, #00d4ff);
             color: #000;
             border-radius: 50%;
-            width: 22px;
-            height: 22px;
+            width: 25px;
+            height: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 11px;
+            font-size: 12px;
             opacity: 0;
-            transition: opacity 0.3s ease;
-            box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.8);
+            border: 2px solid #00f0ff;
         }
 
         .player-card.selected .selection-badge {
             opacity: 1;
+            animation: badge-pulse 2s ease-in-out infinite;
         }
 
+        @keyframes badge-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* BOTONES DE ACCIÓN MEJORADOS */
         .action-buttons {
             display: flex;
-            gap: 20px;
+            gap: 30px;
             width: 100%;
             max-width: 1400px;
             justify-content: center;
-            margin: 20px 0;
+            margin: 30px 0;
         }
         
         .confirm-button {
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 1px solid #ff8c00;
-            color: #ff8c00;
-            padding: 10px 20px;
-            border-radius: 4px;
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.1), rgba(0, 255, 128, 0.2));
+            border: 2px solid #00ff80;
+            color: #00ff80;
+            padding: 15px 35px;
+            border-radius: 30px;
             cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            font-weight: 700;
+            transition: all 0.4s ease;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            box-shadow: 0 0 25px rgba(0, 255, 128, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .confirm-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 128, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .confirm-button:hover::before {
+            left: 100%;
         }
         
         .confirm-button:hover {
-            background-color: rgba(255, 140, 0, 0.15);
-            box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.2), rgba(0, 255, 128, 0.3));
+            box-shadow: 0 0 35px rgba(0, 255, 128, 0.6);
+            transform: translateY(-3px) scale(1.05);
         }
         
         .confirm-button:disabled {
-            opacity: 0.5;
+            opacity: 0.4;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
+            box-shadow: 0 0 10px rgba(0, 255, 128, 0.2);
         }
-
-        /* Media queries mantener iguales */
+        
+        /* RESPONSIVE MEJORADO */
         @media (max-width: 1200px) {
             .player-grid {
                 grid-template-columns: repeat(5, 1fr);
@@ -464,63 +824,72 @@
             
             .player-card {
                 width: 160px;
-                height: 220px;
+                height: 240px;
             }
         }
 
         @media (max-width: 900px) {
             .player-grid {
                 grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
             }
             
             .player-card {
                 width: 150px;
-                height: 210px;
+                height: 220px;
             }
             
             .player-image-container {
-                width: 110px;
-                height: 80px;
+                width: 120px;
+                height: 90px;
             }
+            
+            .team-logos { opacity: 0.3; }
         }
 
         @media (max-width: 768px) {
             .navigation {
                 flex-direction: column;
                 gap: 15px;
+                padding: 15px 20px;
             }
             
             .filters-container {
                 flex-direction: column;
-                gap: 10px;
+                gap: 15px;
             }
             
             .action-buttons {
                 flex-direction: column;
                 align-items: center;
+                gap: 20px;
             }
             
             .section-title {
-                font-size: 1.5rem;
+                font-size: 2rem;
             }
             
             .player-grid {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
+                gap: 12px;
             }
             
             .player-grid-container {
-                padding: 15px;
+                padding: 20px;
             }
             
             .player-card {
                 width: 130px;
-                height: 190px;
+                height: 200px;
             }
             
             .player-image-container {
-                width: 100px;
-                height: 70px;
+                width: 110px;
+                height: 80px;
+            }
+            
+            .decorative-circle {
+                opacity: 0.1;
             }
         }
 
@@ -531,74 +900,66 @@
             
             .player-card {
                 width: 120px;
-                height: 180px;
+                height: 190px;
             }
-
-            /* 🆕 ESTILOS PARA LOGOS DE EQUIPOS EN DRAFT */
-            .team-logo-image {
-                width: 100% !important;
-                height: 100% !important;
-                object-fit: contain !important;
-                filter: drop-shadow(0 0 8px rgba(255, 140, 0, 0.6));
-                transition: all 0.3s ease;
-                padding: 8px;
-                display: block !important;
+            
+            .team-logos .team-logo {
+                width: 60px;
+                height: 60px;
             }
-
-            .player-card.selected .team-logo-image {
-                filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.8));
-            }
-
-            .team-logo-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(45deg, rgba(255, 140, 0, 0.1), transparent);
-                pointer-events: none;
-                z-index: 1;
-            }
-
-            .player-card.selected .team-logo-overlay {
-                background: linear-gradient(45deg, rgba(0, 240, 255, 0.1), transparent);
-            }
-
-            .player-card:hover .team-logo-image {
-                transform: scale(1.05);
-            }
-
-            /* Actualizar container para mejor presentación */
-            .player-image-container {
-                width: 120px;
-                height: 90px;
-                margin: 0 auto 8px auto;
-                background: linear-gradient(135deg, #1a1a1a, #2a2a2a) !important;
-                border: 2px solid #ff8c00;
-                position: relative;
-                overflow: hidden;
-                box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-            }
-
-            .player-card.selected .player-image-container {
-                border-color: #00f0ff;
-            }
-
-            /* Remover el placeholder anterior */
-            .image-placeholder {
-                display: none !important;
+            
+            .team-logo img {
+                width: 50px;
+                height: 50px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Fondo GIF igual al index -->
+    <div class="bg-container">
+        <img src="https://i.pinimg.com/originals/64/a8/08/64a8083d07b8c98923311cbc88fecafe.gif" alt="Basketball Court Background" class="bg-gif">
+    </div>
+    
+    <!-- Overlay oscuro -->
+    <div class="overlay"></div>
+    
+    <!-- Grid Lines -->
     <div class="grid-lines"></div>
     
+    <!-- Logos decorativos flotantes -->
+    <div class="team-logos">
+        <div class="team-logo logo-angelbee">
+            <img src="/assets/images/logos/angelbee.png" alt="Angel Bee Team">
+        </div>
+        <div class="team-logo logo-armonia">
+            <img src="/assets/images/logos/armonia.png" alt="Armonia Team">
+        </div>
+        <div class="team-logo logo-raptors">
+            <img src="/assets/images/logos/raptors.png" alt="Raptors Team">
+        </div>
+        <div class="team-logo logo-titans">
+            <img src="/assets/images/logos/titans.png" alt="Titans Team">
+        </div>
+        <div class="team-logo logo-tmt">
+            <img src="/assets/images/logos/tmt.png" alt="TMT Team">
+        </div>
+        <div class="team-logo logo-warriors">
+            <img src="/assets/images/logos/warriors.png" alt="Warriors Team">
+        </div>
+    </div>
+    
+    <!-- Efectos glow laterales -->
+    <div class="side-glow-left"></div>
+    <div class="side-glow-right"></div>
+    
+    <!-- Círculos decorativos -->
+    <div class="decorative-circle circle-top-left"></div>
+    <div class="decorative-circle circle-bottom-right"></div>
+    <div class="decorative-circle circle-center-draft"></div>
+    
     <div class="draft-screen">
-        <!-- Navegación -->
+        <!-- Navegación mejorada -->
         <div class="navigation">
             <div class="logo">MOONLIGHT LINE</div>
             <div class="nav-buttons">
@@ -606,7 +967,7 @@
             </div>
         </div>
         
-        <!-- 🆕 MENSAJE DE DRAFT BLOQUEADO (inicialmente oculto) -->
+        <!-- Mensaje de draft bloqueado (inicialmente oculto) -->
         <div class="draft-blocked-message" id="draft-blocked-message" style="display: none;">
             <div class="blocked-icon">🔒</div>
             <div class="blocked-title">DRAFT ALREADY COMPLETED</div>
@@ -620,32 +981,32 @@
             </div>
         </div>
         
-        <!-- CONTENIDO NORMAL DEL DRAFT (se oculta si ya hizo draft) -->
+        <!-- CONTENIDO NORMAL DEL DRAFT -->
         <div id="draft-content">
             <h2 class="section-title">DRAFT PLAYERS</h2>
             
-            <!-- Filtros y búsqueda -->
+            <!-- Filtros y búsqueda mejorados -->
             <div class="filters-container">
-                <input type="text" class="filter-input" id="search-input" placeholder="Search by name...">
+                <input type="text" class="filter-input" id="search-input" placeholder="🔍 Search by player name...">
             </div>
             
-            <!-- Resumen de selección -->
+            <!-- Resumen de selección mejorado -->
             <div class="selection-summary">
                 <div class="selected-count">Selected: <span id="selection-count">0</span>/10</div>
-                <div class="selection-warning" id="selection-warning">Maximum selection reached (10/10)</div>
+                <div class="selection-warning" id="selection-warning">⚠️ Maximum selection reached (10/10)</div>
             </div>
             
-            <!-- Grid de jugadores -->
+            <!-- Grid de jugadores mejorado -->
             <div class="player-grid-container">
                 <div class="player-grid" id="player-grid">
                     <!-- Las cartas de jugadores se generarán dinámicamente -->
                 </div>
             </div>
             
-            <!-- Botones de acción -->
+            <!-- Botones de acción mejorados -->
             <div class="action-buttons">
-                <button class="nav-button" id="clear-selections-btn">CLEAR SELECTIONS</button>
-                <button class="confirm-button" id="confirm-draft-btn" disabled>CONFIRM DRAFT</button>
+                <button class="nav-button" id="clear-selections-btn">🗑️ CLEAR SELECTIONS</button>
+                <button class="confirm-button" id="confirm-draft-btn" disabled>✅ CONFIRM DRAFT</button>
             </div>
         </div>
     </div>

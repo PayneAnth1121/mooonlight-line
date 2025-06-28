@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moonlight Line - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="/assets/js/background-music.js"></script>
     <style>
         /* Reset y estilos base */
         * {
@@ -505,6 +506,16 @@
                 email: data.user.email
             }));
         }
+
+                // Inicializar música de fondo
+        document.addEventListener('DOMContentLoaded', function() {
+            // ... código existente ...
+            
+            // 🎵 INICIALIZAR MÚSICA
+            if (typeof initBackgroundMusic === 'function') {
+                initBackgroundMusic();
+            }
+        });
     </script>
 </body>
 </html>

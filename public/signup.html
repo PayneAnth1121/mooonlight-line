@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="/assets/js/background-music.js"></script>
     <style>
-        /* Reset y estilos base */
         * {
             margin: 0;
             padding: 0;
@@ -23,27 +22,40 @@
             overflow-y: auto;
             padding-bottom: 20px;
             position: relative;
-            /* Agregar la imagen de fondo */
-            background-image: url('https://98747F04B20194A89A3E59780734E32E2E7A2516');
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
         }
         
-        /* Overlay para mejorar legibilidad sobre fondo */
-        body::before {
-            content: "";
+        /* 🎬 FONDO GIF ANIMADO IGUAL AL INDEX */
+        .bg-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(6, 17, 31, 0.85);
-            z-index: -1;
+            z-index: -3;
+            overflow: hidden;
         }
         
-        /* Grid Lines */
+        .bg-gif {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        /* Overlay oscuro para legibilidad */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            z-index: -2;
+        }
+        
+        /* Grid Lines - Con colores diferentes para signup */
         .grid-lines {
             position: fixed;
             top: 0;
@@ -51,14 +63,157 @@
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(to right, rgba(0, 240, 255, 0.07) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 240, 255, 0.07) 1px, transparent 1px);
+                linear-gradient(to right, rgba(255, 140, 0, 0.07) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 140, 0, 0.07) 1px, transparent 1px);
             background-size: 30px 30px;
             pointer-events: none;
             z-index: 0;
         }
         
-        /* Contenedor principal */
+        /* 🌟 LOGOS DECORATIVOS DE EQUIPOS FLOTANTES - COLORES CÁLIDOS */
+        .team-logos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .team-logo {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.4;
+            transition: all 0.3s ease;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        .team-logo img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(255, 140, 0, 0.4));
+            transition: all 0.3s ease;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30px, -20px) rotate(5deg); }
+            50% { transform: translate(-20px, 30px) rotate(-3deg); }
+            75% { transform: translate(20px, -10px) rotate(2deg); }
+        }
+        
+        .logo-angelbee {
+            top: 15%;
+            left: 8%;
+            animation-delay: 0s;
+        }
+        
+        .logo-armonia {
+            top: 60%;
+            left: 5%;
+            animation-delay: 3s;
+        }
+        
+        .logo-raptors {
+            top: 80%;
+            left: 15%;
+            animation-delay: 6s;
+        }
+        
+        .logo-titans {
+            top: 20%;
+            right: 8%;
+            animation-delay: 2s;
+        }
+        
+        .logo-tmt {
+            top: 65%;
+            right: 5%;
+            animation-delay: 5s;
+        }
+        
+        .logo-warriors {
+            top: 85%;
+            right: 15%;
+            animation-delay: 8s;
+        }
+        
+        /* 🔥 EFECTOS GLOW LATERALES - COLORES CÁLIDOS */
+        .side-glow-left {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #ff8c00, transparent);
+            box-shadow: 0 0 30px 8px rgba(255, 140, 0, 0.6);
+            opacity: 0.8;
+            z-index: 0;
+        }
+        
+        .side-glow-right {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #00ff80, transparent);
+            box-shadow: 0 0 30px 8px rgba(0, 255, 128, 0.6);
+            opacity: 0.8;
+            z-index: 0;
+        }
+        
+        /* ✨ CÍRCULOS DECORATIVOS FLOTANTES - COLORES CÁLIDOS */
+        .decorative-circle {
+            position: fixed;
+            border-radius: 50%;
+            z-index: 0;
+            opacity: 0.3;
+            pointer-events: none;
+            animation: pulse-glow 6s ease-in-out infinite alternate;
+        }
+        
+        .circle-top-left {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            background: radial-gradient(circle, rgba(255, 140, 0, 0.2) 0%, rgba(255, 140, 0, 0) 70%);
+            animation-delay: 0s;
+        }
+        
+        .circle-bottom-right {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -150px;
+            background: radial-gradient(circle, rgba(0, 255, 128, 0.15) 0%, rgba(0, 255, 128, 0) 70%);
+            animation-delay: 3s;
+        }
+        
+        .circle-center {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(140, 0, 255, 0.1) 0%, rgba(140, 0, 255, 0) 70%);
+            animation-delay: 1.5s;
+        }
+        
+        @keyframes pulse-glow {
+            0% { transform: scale(1) rotate(0deg); opacity: 0.3; }
+            50% { transform: scale(1.1) rotate(180deg); opacity: 0.5; }
+            100% { transform: scale(1) rotate(360deg); opacity: 0.3; }
+        }
+        
+        /* CONTENIDO PRINCIPAL */
         .signup-screen {
             display: flex;
             flex-direction: column;
@@ -68,152 +223,272 @@
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
+            z-index: 10;
         }
         
-        /* Navegación */
+        /* NAVEGACIÓN MEJORADA - COLORES CÁLIDOS */
         .navigation {
             display: flex;
             justify-content: space-between;
             width: 100%;
             margin-bottom: 30px;
             align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.2);
         }
         
         .logo {
             font-size: 1.8rem;
-            color: #00f0ff;
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.7);
+            color: #ff8c00;
+            text-shadow: 0 0 20px rgba(255, 140, 0, 0.8);
             font-weight: 700;
             letter-spacing: 1px;
+            animation: logo-glow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes logo-glow {
+            0% { text-shadow: 0 0 20px rgba(255, 140, 0, 0.8); }
+            100% { text-shadow: 0 0 30px rgba(255, 140, 0, 1), 0 0 40px rgba(255, 140, 0, 0.5); }
         }
         
         .nav-button {
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 1px solid #00f0ff;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
+            border: 2px solid #ff8c00;
             color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
+            padding: 12px 25px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 0.9rem;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            transition: all 0.4s ease;
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
+        }
+        
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 140, 0, 0.4), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .nav-button:hover::before {
+            left: 100%;
         }
         
         .nav-button:hover {
-            background-color: rgba(0, 240, 255, 0.15);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.2));
+            box-shadow: 0 0 30px rgba(255, 140, 0, 0.6), inset 0 0 20px rgba(255, 140, 0, 0.1);
+            transform: translateY(-3px) scale(1.05);
+            border-color: #ff8c00;
         }
         
-        /* Contenedor de formulario */
+        /* CONTENEDOR DE SIGNUP MEJORADO */
         .signup-container {
-            background-color: rgba(0, 0, 0, 0.8);
-            border: 1px solid #00f0ff;
-            border-radius: 10px;
-            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9));
+            border: 2px solid #ff8c00;
+            border-radius: 20px;
+            padding: 40px;
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
             margin: 20px auto;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 40px rgba(255, 140, 0, 0.3);
             position: relative;
             z-index: 10;
+            backdrop-filter: blur(20px);
+            overflow: hidden;
         }
         
-        /* Título del formulario */
+        .signup-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 140, 0, 0.1), transparent);
+            animation: shimmer 4s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* LOGO PRINCIPAL EN SIGNUP */
+        .signup-logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .signup-main-logo {
+            max-width: 280px;
+            width: 75%;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.7));
+            transition: all 0.3s ease;
+            animation: logoGlowSignup 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes logoGlowSignup {
+            0% { filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.7)); }
+            100% { filter: drop-shadow(0 0 30px rgba(255, 140, 0, 1)); }
+        }
+        
+        /* TÍTULO DEL FORMULARIO */
         .signup-title {
-            font-size: 2rem;
-            color: #00f0ff;
+            font-size: 1.8rem;
+            color: #ff8c00;
             text-align: center;
             margin-bottom: 30px;
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+            text-shadow: 0 0 15px rgba(255, 140, 0, 0.8);
             letter-spacing: 2px;
             text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+            animation: title-pulse 3s ease-in-out infinite alternate;
         }
         
-        /* Grupos de formulario */
+        @keyframes title-pulse {
+            0% { text-shadow: 0 0 15px rgba(255, 140, 0, 0.8); }
+            100% { text-shadow: 0 0 25px rgba(255, 140, 0, 1), 0 0 35px rgba(255, 140, 0, 0.5); }
+        }
+        
+        /* GRUPOS DE FORMULARIO MEJORADOS */
         .form-group {
             margin-bottom: 20px;
             position: relative;
             transition: all 0.3s ease;
+            z-index: 2;
         }
         
         .form-label {
             display: block;
             margin-bottom: 8px;
-            color: #00f0ff;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
+            color: #ff8c00;
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 8px rgba(255, 140, 0, 0.5);
+            text-transform: uppercase;
+            font-weight: 600;
         }
         
         .form-input {
             width: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(0, 240, 255, 0.5);
-            border-radius: 5px;
-            padding: 12px 15px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
+            border: 2px solid rgba(255, 140, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px 18px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
-            transition: all 0.3s ease;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.1);
         }
         
         .form-input:focus {
-            border-color: #00f0ff;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
-        }
-        
-        .input-focused .form-label {
-            color: white;
-            text-shadow: 0 0 8px rgba(0, 240, 255, 0.7);
-        }
-        
-        /* Botón de registro */
-        .signup-button {
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            border: 1px solid #00f0ff;
-            border-radius: 5px;
-            color: #00f0ff;
-            padding: 12px 15px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-        }
-        
-        .signup-button:hover {
-            background-color: rgba(0, 240, 255, 0.1);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+            border-color: #ff8c00;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.5);
+            background: linear-gradient(135deg, rgba(255, 140, 0, 0.05), rgba(255, 140, 0, 0.1));
             transform: translateY(-2px);
         }
         
-        .signup-button.success {
-            background-color: rgba(0, 255, 128, 0.1);
-            border-color: #00ff80;
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus::placeholder {
+            color: rgba(255, 140, 0, 0.7);
+        }
+        
+        /* BOTÓN DE SIGNUP MEJORADO - VERDE PARA DIFERENCIARLO */
+        .signup-button {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
+            border: 2px solid #00ff80;
+            border-radius: 20px;
             color: #00ff80;
-            box-shadow: 0 0 15px rgba(0, 255, 128, 0.5);
+            padding: 18px 25px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            box-shadow: 0 0 25px rgba(0, 255, 128, 0.3);
+            z-index: 2;
         }
         
-        /* Animación de pulso */
-        @keyframes pulse {
-            0% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
-            50% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.8); }
-            100% { box-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
+        .signup-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 128, 0.4), transparent);
+            transition: left 0.5s ease;
         }
         
-        .pulse {
-            animation: pulse 2s infinite;
+        .signup-button:hover::before {
+            left: 100%;
         }
         
-        /* Mensaje de error */
+        .signup-button:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.1), rgba(0, 255, 128, 0.2));
+            box-shadow: 0 0 35px rgba(0, 255, 128, 0.6), inset 0 0 20px rgba(0, 255, 128, 0.1);
+            transform: translateY(-3px) scale(1.02);
+        }
+        
+        .signup-button.success {
+            background: linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.2));
+            border-color: #ff8c00;
+            color: #ff8c00;
+            box-shadow: 0 0 35px rgba(255, 140, 0, 0.6);
+        }
+        
+        /* ENLACE PARA LOGIN MEJORADO */
+        .login-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            letter-spacing: 1px;
+        }
+        
+        .login-link:hover {
+            color: #ff8c00;
+            text-shadow: 0 0 12px rgba(255, 140, 0, 0.8);
+            transform: translateY(-2px);
+        }
+        
+        /* MENSAJES DE ERROR MEJORADOS */
         .form-error {
             color: #ff6b6b;
             font-size: 0.8rem;
@@ -222,111 +497,158 @@
         }
         
         .form-error-general {
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: rgba(255, 107, 107, 0.1);
-            border-radius: 5px;
-            border: 1px solid #ff6b6b;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 107, 107, 0.05));
+            border-radius: 15px;
+            border: 2px solid #ff6b6b;
             font-size: 0.9rem;
             display: none;
+            color: #ff6b6b;
+            text-shadow: 0 0 8px rgba(255, 107, 107, 0.5);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 2;
+            animation: error-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes error-pulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 107, 107, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(255, 107, 107, 0.6); }
         }
         
         .input-error {
-            border-color: #ff6b6b;
+            border-color: #ff6b6b !important;
+            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5) !important;
         }
         
-        /* Elementos decorativos */
-        .decorative-element {
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.5;
-            z-index: 1;
-            pointer-events: none;
-        }
-        
-        .left-circle {
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0) 70%);
-            left: -100px;
-            top: 30%;
-            animation: float-left 10s ease-in-out infinite;
-        }
-        
-        .right-circle {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(255, 140, 0, 0.1) 0%, rgba(255, 140, 0, 0) 70%);
-            right: -150px;
-            bottom: 20%;
-            animation: float-right 12s ease-in-out infinite alternate;
-        }
-        
-        @keyframes float-left {
-            0% { transform: translate(0, 0); }
-            50% { transform: translate(30px, -20px); }
-            100% { transform: translate(0, 0); }
-        }
-        
-        @keyframes float-right {
-            0% { transform: translate(0, 0); }
-            50% { transform: translate(-40px, 30px); }
-            100% { transform: translate(0, 0); }
-        }
-        
-        /* Loading spinner */
+        /* LOADING SPINNER MEJORADO */
         .loading-spinner {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 2px solid rgba(0, 240, 255, 0.3);
+            border: 3px solid rgba(0, 255, 128, 0.3);
             border-radius: 50%;
-            border-top-color: #00f0ff;
-            animation: spin 1s ease-in-out infinite;
+            border-top-color: #00ff80;
+            animation: spin-glow 1s ease-in-out infinite;
             margin-right: 10px;
             vertical-align: middle;
+            box-shadow: 0 0 10px rgba(0, 255, 128, 0.5);
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes spin-glow {
+            to { 
+                transform: rotate(360deg); 
+                box-shadow: 0 0 15px rgba(0, 255, 128, 0.8);
+            }
         }
         
-        /* Media Queries */
+        /* RESPONSIVE MEJORADO */
         @media (max-width: 768px) {
             .navigation {
                 flex-direction: column;
                 gap: 15px;
+                padding: 15px 20px;
+            }
+            
+            .signup-container {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .signup-title {
+                font-size: 1.5rem;
+            }
+            
+            .form-input, .signup-button {
+                padding: 12px 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 18px;
+            }
+            
+            .team-logos { opacity: 0.25; }
+            .decorative-circle { opacity: 0.2; }
+        }
+
+        @media (max-width: 480px) {
+            .team-logos .team-logo {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .team-logo img {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .signup-main-logo {
+                max-width: 220px;
             }
             
             .signup-container {
                 padding: 20px;
             }
-            
-            .signup-title {
-                font-size: 1.6rem;
-            }
-            
-            .form-input, .signup-button {
-                padding: 10px;
-            }
-            
-            .decorative-element {
-                opacity: 0.3;
-            }
         }
     </style>
 </head>
 <body>
+    <!-- Fondo GIF igual al index -->
+    <div class="bg-container">
+        <img src="https://i.pinimg.com/originals/64/a8/08/64a8083d07b8c98923311cbc88fecafe.gif" alt="Basketball Court Background" class="bg-gif">
+    </div>
+    
+    <!-- Overlay oscuro -->
+    <div class="overlay"></div>
+    
+    <!-- Grid Lines -->
     <div class="grid-lines"></div>
     
+    <!-- Logos decorativos flotantes -->
+    <div class="team-logos">
+        <div class="team-logo logo-angelbee">
+            <img src="/assets/images/logos/angelbee.png" alt="Angel Bee Team">
+        </div>
+        <div class="team-logo logo-armonia">
+            <img src="/assets/images/logos/armonia.png" alt="Armonia Team">
+        </div>
+        <div class="team-logo logo-raptors">
+            <img src="/assets/images/logos/raptors.png" alt="Raptors Team">
+        </div>
+        <div class="team-logo logo-titans">
+            <img src="/assets/images/logos/titans.png" alt="Titans Team">
+        </div>
+        <div class="team-logo logo-tmt">
+            <img src="/assets/images/logos/tmt.png" alt="TMT Team">
+        </div>
+        <div class="team-logo logo-warriors">
+            <img src="/assets/images/logos/warriors.png" alt="Warriors Team">
+        </div>
+    </div>
+    
+    <!-- Efectos glow laterales -->
+    <div class="side-glow-left"></div>
+    <div class="side-glow-right"></div>
+    
+    <!-- Círculos decorativos -->
+    <div class="decorative-circle circle-top-left"></div>
+    <div class="decorative-circle circle-bottom-right"></div>
+    <div class="decorative-circle circle-center"></div>
+    
     <div class="signup-screen">
-        <!-- Navegación -->
+        <!-- Navegación mejorada -->
         <div class="navigation">
-            <div class="logo">DELL TECHNOLOGIES</div>
+            <div class="logo">MOONLIGHT LINE</div>
             <a href="index.html" class="nav-button">BACK</a>
         </div>
         
         <div class="signup-container">
+            <!-- Logo principal -->
+            <div class="signup-logo-container">
+                <img src="/assets/images/logos/logo.png" alt="Dell Technologies Fantasy League" class="signup-main-logo">
+            </div>
+            
             <h2 class="signup-title">JOIN THE LEAGUE</h2>
             
             <!-- Mensaje de error general -->
@@ -335,35 +657,33 @@
             <form id="signup-form">
                 <div class="form-group">
                     <label class="form-label" for="username">USERNAME</label>
-                    <input type="text" id="username" class="form-input" required>
+                    <input type="text" id="username" class="form-input" required placeholder="Choose your username">
                     <div class="form-error" id="username-error"></div>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="email">EMAIL</label>
-                    <input type="email" id="email" class="form-input" required>
+                    <input type="email" id="email" class="form-input" required placeholder="Enter your email address">
                     <div class="form-error" id="email-error"></div>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="password">PASSWORD</label>
-                    <input type="password" id="password" class="form-input" required>
+                    <input type="password" id="password" class="form-input" required placeholder="Create a strong password">
                     <div class="form-error" id="password-error"></div>
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="team-name">TEAM NAME</label>
-                    <input type="text" id="team-name" class="form-input" required>
+                    <input type="text" id="team-name" class="form-input" required placeholder="Name your fantasy team">
                     <div class="form-error" id="team-name-error"></div>
                 </div>
                 
-                <button type="submit" class="signup-button pulse">SIGN UP</button>
+                <button type="submit" class="signup-button">SIGN UP</button>
+                
+                <a href="login.html" class="login-link">Already have an account? Sign in here</a>
             </form>
         </div>
-        
-        <!-- Elementos decorativos -->
-        <div class="decorative-element left-circle"></div>
-        <div class="decorative-element right-circle"></div>
     </div>
     
     <script>
@@ -463,7 +783,6 @@
                     saveUserSession(data);
                     
                     // Éxito - Actualizar el botón
-                    submitButton.classList.remove('pulse');
                     submitButton.classList.add('success');
                     submitButton.innerHTML = 'WELCOME TO THE LEAGUE!';
                     
@@ -493,18 +812,10 @@
                 errorElement.textContent = message;
             }
             
-            // Efecto de movimiento de los elementos decorativos
-            const decorativeElements = document.querySelectorAll('.decorative-element');
-            window.addEventListener('mousemove', function(e) {
-                const mouseX = e.clientX / window.innerWidth;
-                const mouseY = e.clientY / window.innerHeight;
-                
-                decorativeElements.forEach(element => {
-                    const offsetX = (mouseX - 0.5) * 20;
-                    const offsetY = (mouseY - 0.5) * 20;
-                    element.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-                });
-            });
+            // 🎵 INICIALIZAR MÚSICA
+            if (typeof initBackgroundMusic === 'function') {
+                initBackgroundMusic();
+            }
         });
         
         function clearPreviousSession() {
@@ -536,12 +847,6 @@
                 teamName: data.user.team_name,
                 email: data.user.email
             }));
-        }
-
-        // Al final de DOMContentLoaded
-        // 🎵 INICIALIZAR MÚSICA
-        if (typeof initBackgroundMusic === 'function') {
-            initBackgroundMusic();
         }
     </script>
 </body>

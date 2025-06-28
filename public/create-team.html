@@ -464,10 +464,10 @@
             border-color: #ff6b6b;
         }
         
-        /* CARTAS DE JUGADORES MEJORADAS */
+        /* CARTAS DE JUGADORES MEJORADAS - TAMAÑO ADECUADO PARA VISUALIZACIÓN */
         .player-card {
-            width: 90px;
-            height: 130px;
+            width: 140px; /* Aumentado de 90px a 140px */
+            height: 200px; /* Aumentado de 130px a 200px */
             background: linear-gradient(145deg, rgba(20, 30, 40, 0.9), rgba(10, 20, 30, 0.95));
             border: 3px solid transparent;
             border-image: linear-gradient(45deg, #ff8c00, #ffa500, #ff7f00, #ff8c00) 1;
@@ -480,6 +480,10 @@
             cursor: grab;
             transition: all 0.4s ease;
             backdrop-filter: blur(10px);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .player-card:active {
@@ -487,10 +491,242 @@
         }
 
         .player-card:hover {
-            transform: scale(1.08) translateY(-8px);
+            transform: scale(1.05) translateY(-5px);
             box-shadow: 
                 0 15px 30px rgba(255, 140, 0, 0.6),
                 inset 0 0 12px rgba(255, 140, 0, 0.2);
+            border-image: linear-gradient(45deg, #ffa500, #ffb500, #ffa500, #ffb500) 1;
+        }
+
+        /* Elementos internos de la carta */
+        .card-border {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 1px solid #ff8c00;
+            pointer-events: none;
+            border-radius: 4px;
+        }
+
+        .corner {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(45deg, #ff8c00, #ffa500);
+        }
+
+        .corner.top-left {
+            top: 0;
+            left: 0;
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+        }
+
+        .corner.top-right {
+            top: 0;
+            right: 0;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+        }
+
+        .corner.bottom-left {
+            bottom: 0;
+            left: 0;
+            clip-path: polygon(0 0, 100% 100%, 0 100%);
+        }
+
+        .corner.bottom-right {
+            bottom: 0;
+            right: 0;
+            clip-path: polygon(100% 0, 100% 100%, 0 100%);
+        }
+
+        .player-name {
+            background: linear-gradient(90deg, #ff8c00, #ffa500, #ff8c00);
+            color: #000;
+            text-align: center;
+            padding: 4px 6px;
+            margin: 6px 6px 4px 6px;
+            font-weight: 900;
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: 1px solid #ff7f00;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+            border-radius: 3px;
+        }
+
+        .player-position {
+            background: rgba(255, 140, 0, 0.2);
+            color: #ffa500;
+            text-align: center;
+            padding: 2px 4px;
+            margin: 0 6px 6px 6px;
+            font-weight: 600;
+            font-size: 7px;
+            letter-spacing: 0.3px;
+            border: 1px solid #ff8c00;
+            text-transform: uppercase;
+            border-radius: 2px;
+        }
+
+        .player-image-container {
+            width: 100px;
+            height: 70px;
+            margin: 0 auto 8px auto;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #ff8c00;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .team-logo-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 0 6px rgba(255, 140, 0, 0.6));
+            transition: all 0.3s ease;
+            padding: 8px;
+            display: block;
+        }
+
+        .player-card:hover .team-logo-image {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.8));
+        }
+
+        .stats-container {
+            padding: 0 8px 6px 8px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3px 6px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 7px;
+            font-weight: 600;
+            color: #e6d7c3;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+        }
+
+        .stat-label {
+            color: #ffa500;
+        }
+
+        .stat-value {
+            color: #e6d7c3;
+            font-weight: 700;
+            min-width: 15px;
+            text-align: right;
+        }
+
+        /* AJUSTAR TAMAÑOS DE SLOTS PARA ACOMODAR LAS CARTAS MÁS GRANDES */
+        .player-slot, .bench-slot {
+            position: absolute;
+            width: 150px; /* Aumentado de 100px a 150px */
+            height: 210px; /* Aumentado de 140px a 210px */
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.15), rgba(0, 255, 128, 0.05));
+            border: 3px solid #00ff80;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 255, 128, 0.4);
+            backdrop-filter: blur(5px);
+        }
+
+        .player-slot:hover, .bench-slot:hover {
+            transform: scale(1.02) translateY(-3px);
+            border-color: #00ff80;
+            box-shadow: 0 8px 25px rgba(0, 255, 128, 0.6);
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.25), rgba(0, 255, 128, 0.15));
+        }
+
+        .bench-slot {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 107, 107, 0.05));
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .bench-slot:hover {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.25), rgba(255, 107, 107, 0.15));
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+            border-color: #ff6b6b;
+        }
+
+        /* TEXTO CUANDO LOS SLOTS ESTÁN VACÍOS */
+        .empty-slot {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            text-align: center;
+            font-weight: 600;
+            line-height: 1.3;
+            padding: 10px;
+        }
+
+        /* RESPONSIVE PARA PANTALLAS PEQUEÑAS */
+        @media (max-width: 768px) {
+            .player-card {
+                width: 120px;
+                height: 180px;
+            }
+            
+            .player-slot, .bench-slot {
+                width: 130px;
+                height: 190px;
+            }
+            
+            .player-image-container {
+                width: 85px;
+                height: 60px;
+            }
+            
+            .player-name {
+                font-size: 8px;
+                padding: 3px 5px;
+            }
+            
+            .player-position {
+                font-size: 6px;
+            }
+            
+            .stat-item {
+                font-size: 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .player-card {
+                width: 100px;
+                height: 160px;
+            }
+            
+            .player-slot, .bench-slot {
+                width: 110px;
+                height: 170px;
+            }
+            
+            .player-image-container {
+                width: 70px;
+                height: 50px;
+            }
+            
+            .stats-container {
+                padding: 0 6px 4px 6px;
+                gap: 2px 4px;
+            }
         }
         
         /* BOTONES DE ACCIÓN MEJORADOS */

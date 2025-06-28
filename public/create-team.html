@@ -6,6 +6,7 @@
     <title>Moonlight Line - Create Team</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="/assets/js/team-utils.js"></script>
+    <script src="/assets/js/background-music.js"></script>
     <script>
     console.log('Testing team utils loading...');
     setTimeout(() => {
@@ -1834,6 +1835,11 @@
                 slot.dataset.playerId = playerId;
             }
         });
+
+        // 🎵 INICIALIZAR MÚSICA
+        if (typeof initBackgroundMusic === 'function') {
+            initBackgroundMusic();
+        }
     </script>
 </body>
 </html>

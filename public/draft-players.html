@@ -6,6 +6,7 @@
     <title>Moonlight Line - Draft Players</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="/assets/js/team-utils.js"></script>
+    <script src="/assets/js/background-music.js"></script>
     <style>
         /* [Mantener todos los estilos existentes...] */
         * {
@@ -723,7 +724,12 @@
                 searchInput.addEventListener('input', applyFilters);
                 clearSelectionsBtn.addEventListener('click', clearSelections);
                 confirmDraftBtn.addEventListener('click', confirmDraft);
+                // 🎵 INICIALIZAR MÚSICA
+                if (typeof initBackgroundMusic === 'function') {
+                initBackgroundMusic();
+                }
             }
+
             
             async function loadPlayers() {
                 try {

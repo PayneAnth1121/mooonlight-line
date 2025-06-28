@@ -1,72 +1,61 @@
-// public/assets/js/team-utils.js - TEAM LOGO UTILITIES WITH DEBUGGING
+// public/assets/js/team-utils.js - SIMPLIFIED WITH EXTENSIVE DEBUGGING
+console.log('🚀 Team utils file loading...');
+
 /**
  * Mapea el nombre del equipo al archivo del logo correspondiente
  */
 function getTeamLogoPath(teamName) {
-    console.log('Getting logo for team:', teamName); // Debug
+    console.log('🔍 getTeamLogoPath called with:', teamName, typeof teamName);
     
     if (!teamName) {
-        console.log('No team name provided, using default');
-        return '/assets/images/logos/warriors.png'; // Usar un logo existente como default
+        console.log('❌ No team name provided, using warriors as default');
+        return '/assets/images/logos/warriors.png';
     }
     
-    // Normalizar el nombre del equipo (quitar espacios extra, convertir a mayúsculas)
-    const normalizedTeam = teamName.trim().toUpperCase();
+    // Limpiar y normalizar el nombre del equipo
+    const cleanTeam = String(teamName).trim();
+    console.log('🧹 Cleaned team name:', cleanTeam);
     
+    // Mapping exacto basado en los nombres de la base de datos
     const teamLogoMap = {
-        'ANGEL BEES': '/assets/images/logos/angelbee.png',
-        'WARRIORS': '/assets/images/logos/warriors.png',
+        'Angel Bees': '/assets/images/logos/angelbee.png',
+        'Warriors': '/assets/images/logos/warriors.png',
         'TMT': '/assets/images/logos/tmt.png',
-        'TITANS': '/assets/images/logos/titans.png',
-        'RAPTORS': '/assets/images/logos/raptors.png',
-        'ARMONIA': '/assets/images/logos/armonia.png'
+        'Titans': '/assets/images/logos/titans.png',
+        'Raptors': '/assets/images/logos/raptors.png',
+        'Armonia': '/assets/images/logos/armonia.png'
     };
     
-    const logoPath = teamLogoMap[normalizedTeam] || '/assets/images/logos/warriors.png';
-    console.log('Team:', normalizedTeam, 'Logo path:', logoPath); // Debug
+    const logoPath = teamLogoMap[cleanTeam] || '/assets/images/logos/warriors.png';
+    console.log('✅ Logo path result:', logoPath);
     
     return logoPath;
 }
 
 /**
- * Obtiene el color principal del equipo para efectos visuales
+ * Obtiene el color principal del equipo
  */
 function getTeamColor(teamName) {
     if (!teamName) return '#ff8c00';
     
-    const normalizedTeam = teamName.trim().toUpperCase();
-    
     const teamColorMap = {
-        'ANGEL BEES': '#FFD700', // Dorado
-        'WARRIORS': '#1D428A', // Azul Warriors
-        'TMT': '#CE1141', // Rojo
-        'TITANS': '#002B5C', // Azul oscuro
-        'RAPTORS': '#CE1141', // Rojo Raptors
-        'ARMONIA': '#00788C' // Verde azulado
+        'Angel Bees': '#FFD700',
+        'Warriors': '#1D428A', 
+        'TMT': '#CE1141',
+        'Titans': '#002B5C',
+        'Raptors': '#CE1141',
+        'Armonia': '#00788C'
     };
     
-    return teamColorMap[normalizedTeam] || '#ff8c00'; // Naranja por defecto
-}
-
-/**
- * Crea el HTML para mostrar el logo del equipo en la carta del jugador
- */
-function createTeamLogoElement(teamName, playerName) {
-    const logoPath = getTeamLogoPath(teamName);
-    const teamColor = getTeamColor(teamName);
-    
-    return `
-        <div class="team-logo-container" style="border-color: ${teamColor};">
-            <img src="${logoPath}" alt="${teamName} Logo" class="team-logo" 
-                 onerror="this.src='/assets/images/logos/warriors.png'; console.log('Error loading logo for ${teamName}');">
-            <div class="team-logo-overlay" style="background: linear-gradient(45deg, ${teamColor}22, ${teamColor}11);"></div>
-        </div>
-    `;
+    return teamColorMap[String(teamName).trim()] || '#ff8c00';
 }
 
 // Hacer las funciones globalmente disponibles
 window.getTeamLogoPath = getTeamLogoPath;
 window.getTeamColor = getTeamColor;
-window.createTeamLogoElement = createTeamLogoElement;
 
-console.log('Team utils loaded successfully'); // Debug
+console.log('✅ Team utils loaded successfully!');
+console.log('🔧 Functions available:', {
+    getTeamLogoPath: typeof getTeamLogoPath,
+    getTeamColor: typeof getTeamColor
+});

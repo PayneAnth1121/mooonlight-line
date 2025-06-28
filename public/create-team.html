@@ -6,6 +6,15 @@
     <title>Moonlight Line - Create Team</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="/assets/js/team-utils.js"></script>
+    <script>
+    console.log('Testing team utils loading...');
+    setTimeout(() => {
+        console.log('getTeamLogoPath available:', typeof getTeamLogoPath);
+        if (typeof getTeamLogoPath === 'function') {
+            console.log('Testing Warriors logo:', getTeamLogoPath('Warriors'));
+        }
+    }, 1000);
+</script>
     <style>
         /* [Mantener todos los estilos base existentes...] */
         * {
@@ -1216,17 +1225,24 @@
             // Cargar datos de jugadores desde la API
             async function loadPlayersData() {
                 try {
+                    console.log('🔄 Loading players data...');
                     const response = await fetch('/api/players');
                     if (response.ok) {
                         const players = await response.json();
+                        console.log('📊 Players received:', players.length);
+                        
                         // Crear un mapa de jugadores por ID para acceso rápido
                         players.forEach(player => {
                             playersData[player.id] = player;
+                            console.log(`👤 Player ${player.id}: ${player.name} - Team: ${player.team}`);
                         });
-                        console.log('Players data loaded:', Object.keys(playersData).length, 'players');
+                        console.log('✅ Players data loaded:', Object.keys(playersData).length, 'players');
+                        console.log('🔍 Sample player data:', playersData[Object.keys(playersData)[0]]);
+                    } else {
+                        console.error('❌ Failed to load players:', response.status);
                     }
                 } catch (error) {
-                    console.error('Error loading players data:', error);
+                    console.error('❌ Error loading players data:', error);
                 }
             }
             
@@ -1302,26 +1318,34 @@
             }
             
             function createPlayerCard(playerId, position) {
+                console.log('🎴 Creating card for player:', playerId);
+                
                 const playerInfo = playersData[playerId];
                 const playerName = playerInfo ? playerInfo.name : `Player ${playerId}`;
-                const teamName = playerInfo ? playerInfo.team : 'Warriors'; // Default a Warriors
+                const teamName = playerInfo ? playerInfo.team : 'Warriors';
                 
-                // Debug logging
-                console.log('Creating card for:', playerName, 'Team:', teamName);
+                console.log('🎴 Player info:', {
+                    id: playerId,
+                    name: playerName,
+                    team: teamName,
+                    fullPlayerInfo: playerInfo
+                });
                 
-                // Obtener rutas usando las funciones utilitarias
-                const teamLogoPath = typeof getTeamLogoPath === 'function' ? 
-                    getTeamLogoPath(teamName) : '/assets/images/logos/warriors.png';
-                const teamColor = typeof getTeamColor === 'function' ? 
-                    getTeamColor(teamName) : '#ff8c00';
-                
-                console.log('Logo path for', playerName, ':', teamLogoPath);
-                
+                // Crear el elemento de la carta
                 const card = document.createElement('div');
                 card.className = 'player-card';
                 card.draggable = !isLineupLocked;
                 card.dataset.playerId = playerId;
                 card.dataset.originalPosition = position;
+                
+                // Obtener la ruta del logo
+                let logoPath = '/assets/images/logos/warriors.png'; // Default
+                if (typeof getTeamLogoPath === 'function') {
+                    logoPath = getTeamLogoPath(teamName);
+                    console.log('🖼️ Logo path for', playerName, ':', logoPath);
+                } else {
+                    console.error('❌ getTeamLogoPath function not available!');
+                }
                 
                 card.innerHTML = `
                     <div class="card-border"></div>
@@ -1333,13 +1357,13 @@
                     <div class="player-name">${playerName.toUpperCase()}</div>
                     <div class="player-position">${playerInfo?.position || 'SF'} - ${teamName}</div>
                     
-                    <div class="player-image-container" style="border-color: ${teamColor};">
-                        <img src="${teamLogoPath}" 
+                    <div class="player-image-container">
+                        <img src="${logoPath}" 
                             alt="${teamName} Logo" 
                             class="team-logo-image"
-                            onload="console.log('Logo loaded successfully for ${playerName}')"
-                            onerror="console.log('Error loading logo:', this.src); this.src='/assets/images/logos/warriors.png';">
-                        <div class="team-logo-overlay"></div>
+                            onload="console.log('✅ Logo loaded successfully:', '${logoPath}')"
+                            onerror="console.error('❌ Logo failed to load:', '${logoPath}'); this.src='/assets/images/logos/warriors.png';"
+                            style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     
                     <div class="stats-container">

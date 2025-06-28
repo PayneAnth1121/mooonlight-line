@@ -8,19 +8,19 @@
     <script src="/assets/js/team-utils.js"></script>
     <script src="/assets/js/background-music.js"></script>
     <style>
-            * {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Orbitron', sans-serif;
         }
-
+        
         html {
             height: 100%;
             overflow-x: hidden;
             overflow-y: auto;
         }
-
+        
         body {
             background-color: #06111f;
             color: white;
@@ -34,7 +34,7 @@
             padding-bottom: 40px;
             position: relative;
         }
-
+        
         /* 🎬 FONDO GIF ANIMADO IGUAL AL INDEX */
         .bg-container {
             position: fixed;
@@ -45,7 +45,7 @@
             z-index: -3;
             overflow: hidden;
         }
-
+        
         .bg-gif {
             width: 100%;
             height: 100%;
@@ -54,7 +54,7 @@
             top: 0;
             left: 0;
         }
-
+        
         /* Overlay oscuro para legibilidad */
         .overlay {
             position: fixed;
@@ -65,7 +65,7 @@
             background-color: rgba(0, 0, 0, 0.6);
             z-index: -2;
         }
-
+        
         /* Grid Lines */
         .grid-lines {
             position: fixed;
@@ -80,7 +80,7 @@
             pointer-events: none;
             z-index: -1;
         }
-
+        
         /* 🌟 LOGOS DECORATIVOS DE EQUIPOS FLOTANTES */
         .team-logos {
             position: fixed;
@@ -88,84 +88,73 @@
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: auto;
+            pointer-events: none;
             z-index: 0;
         }
-
+        
         .team-logo {
             position: absolute;
-            width: 150px;
-            height: 150px;
+            width: 120px;
+            height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0.8;
-            cursor: pointer;
+            opacity: 0.6;
             transition: all 0.3s ease;
             animation: float 20s ease-in-out infinite;
         }
-
+        
         .team-logo img {
-            width: 150px;
-            height: 150px;
+            width: 100px;
+            height: 100px;
             object-fit: contain;
-            filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.6));
+            filter: drop-shadow(0 0 15px rgba(0, 240, 255, 0.4));
             transition: all 0.3s ease;
         }
-
+        
         @keyframes float {
             0%, 100% { transform: translate(0, 0) rotate(0deg); }
             25% { transform: translate(30px, -20px) rotate(5deg); }
             50% { transform: translate(-20px, 30px) rotate(-3deg); }
             75% { transform: translate(20px, -10px) rotate(2deg); }
         }
-
-        .team-logo:hover img {
-            transform: scale(1.05);
-            filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.9));
-        }
-
-        .team-logo:active img {
-            transform: scale(0.95);
-        }
-
-        /* POSICIONES DE LOGOS */
+        
         .logo-angelbee {
             top: 15%;
             left: 8%;
             animation-delay: 0s;
         }
-
+        
         .logo-armonia {
             top: 60%;
             left: 5%;
             animation-delay: 3s;
         }
-
+        
         .logo-raptors {
             top: 80%;
             left: 15%;
             animation-delay: 6s;
         }
-
+        
         .logo-titans {
             top: 20%;
             right: 8%;
             animation-delay: 2s;
         }
-
+        
         .logo-tmt {
             top: 65%;
             right: 5%;
             animation-delay: 5s;
         }
-
+        
         .logo-warriors {
             top: 85%;
             right: 15%;
             animation-delay: 8s;
         }
-
+        
         /* 🔥 EFECTOS GLOW LATERALES */
         .side-glow-left {
             position: fixed;
@@ -178,7 +167,7 @@
             opacity: 0.8;
             z-index: 0;
         }
-
+        
         .side-glow-right {
             position: fixed;
             right: 0;
@@ -190,7 +179,7 @@
             opacity: 0.8;
             z-index: 0;
         }
-
+        
         /* ✨ CÍRCULOS DECORATIVOS FLOTANTES */
         .decorative-circle {
             position: fixed;
@@ -200,7 +189,7 @@
             pointer-events: none;
             animation: pulse-glow 6s ease-in-out infinite alternate;
         }
-
+        
         .circle-top-left {
             width: 400px;
             height: 400px;
@@ -209,7 +198,7 @@
             background: radial-gradient(circle, rgba(0, 240, 255, 0.2) 0%, rgba(0, 240, 255, 0) 70%);
             animation-delay: 0s;
         }
-
+        
         .circle-bottom-right {
             width: 500px;
             height: 500px;
@@ -218,7 +207,7 @@
             background: radial-gradient(circle, rgba(255, 140, 0, 0.15) 0%, rgba(255, 140, 0, 0) 70%);
             animation-delay: 3s;
         }
-
+        
         .circle-center {
             width: 300px;
             height: 300px;
@@ -228,21 +217,21 @@
             background: radial-gradient(circle, rgba(140, 0, 255, 0.1) 0%, rgba(140, 0, 255, 0) 70%);
             animation-delay: 1.5s;
         }
-
+        
         @keyframes pulse-glow {
             0% { transform: scale(1) rotate(0deg); opacity: 0.3; }
             50% { transform: scale(1.1) rotate(180deg); opacity: 0.5; }
             100% { transform: scale(1) rotate(360deg); opacity: 0.3; }
         }
-
+        
         /* CONTENIDO PRINCIPAL */
         .team-creation-screen {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px;
         }
-
+        
         .navigation {
             display: flex;
             justify-content: space-between;
@@ -256,7 +245,7 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
         }
-
+        
         .logo {
             font-size: 1.8rem;
             color: #00f0ff;
@@ -265,17 +254,17 @@
             letter-spacing: 1px;
             animation: logo-glow 3s ease-in-out infinite alternate;
         }
-
+        
         @keyframes logo-glow {
             0% { text-shadow: 0 0 20px rgba(0, 240, 255, 0.8); }
             100% { text-shadow: 0 0 30px rgba(0, 240, 255, 1), 0 0 40px rgba(0, 240, 255, 0.5); }
         }
-
+        
         .nav-buttons {
             display: flex;
             gap: 15px;
         }
-
+        
         .nav-button, .draft-button {
             background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8));
             border: 2px solid #00f0ff;
@@ -293,7 +282,7 @@
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
         }
-
+        
         .nav-button::before, .draft-button::before {
             content: '';
             position: absolute;
@@ -304,30 +293,30 @@
             background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
             transition: left 0.5s ease;
         }
-
+        
         .nav-button:hover::before, .draft-button:hover::before {
             left: 100%;
         }
-
+        
         .nav-button:hover, .draft-button:hover {
             background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(0, 240, 255, 0.2));
             box-shadow: 0 0 30px rgba(0, 240, 255, 0.6), inset 0 0 20px rgba(0, 240, 255, 0.1);
             transform: translateY(-3px) scale(1.05);
             border-color: #00f0ff;
         }
-
+        
         .draft-button {
             border-color: #ff8c00;
             color: #ff8c00;
             box-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
         }
-
+        
         .draft-button:hover {
             background: linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.2));
             box-shadow: 0 0 30px rgba(255, 140, 0, 0.6), inset 0 0 20px rgba(255, 140, 0, 0.1);
             border-color: #ff8c00;
         }
-
+        
         .section-title {
             font-size: 2.5rem;
             color: #00f0ff;
@@ -338,7 +327,7 @@
             text-align: center;
             animation: title-pulse 4s ease-in-out infinite alternate;
         }
-
+        
         @keyframes title-pulse {
             0% { 
                 text-shadow: 0 0 20px rgba(0, 240, 255, 0.8);
@@ -349,7 +338,7 @@
                 transform: scale(1.02);
             }
         }
-
+        
         /* STATUS DE JORNADA MEJORADO */
         .jornada-status {
             background: linear-gradient(135deg, rgba(0, 255, 128, 0.1), rgba(0, 255, 128, 0.05));
@@ -369,7 +358,7 @@
             position: relative;
             overflow: hidden;
         }
-
+        
         .jornada-status::before {
             content: '';
             position: absolute;
@@ -380,37 +369,37 @@
             background: linear-gradient(90deg, transparent, rgba(0, 255, 128, 0.2), transparent);
             animation: shimmer 3s infinite;
         }
-
+        
         @keyframes shimmer {
             0% { left: -100%; }
             100% { left: 100%; }
         }
-
+        
         .jornada-status.locked {
             background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 107, 107, 0.05));
             border-color: #ff6b6b;
             color: #ff6b6b;
             box-shadow: 0 0 30px rgba(255, 107, 107, 0.3);
         }
-
+        
         .jornada-status.warning {
             background: linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(255, 140, 0, 0.05));
             border-color: #ff8c00;
             color: #ff8c00;
             box-shadow: 0 0 30px rgba(255, 140, 0, 0.3);
         }
-
+        
         .status-icon {
             font-size: 1.4rem;
             margin-right: 10px;
             animation: icon-bounce 2s ease-in-out infinite;
         }
-
+        
         @keyframes icon-bounce {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
-
+        
         /* CANCHA MEJORADA */
         .court-container {
             width: 100%;
@@ -424,7 +413,7 @@
             border: 2px solid rgba(0, 240, 255, 0.2);
             box-shadow: 0 0 40px rgba(0, 240, 255, 0.2);
         }
-
+        
         .court {
             width: 100%;
             aspect-ratio: 2/1;
@@ -437,11 +426,97 @@
                 0 0 30px rgba(0, 240, 255, 0.4),
                 inset 0 0 50px rgba(0, 240, 255, 0.1);
         }
-
-        /* 🔧 CARTAS DE JUGADORES - DISEÑO EXACTO DE DRAFT-PLAYERS */
+        
+        /* SLOTS DE JUGADORES MEJORADOS */
+        .player-slot {
+            position: absolute;
+            width: 120px;
+            height: 160px;
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.15), rgba(0, 255, 128, 0.05));
+            border: 3px solid #00ff80;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0, 255, 128, 0.4);
+            backdrop-filter: blur(5px);
+        }
+        
+        .player-slot:hover {
+            transform: scale(1.05) translateY(-5px);
+            border-color: #00ff80;
+            box-shadow: 0 10px 30px rgba(0, 255, 128, 0.6);
+            background: linear-gradient(135deg, rgba(0, 255, 128, 0.25), rgba(0, 255, 128, 0.15));
+        }
+        
+        /* 🆕 BENCH SLOTS COMPLETAMENTE REDISEÑADOS */
+        .bench-slot {
+            width: 160px;  /* 🔥 AUMENTADO de 100px a 160px */
+            height: 220px; /* 🔥 AUMENTADO de 140px a 220px */
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 107, 107, 0.05));
+            border: 3px solid #ff6b6b;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+            backdrop-filter: blur(5px);
+            position: relative;
+        }
+        
+        .bench-slot:hover {
+            transform: scale(1.05) translateY(-5px);
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.25), rgba(255, 107, 107, 0.15));
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.6);
+            border-color: #ff6b6b;
+        }
+        
+        /* 🆕 LAYOUT DE BENCH COMPLETAMENTE NUEVO - GRID DESPLEGADO */
+        .bench-section {
+            width: 100%;
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        .bench-title {
+            text-align: center;
+            color: #ff6b6b;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .bench-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 🔥 5 columnas */
+            gap: 20px;
+            justify-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .bench-grid-second {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 🔥 5 columnas para la segunda fila */
+            gap: 20px;
+            justify-items: center;
+        }
+        
+        /* CARTAS DE JUGADORES MEJORADAS - ESCALADAS PARA LOS SLOTS */
         .player-card {
-            width: 140px !important;
-            height: 200px !important;
+            width: 150px;  /* 🔥 ESCALADO para encajar mejor en los slots */
+            height: 210px; /* 🔥 ESCALADO proporcionalmente */
             background: linear-gradient(145deg, rgba(20, 30, 40, 0.9), rgba(10, 20, 30, 0.95));
             border: 3px solid transparent;
             border-image: linear-gradient(45deg, #ff8c00, #ffa500, #ff7f00, #ff8c00) 1;
@@ -455,11 +530,6 @@
             transition: all 0.4s ease;
             backdrop-filter: blur(10px);
             border-radius: 8px;
-            display: flex !important;
-            flex-direction: column;
-            justify-content: space-between;
-            margin: 0 !important;
-            z-index: 100;
         }
 
         .player-card:active {
@@ -467,14 +537,13 @@
         }
 
         .player-card:hover {
-            transform: scale(1.05) translateY(-5px);
+            transform: scale(1.03) translateY(-3px);
             box-shadow: 
-                0 15px 30px rgba(255, 140, 0, 0.6),
+                0 10px 25px rgba(255, 140, 0, 0.6),
                 inset 0 0 12px rgba(255, 140, 0, 0.2);
-            border-image: linear-gradient(45deg, #ffa500, #ffb500, #ffa500, #ffb500) 1;
         }
-
-        /* Elementos internos de la carta */
+        
+        /* Elementos de la carta escalados */
         .card-border {
             position: absolute;
             top: 4px;
@@ -522,7 +591,7 @@
             color: #000;
             text-align: center;
             padding: 4px 6px;
-            margin: 6px 6px 4px 6px;
+            margin: 8px 8px 4px 8px;
             font-weight: 900;
             font-size: 9px;
             letter-spacing: 0.5px;
@@ -537,9 +606,9 @@
             color: #ffa500;
             text-align: center;
             padding: 2px 4px;
-            margin: 0 6px 6px 6px;
+            margin: 0 8px 6px 8px;
             font-weight: 600;
-            font-size: 7px;
+            font-size: 8px;
             letter-spacing: 0.3px;
             border: 1px solid #ff8c00;
             text-transform: uppercase;
@@ -547,8 +616,8 @@
         }
 
         .player-image-container {
-            width: 100px;
-            height: 70px;
+            width: 110px;
+            height: 80px;
             margin: 0 auto 8px auto;
             background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
             border: 2px solid #ff8c00;
@@ -573,14 +642,14 @@
 
         .player-card:hover .team-logo-image {
             transform: scale(1.05);
-            filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.8));
         }
 
         .stats-container {
-            padding: 0 8px 6px 8px;
+            padding: 0 10px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 3px 6px;
+            gap: 2px 6px;
+            margin-bottom: 8px;
         }
 
         .stat-item {
@@ -601,72 +670,23 @@
         .stat-value {
             color: #e6d7c3;
             font-weight: 700;
-            min-width: 15px;
+            min-width: 16px;
             text-align: right;
         }
-
-        /* 🔧 SLOTS DE JUGADORES - AJUSTADOS PARA MOSTRAR CARTAS CORRECTAMENTE */
-        .player-slot, .bench-slot {
-            position: absolute;
-            width: 150px;
-            height: 210px;
-            background: linear-gradient(135deg, rgba(0, 255, 128, 0.15), rgba(0, 255, 128, 0.05));
-            border: 3px solid #00ff80;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            box-shadow: 0 0 20px rgba(0, 255, 128, 0.4);
-            backdrop-filter: blur(5px);
-            z-index: 50;
-        }
-
-        .player-slot:hover, .bench-slot:hover {
-            transform: scale(1.02) translateY(-3px);
-            border-color: #00ff80;
-            box-shadow: 0 8px 25px rgba(0, 255, 128, 0.6);
-            background: linear-gradient(135deg, rgba(0, 255, 128, 0.25), rgba(0, 255, 128, 0.15));
-        }
-
-        .bench-slot {
-            background: linear-gradient(135deg, rgba(255, 107, 107, 0.15), rgba(255, 107, 107, 0.05));
-            border-color: #ff6b6b;
-            box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
-        }
-
-        .bench-slot:hover {
-            background: linear-gradient(135deg, rgba(255, 107, 107, 0.25), rgba(255, 107, 107, 0.15));
-            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
-            border-color: #ff6b6b;
-        }
-
-        /* TEXTO CUANDO LOS SLOTS ESTÁN VACÍOS */
+        
+        /* EMPTY SLOT CONTENT MEJORADO */
         .empty-slot {
             color: rgba(255, 255, 255, 0.7);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             text-align: center;
             font-weight: 600;
             line-height: 1.3;
-            padding: 10px;
-            pointer-events: none;
         }
-
-        /* 🔧 CUANDO EL SLOT TIENE UN JUGADOR */
-        .player-slot.has-player, .bench-slot.has-player {
-            padding: 0 !important;
-            background: transparent !important;
-            border-color: rgba(255, 255, 255, 0.3) !important;
+        
+        .bench-slot .empty-slot {
+            font-size: 0.8rem;
         }
-
-        .player-slot.has-player .player-card,
-        .bench-slot.has-player .player-card {
-            position: relative !important;
-            z-index: 100 !important;
-        }
-
+        
         /* BOTONES DE ACCIÓN MEJORADOS */
         .action-buttons {
             display: flex;
@@ -676,7 +696,7 @@
             justify-content: center;
             margin: 30px 0;
         }
-
+        
         .action-buttons .nav-button {
             padding: 15px 35px;
             font-size: 1.1rem;
@@ -684,28 +704,28 @@
             font-weight: 700;
             letter-spacing: 2px;
         }
-
-        /* Mantener todas las posiciones y lógica existente */
+        
+        /* Mantener todas las posiciones y lógica existente de la cancha */
         .center-line, .free-throw-left, .free-throw-right, .backboard-left, .backboard-right {
             position: absolute;
             background-color: #00f0ff;
             box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
         }
-
+        
         .center-line {
             top: 0;
             left: 50%;
             height: 100%;
             width: 2px;
         }
-
+        
         .center-circle, .free-throw-circle-left, .free-throw-circle-right {
             position: absolute;
             border: 2px solid #00f0ff;
             border-radius: 50%;
             box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
         }
-
+        
         .center-circle {
             top: 50%;
             left: 50%;
@@ -713,7 +733,7 @@
             width: 150px;
             height: 150px;
         }
-
+        
         /* Mantener todas las demás posiciones de la cancha */
         .three-point-left, .three-point-right, .key-left, .key-right {
             position: absolute;
@@ -722,7 +742,7 @@
             box-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
             transform: translateY(-50%);
         }
-
+        
         .three-point-left {
             left: 0;
             width: 40%;
@@ -730,7 +750,7 @@
             border-radius: 0 33% 33% 0 / 50% 50% 50% 50%;
             border-left: none;
         }
-
+        
         .three-point-right {
             right: 0;
             width: 40%;
@@ -738,52 +758,52 @@
             border-radius: 33% 0 0 33% / 50% 50% 50% 50%;
             border-right: none;
         }
-
+        
         .key-left {
             left: 0;
             width: 19%;
             height: 40%;
             border-left: none;
         }
-
+        
         .key-right {
             right: 0;
             width: 19%;
             height: 40%;
             border-right: none;
         }
-
+        
         /* Posiciones de slots - mantener todas */
         .slot-left {
             top: 25%;
             left: 20%;
             transform: translate(-50%, -50%);
         }
-
+        
         .slot-center {
             top: 75%;
             left: 20%;
             transform: translate(-50%, -50%);
         }
-
+        
         .slot-top {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
-
+        
         .slot-right {
             top: 25%;
             left: 80%;
             transform: translate(-50%, -50%);
         }
-
+        
         .slot-bottom {
             top: 75%;
             left: 80%;
             transform: translate(-50%, -50%);
         }
-
+        
         /* Resto de elementos de cancha */
         .free-throw-left, .free-throw-right {
             top: 50%;
@@ -791,10 +811,10 @@
             width: 19%;
             height: 2px;
         }
-
+        
         .free-throw-left { left: 0; }
         .free-throw-right { right: 0; }
-
+        
         .free-throw-circle-left {
             left: 19%;
             top: 50%;
@@ -802,7 +822,7 @@
             width: 100px;
             height: 100px;
         }
-
+        
         .free-throw-circle-right {
             right: 19%;
             top: 50%;
@@ -810,7 +830,7 @@
             width: 100px;
             height: 100px;
         }
-
+        
         .basket-left, .basket-right {
             position: absolute;
             top: 50%;
@@ -821,10 +841,10 @@
             border-radius: 50%;
             box-shadow: 0 0 12px rgba(0, 240, 255, 0.8);
         }
-
+        
         .basket-left { left: 5%; }
         .basket-right { right: 5%; }
-
+        
         .backboard-left {
             left: 2%;
             top: 50%;
@@ -832,7 +852,7 @@
             width: 40px;
             height: 2px;
         }
-
+        
         .backboard-right {
             right: 2%;
             top: 50%;
@@ -840,21 +860,26 @@
             width: 40px;
             height: 2px;
         }
-
-        /* Áreas de bench */
-        .bench-container, .bench-container-2 {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            gap: 10px;
-        }
-
-        .bench-container-2 {
-            margin-bottom: 15px;
-        }
-
+        
         /* RESPONSIVE MEJORADO */
+        @media (max-width: 1200px) {
+            .bench-grid,
+            .bench-grid-second {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+            }
+            
+            .bench-slot {
+                width: 140px;
+                height: 200px;
+            }
+            
+            .player-card {
+                width: 130px;
+                height: 190px;
+            }
+        }
+        
         @media (max-width: 768px) {
             .team-logos { opacity: 0.3; }
             
@@ -873,40 +898,44 @@
                 font-size: 0.9rem;
             }
             
-            .decorative-circle {
-                opacity: 0.2;
+            .bench-grid,
+            .bench-grid-second {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            
+            .bench-slot {
+                width: 120px;
+                height: 180px;
             }
             
             .player-card {
-                width: 120px !important;
-                height: 180px !important;
+                width: 110px;
+                height: 170px;
             }
             
-            .player-slot, .bench-slot {
-                width: 130px;
-                height: 190px;
-            }
-            
-            .player-image-container {
-                width: 85px;
-                height: 60px;
-            }
-            
-            .player-name {
-                font-size: 8px;
-                padding: 3px 5px;
-            }
-            
-            .player-position {
-                font-size: 6px;
-            }
-            
-            .stat-item {
-                font-size: 6px;
+            .decorative-circle {
+                opacity: 0.2;
             }
         }
 
         @media (max-width: 480px) {
+            .bench-grid,
+            .bench-grid-second {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .bench-slot {
+                width: 110px;
+                height: 160px;
+            }
+            
+            .player-card {
+                width: 100px;
+                height: 150px;
+            }
+            
             .team-logos .team-logo {
                 width: 80px;
                 height: 80px;
@@ -915,26 +944,6 @@
             .team-logo img {
                 width: 60px;
                 height: 60px;
-            }
-            
-            .player-card {
-                width: 100px !important;
-                height: 160px !important;
-            }
-            
-            .player-slot, .bench-slot {
-                width: 110px;
-                height: 170px;
-            }
-            
-            .player-image-container {
-                width: 70px;
-                height: 50px;
-            }
-            
-            .stats-container {
-                padding: 0 6px 4px 6px;
-                gap: 2px 4px;
             }
         }
     </style>
@@ -1061,42 +1070,47 @@
                     </div>
                 </div>
             </div>
+        </div>
+        
+        <!-- 🆕 NUEVA SECCIÓN DE BENCH COMPLETAMENTE REDISEÑADA -->
+        <div class="bench-section">
+            <div class="bench-title">🔴 BENCH PLAYERS (NO POINTS EARNED)</div>
             
-            <!-- Área de banca (ZONA ROJA - SUPLENTES) primera fila -->
-            <div class="bench-container">
+            <!-- Primera fila de bench (5 slots) -->
+            <div class="bench-grid">
                 <div class="bench-slot" data-position="6" id="bench-1">
-                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 1<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
+                    <div class="empty-slot">BENCH 1<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="7" id="bench-2">
-                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 2<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
+                    <div class="empty-slot">BENCH 2<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="8" id="bench-3">
-                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 3<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
+                    <div class="empty-slot">BENCH 3<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="9" id="bench-4">
-                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 4<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
+                    <div class="empty-slot">BENCH 4<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="10" id="bench-5">
-                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 5<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
+                    <div class="empty-slot">BENCH 5<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
             </div>
             
-            <!-- Área de banca adicional segunda fila -->
-            <div class="bench-container-2">
+            <!-- Segunda fila de bench (5 slots) -->
+            <div class="bench-grid-second">
                 <div class="bench-slot" data-position="11" id="bench-6">
-                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 6<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
+                    <div class="empty-slot">BENCH 6<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="12" id="bench-7">
-                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 7<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
+                    <div class="empty-slot">BENCH 7<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="13" id="bench-8">
-                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 8<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
+                    <div class="empty-slot">BENCH 8<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="14" id="bench-9">
-                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 9<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
+                    <div class="empty-slot">BENCH 9<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
                 <div class="bench-slot" data-position="15" id="bench-10">
-                    <div class="empty-slot" style="color: rgba(255, 255, 255, 0.7); font-size: 0.7rem; text-align: center; font-weight: 600;">BENCH 10<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
+                    <div class="empty-slot">BENCH 10<br><small style="color: #ff6b6b;">❌ NO POINTS</small></div>
                 </div>
             </div>
         </div>
@@ -1941,8 +1955,6 @@
         if (typeof initBackgroundMusic === 'function') {
             initBackgroundMusic();
         }
-
-
     </script>
 </body>
 </html>

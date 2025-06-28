@@ -400,20 +400,20 @@
             50% { transform: scale(1.1); }
         }
         
-        /* CANCHA MEJORADA */
+        /* CANCHA MEJORADA - AUMENTAR TAMAÑO */
         .court-container {
             width: 100%;
-            max-width: 1200px;
+            max-width: 1400px; /* 🔥 AUMENTADO de 1200px a 1400px */
             position: relative;
             margin-bottom: 30px;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 20px;
-            padding: 20px;
+            padding: 30px; /* 🔥 AUMENTADO de 20px a 30px */
             backdrop-filter: blur(15px);
             border: 2px solid rgba(0, 240, 255, 0.2);
             box-shadow: 0 0 40px rgba(0, 240, 255, 0.2);
         }
-        
+
         .court {
             width: 100%;
             aspect-ratio: 2/1;
@@ -425,13 +425,14 @@
             box-shadow: 
                 0 0 30px rgba(0, 240, 255, 0.4),
                 inset 0 0 50px rgba(0, 240, 255, 0.1);
+            min-height: 600px; /* 🔥 NUEVO: altura mínima */
         }
         
-        /* SLOTS DE JUGADORES MEJORADOS */
+        /* SLOTS DE JUGADORES MEJORADOS - AUMENTAR TAMAÑO PARA GREEN ZONE */
         .player-slot {
             position: absolute;
-            width: 120px;
-            height: 160px;
+            width: 160px;  /* 🔥 AUMENTADO de 120px a 160px */
+            height: 220px; /* 🔥 AUMENTADO de 160px a 220px */
             background: linear-gradient(135deg, rgba(0, 255, 128, 0.15), rgba(0, 255, 128, 0.05));
             border: 3px solid #00ff80;
             border-radius: 10px;
@@ -513,10 +514,10 @@
             justify-items: center;
         }
         
-        /* CARTAS DE JUGADORES MEJORADAS - ESCALADAS PARA LOS SLOTS */
+        /* CARTAS DE JUGADORES AJUSTADAS PARA ENCAJAR EN AMBAS ZONAS */
         .player-card {
-            width: 150px;  /* 🔥 ESCALADO para encajar mejor en los slots */
-            height: 210px; /* 🔥 ESCALADO proporcionalmente */
+            width: 150px;  /* Mantener tamaño base */
+            height: 210px; /* Mantener tamaño base */
             background: linear-gradient(145deg, rgba(20, 30, 40, 0.9), rgba(10, 20, 30, 0.95));
             border: 3px solid transparent;
             border-image: linear-gradient(45deg, #ff8c00, #ffa500, #ff7f00, #ff8c00) 1;
@@ -530,18 +531,30 @@
             transition: all 0.4s ease;
             backdrop-filter: blur(10px);
             border-radius: 8px;
+            /* 🔥 NUEVO: Escalar automáticamente en slots pequeños */
+            transform-origin: center;
         }
 
-        .player-card:active {
-            cursor: grabbing;
-        }
+        /* 🔥 NUEVO: Escalar cartas cuando están en green zone */
+            .player-slot .player-card {
+                transform: scale(0.95); /* Reducir ligeramente para encajar mejor */
+            }
 
-        .player-card:hover {
-            transform: scale(1.03) translateY(-3px);
-            box-shadow: 
-                0 10px 25px rgba(255, 140, 0, 0.6),
-                inset 0 0 12px rgba(255, 140, 0, 0.2);
-        }
+        /* Mantener tamaño normal en bench */
+            .bench-slot .player-card {
+                transform: scale(1);
+            }
+
+            .player-card:active {
+                cursor: grabbing;
+            }
+
+            .player-card:hover {
+                transform: scale(1.03) translateY(-3px);
+                box-shadow: 
+                    0 10px 25px rgba(255, 140, 0, 0.6),
+                    inset 0 0 12px rgba(255, 140, 0, 0.2);
+            }
         
         /* Elementos de la carta escalados */
         .card-border {
@@ -774,33 +787,34 @@
         }
         
         /* Posiciones de slots - mantener todas */
+        /* POSICIONES DE SLOTS AJUSTADAS PARA CANCHA MÁS GRANDE */
         .slot-left {
             top: 25%;
-            left: 20%;
+            left: 18%; /* 🔥 AJUSTADO de 20% a 18% */
             transform: translate(-50%, -50%);
         }
-        
+
         .slot-center {
             top: 75%;
-            left: 20%;
+            left: 18%; /* 🔥 AJUSTADO de 20% a 18% */
             transform: translate(-50%, -50%);
         }
-        
+
         .slot-top {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
-        
+
         .slot-right {
             top: 25%;
-            left: 80%;
+            left: 82%; /* 🔥 AJUSTADO de 80% a 82% */
             transform: translate(-50%, -50%);
         }
-        
+
         .slot-bottom {
             top: 75%;
-            left: 80%;
+            left: 82%; /* 🔥 AJUSTADO de 80% a 82% */
             transform: translate(-50%, -50%);
         }
         
@@ -863,10 +877,14 @@
         
         /* RESPONSIVE MEJORADO */
         @media (max-width: 1200px) {
-            .bench-grid,
-            .bench-grid-second {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 15px;
+            .court-container {
+                max-width: 1200px;
+                padding: 25px;
+            }
+            
+            .player-slot {
+                width: 140px;
+                height: 200px;
             }
             
             .bench-slot {
@@ -881,27 +899,17 @@
         }
         
         @media (max-width: 768px) {
-            .team-logos { opacity: 0.3; }
-            
-            .navigation {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px;
+            .court-container {
+                padding: 20px;
             }
             
-            .section-title {
-                font-size: 2rem;
+            .court {
+                min-height: 500px;
             }
             
-            .nav-button, .draft-button {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-            
-            .bench-grid,
-            .bench-grid-second {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
+            .player-slot {
+                width: 120px;
+                height: 180px;
             }
             
             .bench-slot {
@@ -913,39 +921,28 @@
                 width: 110px;
                 height: 170px;
             }
-            
-            .decorative-circle {
-                opacity: 0.2;
-            }
         }
 
         @media (max-width: 480px) {
-            .bench-grid,
-            .bench-grid-second {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-            
-            .bench-slot {
-                width: 110px;
-                height: 160px;
-            }
-            
-            .player-card {
-                width: 100px;
-                height: 150px;
-            }
-            
-            .team-logos .team-logo {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .team-logo img {
-                width: 60px;
-                height: 60px;
-            }
-        }
+    .court {
+        min-height: 400px;
+    }
+    
+    .player-slot {
+        width: 100px;
+        height: 160px;
+    }
+    
+    .bench-slot {
+        width: 110px;
+        height: 160px;
+    }
+    
+    .player-card {
+        width: 100px;
+        height: 150px;
+    }
+}
     </style>
 </head>
 <body>

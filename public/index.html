@@ -623,7 +623,7 @@
         </button>
         <div class="volume-control">
             <span style="color: #00f0ff; font-size: 0.8rem;">🔉</span>
-            <input type="range" min="0" max="100" value="15" class="volume-slider" id="volume-slider">
+            <input type="range" min="0" max="100" value="10" class="volume-slider" id="volume-slider">
             <span style="color: #00f0ff; font-size: 0.8rem;">🔊</span>
         </div>
     </div>
@@ -769,21 +769,21 @@
             if (!bgAudio || !playPauseBtn || !volumeSlider) return;
             
             // Configurar volumen inicial
-            bgAudio.volume = 0.3; // 30% de volumen
-            volumeSlider.value = 30;
+            bgAudio.volume = 0.1; // 30% de volumen
+            volumeSlider.value = 10;
             
             // Estado de reproducción
             let isPlaying = false;
             let userHasInteracted = false;
             
             // 🚀 REPRODUCIR INMEDIATAMENTE AL CARGAR - SIN MUTE
-            bgAudio.volume = 0.3; // Volumen inicial 30%
+            bgAudio.volume = 0.1; // Volumen inicial 30%
             playAudio();
             
             // 🎵 FUNCIÓN DE REPRODUCCIÓN INMEDIATA - SIN MUTE
             async function playAudio() {
                 try {
-                    bgAudio.volume = 0.3; // Asegurar volumen
+                    bgAudio.volume = 0.1; // Asegurar volumen
                     
                     await bgAudio.play();
                     isPlaying = true;

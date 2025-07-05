@@ -617,29 +617,59 @@
                     showAlert('error', 'Please select a game week first.');
                     return;
                 }
+
+                // Validar que hay al menos algunas estadísticas
+                const hasStats = Array.from(document.querySelectorAll('.stat-input')).some(input => 
+                    parseInt(input.value) > 0
+                );
                 
+                if (!hasStats) {
+                    if (!confirm('No statistics detected. Do you want to save anyway?')) {
+                        return;
+                    }
+                }
+
                 try {
                     saveButton.disabled = true;
                     saveButton.textContent = 'SAVING & ACTIVATING...';
                     
-                    // Recopilar datos
+                    // Recopilar datos con validación mejorada
                     const stats = [];
+                    let totalPlayers = 0;
+                    let playersWithStats = 0;
+                    
                     document.querySelectorAll('#stats-table-body tr').forEach(row => {
                         const playerId = parseInt(row.dataset.playerId);
+                        totalPlayers++;
+                        
+                        const rebounds = parseInt(row.querySelector('.rebounds-input').value) || 0;
+                        const twoPoints = parseInt(row.querySelector('.two-points-input').value) || 0;
+                        const threePoints = parseInt(row.querySelector('.three-points-input').value) || 0;
+                        const freeThrows = parseInt(row.querySelector('.free-throws-input').value) || 0;
+                        const assists = parseInt(row.querySelector('.assists-input').value) || 0;
+                        const blocks = parseInt(row.querySelector('.blocks-input').value) || 0;
+                        const victories = row.querySelector('.victory-checkbox').checked;
+                        
+                        // Contar jugadores con estadísticas
+                        if (rebounds + twoPoints + threePoints + freeThrows + assists + blocks > 0 || victories) {
+                            playersWithStats++;
+                        }
                         
                         stats.push({
                             player_id: playerId,
-                            rebounds: parseInt(row.querySelector('.rebounds-input').value) || 0,
-                            two_points: parseInt(row.querySelector('.two-points-input').value) || 0,
-                            three_points: parseInt(row.querySelector('.three-points-input').value) || 0,
-                            free_throws: parseInt(row.querySelector('.free-throws-input').value) || 0,
-                            assists: parseInt(row.querySelector('.assists-input').value) || 0,
-                            blocks: parseInt(row.querySelector('.blocks-input').value) || 0,
-                            victories: row.querySelector('.victory-checkbox').checked
+                            rebounds,
+                            two_points: twoPoints,
+                            three_points: threePoints,
+                            free_throws: freeThrows,
+                            assists,
+                            blocks,
+                            victories
                         });
                     });
                     
-                    // Realizar la petición
+                    console.log(`📊 Saving stats for ${playersWithStats}/${totalPlayers} players with data`);
+                    
+                    // Realizar la petición con manejo de errores mejorado
                     const response = await fetch(`${API_URL}/admin/player-stats`, {
                         method: 'POST',
                         headers: {
@@ -647,43 +677,153 @@
                             'Authorization': `Bearer ${getAuthToken()}`
                         },
                         body: JSON.stringify({
-                            jornada_id: jornadaId,
+                            jornada_id: parseInt(jornadaId),
                             stats: stats
                         })
                     });
                     
                     if (!response.ok) {
-                        throw new Error('Failed to save player stats');
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || `HTTP ${response.status}: Failed to save stats`);
                     }
                     
                     const result = await response.json();
+                    console.log('✅ Stats save result:', result);
                     
-                    // 🆕 MOSTRAR MENSAJE DE ÉXITO CON INFO DE ACTIVACIÓN
-                    showAlert('success', 
-                        `✅ Stats saved successfully! Week automatically activated. ` +
-                        `All user teams will now be calculated based on their GREEN ZONE selections!`
-                    );
+                    // Mostrar información detallada del éxito
+                    const successMessage = `
+                        ✅ STATS SAVED SUCCESSFULLY!
+                        
+                        📊 Updated: ${result.updated_count || playersWithStats} players
+                        🔄 Recalculation: ${result.recalculation ? 'Completed' : 'Pending'}
+                        ⚡ Week Status: Automatically activated
+                        🔒 Lineups: Now locked for editing
+                        
+                        All user teams have been recalculated based on their GREEN ZONE selections!
+                    `.trim();
                     
-                    // Recargar los datos para ver la activación
+                    showAlert('success', successMessage);
+                    
+                    // 🆕 FORZAR ACTUALIZACIÓN DE LEADERBOARDS
+                    await forceLeaderboardRefresh();
+                    
+                    // Recargar los datos para mostrar cambios
+                    setTimeout(async () => {
+                        await loadJornadas();
+                        await handleJornadaChange();
+                    }, 1000);
+                    
+                    // Sugerir acciones adicionales
                     setTimeout(() => {
-                        loadJornadas();
-                        handleJornadaChange();
+                        const actions = confirm(
+                            '🏀 Stats uploaded successfully!\n\n' +
+                            'What would you like to do next?\n\n' +
+                            'OK = View Updated Leaderboards\n' +
+                            'Cancel = Stay in Stats Manager'
+                        );
+                        
+                        if (actions) {
+                            window.open('leaderboards.html?force_refresh=true', '_blank');
+                        }
                     }, 2000);
                     
-                    // 🆕 SUGERIR VER LEADERBOARDS
-                    setTimeout(() => {
-                        if (confirm('Stats uploaded successfully! Do you want to view the updated leaderboards?')) {
-                            window.location.href = 'leaderboards.html';
-                        }
-                    }, 3000);
-                    
                 } catch (error) {
-                    console.error('Error saving player stats:', error);
-                    showAlert('error', 'Error saving player stats. Please try again.');
+                    console.error('❌ Error saving player stats:', error);
+                    showAlert('error', `Error saving stats: ${error.message}`);
                 } finally {
                     saveButton.disabled = false;
                     saveButton.textContent = 'SAVE & AUTO-ACTIVATE WEEK';
                 }
+            }
+
+            // 🆕 NUEVA FUNCIÓN PARA FORZAR ACTUALIZACIÓN DE LEADERBOARDS
+            async function forceLeaderboardRefresh() {
+                try {
+                    console.log('🔄 Forcing leaderboard refresh...');
+                    
+                    // Llamar al endpoint de leaderboards con force_refresh
+                    const response = await fetch(`${API_URL}/leaderboards?force_refresh=true&t=${Date.now()}`, {
+                        method: 'GET',
+                        headers: {
+                            'Cache-Control': 'no-cache',
+                            'Pragma': 'no-cache'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        console.log('✅ Leaderboard refresh triggered successfully');
+                    } else {
+                        console.log('⚠️ Leaderboard refresh may have issues');
+                    }
+                    
+                } catch (error) {
+                    console.error('❌ Error forcing leaderboard refresh:', error);
+                }
+            }
+
+            // 🆕 FUNCIÓN MEJORADA PARA VALIDAR DATOS ANTES DE GUARDAR
+            function validateStatsData() {
+                const rows = document.querySelectorAll('#stats-table-body tr');
+                const errors = [];
+                let hasAnyData = false;
+                
+                rows.forEach((row, index) => {
+                    const playerName = row.querySelector('.player-name-cell').textContent;
+                    const inputs = row.querySelectorAll('.stat-input');
+                    
+                    inputs.forEach(input => {
+                        const value = parseInt(input.value);
+                        if (value < 0) {
+                            errors.push(`${playerName}: ${input.className} cannot be negative`);
+                        }
+                        if (value > 0) {
+                            hasAnyData = true;
+                        }
+                    });
+                    
+                    // Validar rangos razonables
+                    const rebounds = parseInt(row.querySelector('.rebounds-input').value) || 0;
+                    const twoPoints = parseInt(row.querySelector('.two-points-input').value) || 0;
+                    const threePoints = parseInt(row.querySelector('.three-points-input').value) || 0;
+                    
+                    if (rebounds > 30) {
+                        errors.push(`${playerName}: Rebounds (${rebounds}) seems unusually high`);
+                    }
+                    if (twoPoints > 25) {
+                        errors.push(`${playerName}: 2-Points (${twoPoints}) seems unusually high`);
+                    }
+                    if (threePoints > 15) {
+                        errors.push(`${playerName}: 3-Points (${threePoints}) seems unusually high`);
+                    }
+                });
+                
+                return { errors, hasAnyData };
+            }
+
+            // 🆕 FUNCIÓN PARA MOSTRAR PROGRESO DE GUARDADO
+            function showSaveProgress() {
+                const progressSteps = [
+                    'Validating data...',
+                    'Saving player statistics...',
+                    'Activating game week...',
+                    'Locking user lineups...',
+                    'Recalculating team points...',
+                    'Updating leaderboards...',
+                    'Completing process...'
+                ];
+                
+                let currentStep = 0;
+                
+                const interval = setInterval(() => {
+                    if (currentStep < progressSteps.length) {
+                        saveButton.textContent = progressSteps[currentStep];
+                        currentStep++;
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 800);
+                
+                return interval;
             }
             
             function showAlert(type, message) {
@@ -699,6 +839,444 @@
             function getAuthToken() {
                 return localStorage.getItem('authToken') || '';
             }
+
+            // Agregar estas funciones al stats-manager.html dentro del script existente
+
+// 🆕 FUNCIÓN PARA VERIFICAR INTEGRIDAD DE DATOS
+        async function checkDataIntegrity() {
+            try {
+                showAlert('info', 'Checking data integrity...');
+                
+                const response = await fetch(`${API_URL}/admin/data-integrity`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to check data integrity');
+                }
+                
+                const result = await response.json();
+                
+                // Mostrar resultados en un modal o alert
+                displayIntegrityResults(result);
+                
+            } catch (error) {
+                console.error('Error checking data integrity:', error);
+                showAlert('error', 'Error checking data integrity: ' + error.message);
+            }
+        }
+
+        // 🆕 FUNCIÓN PARA CORREGIR PROBLEMAS DE DATOS
+        async function fixDataIssues(fixType = 'recalculate_all', jornadaId = null) {
+            try {
+                const confirmMessage = fixType === 'recalculate_all' 
+                    ? 'This will recalculate ALL team points for ALL weeks. Continue?'
+                    : `This will recalculate team points for Week ${jornadaId}. Continue?`;
+                    
+                if (!confirm(confirmMessage)) {
+                    return;
+                }
+                
+                showAlert('info', 'Applying fixes... This may take a moment.');
+                
+                const response = await fetch(`${API_URL}/admin/data-integrity`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
+                    body: JSON.stringify({
+                        fix_type: fixType,
+                        jornada_id: jornadaId
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to apply fixes');
+                }
+                
+                const result = await response.json();
+                
+                showAlert('success', 
+                    `✅ Fixes applied successfully!\n\n` +
+                    `${result.fixes_applied.length} fixes completed:\n` +
+                    result.fixes_applied.map(fix => 
+                        `• ${fix.type}: ${fix.players_updated || 0} players, ${fix.teams_updated || 0} teams updated`
+                    ).join('\n')
+                );
+                
+                // Recargar datos después de las correcciones
+                setTimeout(() => {
+                    loadJornadas();
+                    if (jornadaSelect.value) {
+                        handleJornadaChange();
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error applying fixes:', error);
+                showAlert('error', 'Error applying fixes: ' + error.message);
+            }
+        }
+
+        // 🆕 FUNCIÓN PARA MOSTRAR RESULTADOS DE INTEGRIDAD
+        function displayIntegrityResults(result) {
+            const { status, summary, issues, recommendations } = result;
+            
+            let message = `📊 DATA INTEGRITY CHECK RESULTS\n\n`;
+            message += `Status: ${status.toUpperCase()}\n\n`;
+            
+            // Mostrar resumen
+            message += `📈 SUMMARY:\n`;
+            message += `• Jornadas: ${summary.jornadas?.total || 0} total, ${summary.jornadas?.current || 0} current\n`;
+            message += `• Users: ${summary.users?.total_users || 0} total, ${summary.users?.admins || 0} admins\n`;
+            message += `• Players: ${summary.players?.active_players || 0} active\n`;
+            message += `• Teams: ${summary.user_teams?.total_teams || 0} total\n`;
+            message += `• Player Stats: ${summary.player_stats?.total_stat_entries || 0} entries\n\n`;
+            
+            if (issues.length > 0) {
+                message += `⚠️ ISSUES FOUND (${issues.length}):\n`;
+                issues.slice(0, 5).forEach((issue, index) => {
+                    message += `${index + 1}. ${issue.type.toUpperCase()}: ${issue.message}\n`;
+                });
+                
+                if (issues.length > 5) {
+                    message += `... and ${issues.length - 5} more issues\n`;
+                }
+                message += `\n`;
+            }
+            
+            if (recommendations.length > 0) {
+                message += `💡 RECOMMENDATIONS:\n`;
+                recommendations.forEach((rec, index) => {
+                    message += `${index + 1}. [${rec.priority.toUpperCase()}] ${rec.action}\n`;
+                });
+            }
+            
+            // Mostrar en alert (en producción, sería mejor un modal)
+            alert(message);
+            
+            // Si hay problemas críticos, ofrecer corrección automática
+            const criticalIssues = issues.filter(i => i.type === 'error' || i.category === 'calculation');
+            if (criticalIssues.length > 0) {
+                setTimeout(() => {
+                    if (confirm('Critical issues found! Do you want to run automatic fixes?')) {
+                        fixDataIssues('recalculate_all');
+                    }
+                }, 1000);
+            }
+        }
+
+        // 🆕 FUNCIÓN PARA VERIFICAR DESPUÉS DE GUARDAR STATS
+        async function verifyAfterSave(jornadaId) {
+            try {
+                console.log('🔍 Verifying data after save...');
+                
+                // Esperar un poco para que se complete el procesamiento
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Verificar que los puntos se calcularon correctamente
+                const response = await fetch(`${API_URL}/leaderboards?jornada_id=${jornadaId}&force_refresh=true`, {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                });
+                
+                if (response.ok) {
+                    const leaderboard = await response.json();
+                    const totalPoints = leaderboard.reduce((sum, entry) => sum + entry.points, 0);
+                    const usersWithPoints = leaderboard.filter(entry => entry.points > 0).length;
+                    
+                    console.log('✅ Verification results:', {
+                        total_entries: leaderboard.length,
+                        users_with_points: usersWithPoints,
+                        total_points_distributed: totalPoints
+                    });
+                    
+                    if (totalPoints > 0) {
+                        showAlert('success', 
+                            `✅ VERIFICATION PASSED!\n\n` +
+                            `📊 Leaderboard Status:\n` +
+                            `• ${leaderboard.length} teams total\n` +
+                            `• ${usersWithPoints} teams with points\n` +
+                            `• ${totalPoints} total points distributed\n` +
+                            `• Top score: ${leaderboard[0]?.points || 0} points`
+                        );
+                    } else {
+                        showAlert('warning', 
+                            `⚠️ VERIFICATION WARNING!\n\n` +
+                            `No points found in leaderboard after saving stats.\n` +
+                            `This might indicate a calculation issue.\n\n` +
+                            `Do you want to run data integrity check?`
+                        );
+                        
+                        setTimeout(() => {
+                            if (confirm('Run data integrity check now?')) {
+                                checkDataIntegrity();
+                            }
+                        }, 2000);
+                    }
+                } else {
+                    console.warn('⚠️ Could not verify leaderboard data');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error during verification:', error);
+            }
+        }
+
+        // 🆕 FUNCIÓN MEJORADA PARA MOSTRAR ALERTAS CON TIPOS
+        function showAlert(type, message) {
+            const alertSuccess = document.getElementById('alert-success');
+            const alertError = document.getElementById('alert-error');
+            
+            // Ocultar todas las alertas primero
+            alertSuccess.style.display = 'none';
+            alertError.style.display = 'none';
+            
+            let targetAlert;
+            if (type === 'success') {
+                targetAlert = alertSuccess;
+            } else if (type === 'error') {
+                targetAlert = alertError;
+            } else if (type === 'warning') {
+                targetAlert = alertError; // Usar el mismo estilo que error para warnings
+            } else if (type === 'info') {
+                targetAlert = alertSuccess; // Usar el mismo estilo que success para info
+            } else {
+                targetAlert = alertError; // Default a error
+            }
+            
+            targetAlert.textContent = message;
+            targetAlert.style.display = 'block';
+            
+            // Auto-ocultar después de un tiempo (excepto para errores críticos)
+            const autoHideTime = type === 'error' ? 10000 : 8000;
+            setTimeout(() => {
+                targetAlert.style.display = 'none';
+            }, autoHideTime);
+        }
+
+        // 🆕 FUNCIÓN PARA AGREGAR BOTONES DE VERIFICACIÓN A LA INTERFAZ
+        function addVerificationButtons() {
+            // Agregar botón de verificación de integridad
+            const actionButtons = document.querySelector('.action-buttons');
+            if (actionButtons) {
+                const checkIntegrityBtn = document.createElement('button');
+                checkIntegrityBtn.type = 'button';
+                checkIntegrityBtn.className = 'action-button';
+                checkIntegrityBtn.textContent = 'CHECK DATA INTEGRITY';
+                checkIntegrityBtn.onclick = checkDataIntegrity;
+                
+                const fixDataBtn = document.createElement('button');
+                fixDataBtn.type = 'button';
+                fixDataBtn.className = 'action-button';
+                fixDataBtn.textContent = 'FIX ALL DATA ISSUES';
+                fixDataBtn.onclick = () => fixDataIssues('recalculate_all');
+                fixDataBtn.style.backgroundColor = 'rgba(255, 107, 107, 0.1)';
+                fixDataBtn.style.borderColor = '#ff6b6b';
+                fixDataBtn.style.color = '#ff6b6b';
+                
+                // Insertar antes del botón de guardar
+                actionButtons.insertBefore(checkIntegrityBtn, actionButtons.firstChild);
+                actionButtons.insertBefore(fixDataBtn, actionButtons.firstChild);
+            }
+        }
+
+        // 🆕 MODIFICAR LA FUNCIÓN saveStats EXISTENTE PARA INCLUIR VERIFICACIÓN
+        async function saveStatsWithVerification(e) {
+            e.preventDefault();
+            
+            const jornadaId = jornadaSelect.value;
+            
+            if (!jornadaId) {
+                showAlert('error', 'Please select a game week first.');
+                return;
+            }
+
+            // Validación mejorada
+            const validation = validateStatsData();
+            if (validation.errors.length > 0) {
+                const errorMessage = 'Validation errors found:\n\n' + validation.errors.join('\n');
+                showAlert('error', errorMessage);
+                return;
+            }
+
+            if (!validation.hasAnyData) {
+                if (!confirm('No statistics detected. Do you want to save anyway?')) {
+                    return;
+                }
+            }
+
+            try {
+                saveButton.disabled = true;
+                
+                // Mostrar progreso
+                const progressSteps = [
+                    'Validating data...',
+                    'Saving player statistics...',
+                    'Activating game week...',
+                    'Recalculating team points...',
+                    'Updating leaderboards...',
+                    'Verifying results...'
+                ];
+                
+                let currentStep = 0;
+                const progressInterval = setInterval(() => {
+                    if (currentStep < progressSteps.length) {
+                        saveButton.textContent = progressSteps[currentStep];
+                        currentStep++;
+                    }
+                }, 1000);
+
+                // Recopilar y enviar datos (código existente de saveStats)
+                const stats = [];
+                let totalPlayers = 0;
+                let playersWithStats = 0;
+                
+                document.querySelectorAll('#stats-table-body tr').forEach(row => {
+                    const playerId = parseInt(row.dataset.playerId);
+                    totalPlayers++;
+                    
+                    const rebounds = parseInt(row.querySelector('.rebounds-input').value) || 0;
+                    const twoPoints = parseInt(row.querySelector('.two-points-input').value) || 0;
+                    const threePoints = parseInt(row.querySelector('.three-points-input').value) || 0;
+                    const freeThrows = parseInt(row.querySelector('.free-throws-input').value) || 0;
+                    const assists = parseInt(row.querySelector('.assists-input').value) || 0;
+                    const blocks = parseInt(row.querySelector('.blocks-input').value) || 0;
+                    const victories = row.querySelector('.victory-checkbox').checked;
+                    
+                    if (rebounds + twoPoints + threePoints + freeThrows + assists + blocks > 0 || victories) {
+                        playersWithStats++;
+                    }
+                    
+                    stats.push({
+                        player_id: playerId,
+                        rebounds,
+                        two_points: twoPoints,
+                        three_points: threePoints,
+                        free_throws: freeThrows,
+                        assists,
+                        blocks,
+                        victories
+                    });
+                });
+                
+                console.log(`📊 Saving stats for ${playersWithStats}/${totalPlayers} players`);
+                
+                // Realizar la petición
+                const response = await fetch(`${API_URL}/admin/player-stats`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getAuthToken()}`
+                    },
+                    body: JSON.stringify({
+                        jornada_id: parseInt(jornadaId),
+                        stats: stats
+                    })
+                });
+                
+                clearInterval(progressInterval);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP ${response.status}: Failed to save stats`);
+                }
+                
+                const result = await response.json();
+                console.log('✅ Stats save result:', result);
+                
+                // Mostrar resultado detallado
+                const successMessage = `✅ STATS SAVED SUCCESSFULLY!\n\n` +
+                    `📊 Week ${result.week_number} Results:\n` +
+                    `• Players processed: ${result.stats_summary?.players_processed || playersWithStats}\n` +
+                    `• Teams updated: ${result.team_recalculation?.teams_updated || 0}\n` +
+                    `• Total points distributed: ${result.team_recalculation?.total_points_distributed || 0}\n` +
+                    `• Average points per team: ${result.team_recalculation?.avg_points_per_team || 0}\n\n` +
+                    `⚡ Week automatically activated and lineups locked!`;
+                
+                showAlert('success', successMessage);
+                
+                // 🆕 VERIFICAR RESULTADOS AUTOMÁTICAMENTE
+                await verifyAfterSave(jornadaId);
+                
+                // Recargar datos
+                setTimeout(async () => {
+                    await loadJornadas();
+                    await handleJornadaChange();
+                }, 1000);
+                
+                // Sugerir ver leaderboards
+                setTimeout(() => {
+                    if (confirm('🏀 Stats saved successfully! View updated leaderboards?')) {
+                        window.open('leaderboards.html?force_refresh=true', '_blank');
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                console.error('❌ Error saving player stats:', error);
+                showAlert('error', `Error saving stats: ${error.message}`);
+            } finally {
+                saveButton.disabled = false;
+                saveButton.textContent = 'SAVE & AUTO-ACTIVATE WEEK';
+            }
+        }
+
+        // 🆕 FUNCIÓN DE VALIDACIÓN MEJORADA
+        function validateStatsData() {
+            const rows = document.querySelectorAll('#stats-table-body tr');
+            const errors = [];
+            let hasAnyData = false;
+            
+            rows.forEach((row, index) => {
+                const playerName = row.querySelector('.player-name-cell').textContent;
+                const inputs = row.querySelectorAll('.stat-input');
+                
+                inputs.forEach(input => {
+                    const value = parseInt(input.value);
+                    if (value < 0) {
+                        errors.push(`${playerName}: ${input.className.replace('-input', '').replace('stat-input ', '')} cannot be negative`);
+                    }
+                    if (value > 0) {
+                        hasAnyData = true;
+                    }
+                });
+                
+                // Validar rangos razonables
+                const rebounds = parseInt(row.querySelector('.rebounds-input').value) || 0;
+                const twoPoints = parseInt(row.querySelector('.two-points-input').value) || 0;
+                const threePoints = parseInt(row.querySelector('.three-points-input').value) || 0;
+                
+                if (rebounds > 30) {
+                    errors.push(`${playerName}: Rebounds (${rebounds}) seems unusually high (max recommended: 30)`);
+                }
+                if (twoPoints > 25) {
+                    errors.push(`${playerName}: 2-Points (${twoPoints}) seems unusually high (max recommended: 25)`);
+                }
+                if (threePoints > 15) {
+                    errors.push(`${playerName}: 3-Points (${threePoints}) seems unusually high (max recommended: 15)`);
+                }
+            });
+            
+            return { errors, hasAnyData };
+        }
+
+        // 🆕 INICIALIZAR LAS NUEVAS FUNCIONES AL CARGAR LA PÁGINA
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agregar los nuevos botones a la interfaz
+            setTimeout(addVerificationButtons, 1000);
+            
+            // Reemplazar el event listener del formulario con la nueva función
+            const statsForm = document.getElementById('stats-form');
+            if (statsForm) {
+                statsForm.removeEventListener('submit', saveStats);
+                statsForm.addEventListener('submit', saveStatsWithVerification);
+            }
+        });
         });
     </script>
 </body>

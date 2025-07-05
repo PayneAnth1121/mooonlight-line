@@ -2,7 +2,7 @@
 class BackgroundMusicManager {
     constructor() {
         this.audio = null;
-        this.isPlaying = true;
+        this.isPlaying = false;
         this.volume = 0.05;
         this.userHasInteracted = false;
         this.controls = {

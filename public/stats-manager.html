@@ -729,12 +729,24 @@
                     
                 } catch (error) {
                     console.error('❌ Error saving player stats:', error);
-                    showAlert('error', `Error saving stats: ${error.message}`);
-                } finally {
-                    saveButton.disabled = false;
-                    saveButton.textContent = 'SAVE & AUTO-ACTIVATE WEEK';
+                    // Mostrar error más detallado
+                    let errorMessage = 'Error saving stats: ';
+                    if (error.message) {
+                        errorMessage += error.message;
+                    } else {
+                        errorMessage += 'Unknown server error';
+                    }
+                    
+                    // Si hay respuesta del servidor, mostrar detalles
+                    if (error.response) {
+                        errorMessage += `\nStatus: ${error.response.status}`;
+                        errorMessage += `\nDetails: ${JSON.stringify(error.response.data)}`;
+                    }
+                    
+                    showAlert('error', errorMessage);
                 }
             }
+            
 
             // 🆕 NUEVA FUNCIÓN PARA FORZAR ACTUALIZACIÓN DE LEADERBOARDS
             async function forceLeaderboardRefresh() {

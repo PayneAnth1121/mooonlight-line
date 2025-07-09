@@ -884,6 +884,20 @@
             
             window.activateJornada = async function(id) {
                 try {
+                    // Primero obtener los datos actuales de la jornada
+                    const getCurrentResponse = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (!getCurrentResponse.ok) {
+                        throw new Error('Failed to get current jornada data');
+                    }
+                    
+                    const currentJornada = await getCurrentResponse.json();
+                    
+                    // Ahora actualizar con todos los campos requeridos
                     const response = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
                         method: 'PUT',
                         headers: {
@@ -891,12 +905,17 @@
                             'Authorization': `Bearer ${getAuthToken()}`
                         },
                         body: JSON.stringify({
-                            is_current: true
+                            week_number: currentJornada.week_number,
+                            start_date: currentJornada.start_date,
+                            end_date: currentJornada.end_date,
+                            is_current: true,
+                            is_completed: currentJornada.is_completed || false
                         })
                     });
                     
                     if (!response.ok) {
-                        throw new Error('Failed to activate game week');
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Failed to activate game week');
                     }
                     
                     showAlert('success', 'Game week activated successfully!');
@@ -904,7 +923,7 @@
                     
                 } catch (error) {
                     console.error('Error activating game week:', error);
-                    showAlert('error', 'Error activating game week.');
+                    showAlert('error', `Error activating game week: ${error.message}`);
                 }
             };
             
@@ -914,6 +933,20 @@
                 }
                 
                 try {
+                    // Primero obtener los datos actuales de la jornada
+                    const getCurrentResponse = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
+                        headers: {
+                            'Authorization': `Bearer ${getAuthToken()}`
+                        }
+                    });
+                    
+                    if (!getCurrentResponse.ok) {
+                        throw new Error('Failed to get current jornada data');
+                    }
+                    
+                    const currentJornada = await getCurrentResponse.json();
+                    
+                    // Actualizar con todos los campos requeridos
                     const response = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
                         method: 'PUT',
                         headers: {
@@ -921,12 +954,18 @@
                             'Authorization': `Bearer ${getAuthToken()}`
                         },
                         body: JSON.stringify({
+                            week_number: currentJornada.week_number,
+                            start_date: currentJornada.start_date,
+                            end_date: currentJornada.end_date,
+                            is_current: currentJornada.is_current,
+                            is_completed: currentJornada.is_completed || false,
                             lineup_locked: false
                         })
                     });
                     
                     if (!response.ok) {
-                        throw new Error('Failed to unlock lineups');
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Failed to unlock lineups');
                     }
                     
                     showAlert('success', 'Lineups unlocked successfully!');
@@ -934,7 +973,7 @@
                     
                 } catch (error) {
                     console.error('Error unlocking lineups:', error);
-                    showAlert('error', 'Error unlocking lineups.');
+                    showAlert('error', `Error unlocking lineups: ${error.message}`);
                 }
             };
             
@@ -944,14 +983,10 @@
                     return;
                 }
                 
-                // Doble confirmación para eliminar
-                if (!confirm(`FINAL CONFIRMATION: Delete Week ${weekNumber}?\n\nType "DELETE" in the next prompt to confirm.`)) {
-                    return;
-                }
-                
-                const confirmText = prompt(`Type "DELETE" to confirm deletion of Week ${weekNumber}:`);
-                if (confirmText !== 'DELETE') {
-                    showAlert('error', 'Deletion cancelled - confirmation text did not match.');
+                // Confirmación más simple y flexible
+                const confirmText = prompt(`To confirm deletion of Week ${weekNumber}, type: delete`);
+                if (!confirmText || confirmText.toLowerCase().trim() !== 'delete') {
+                    showAlert('error', 'Deletion cancelled - please type "delete" to confirm.');
                     return;
                 }
                 
@@ -976,6 +1011,7 @@
                     showAlert('error', error.message || 'Error deleting game week.');
                 }
             };
+
             
             // 🆕 FUNCIONES DE ACCIONES RÁPIDAS
             async function forceRecalculateAll() {

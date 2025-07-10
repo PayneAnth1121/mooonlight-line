@@ -905,7 +905,7 @@
         <!-- Contenedor de leaderboard mejorado -->
         <div class="leaderboards-container">
             <div class="leaderboards-tabs">
-                <div class="leaderboards-tab">🏅 CURRENT WEEK</div>
+                <div class="leaderboards-tab">🏅 TOTAL STANDINGS</div>
             </div>
             
             <div class="leaderboards-content">
@@ -1004,11 +1004,11 @@
             async function fetchLeaderboard(forceRefresh = false) {
                 try {
                     showLoading();
-                    console.log('🔍 Fetching leaderboard...');
+                    console.log('🔍 Fetching global leaderboard...');
                     
                     const requestTime = Date.now();
                     
-                    // 🆕 ADD FORCE REFRESH PARAMETER
+                    // 🆕 ALWAYS FETCH GLOBAL LEADERBOARD (cumulative points)
                     let url = '/api/leaderboards';
                     if (forceRefresh) {
                         url += '?force_refresh=true&t=' + requestTime;
@@ -1025,7 +1025,7 @@
                     const responseTime = Date.now() - requestTime;
                     updateDebugInfo('debug-response-time', responseTime + 'ms');
                     
-                    console.log('📡 Leaderboard API response status:', response.status);
+                    console.log('📡 Global leaderboard API response status:', response.status);
                     
                     if (!response.ok) {
                         const errorText = await response.text();
@@ -1034,7 +1034,7 @@
                     }
                     
                     const data = await response.json();
-                    console.log('✅ Leaderboard data received:', data);
+                    console.log('✅ Global leaderboard data received:', data);
                     
                     // Store the full data for pagination
                     window.leaderboardData = Array.isArray(data) ? data : [];
@@ -1042,14 +1042,14 @@
                     
                     console.log('📊 Total leaderboard entries:', window.leaderboardData.length);
                     
-                    // 🆕 UPDATE DEBUG INFO
+                    // 🆕 UPDATE DEBUG INFO FOR GLOBAL STANDINGS
                     const totalPoints = window.leaderboardData.reduce((sum, entry) => sum + parseInt(entry.points || 0), 0);
                     updateDebugInfo('debug-total-points', totalPoints);
                     updateDebugInfo('debug-timestamp', new Date().toLocaleTimeString());
                     
-                    // Find current jornada info
+                    // Find current jornada info for reference only
                     const currentJornada = await getCurrentJornadaInfo();
-                    updateDebugInfo('debug-jornada', currentJornada ? `Week ${currentJornada.week_number} (ID: ${currentJornada.id})` : 'Unknown');
+                    updateDebugInfo('debug-jornada', currentJornada ? `Global Standings (Ref: Week ${currentJornada.week_number})` : 'Global Standings');
                     
                     // Implement client-side pagination
                     const itemsPerPage = 10;
@@ -1072,9 +1072,9 @@
                     if (nextButton) nextButton.disabled = totalPages <= 1;
                     
                 } catch (error) {
-                    console.error('❌ Error fetching leaderboard:', error);
+                    console.error('❌ Error fetching global leaderboard:', error);
                     updateDebugInfo('debug-timestamp', 'Error: ' + error.message);
-                    showError('Failed to load leaderboard', `${error.message}\n\nThis might happen if:\n• No game weeks have been created yet\n• No teams have been registered\n• Database connection issues\n• Points calculation problems`);
+                    showError('Failed to load season standings', `${error.message}\n\nThis might happen if:\n• No game weeks have been created yet\n• No teams have been registered\n• Database connection issues\n• Points calculation problems`);
                 }
             }
             
@@ -1150,10 +1150,10 @@
                     html = `
                         <tr>
                             <td colspan="4" style="text-align: center; padding: 40px; color: #ff8c00;">
-                                <div style="font-size: 1.2rem; margin-bottom: 10px;">🏀 No Teams Yet!</div>
+                                <div style="font-size: 1.2rem; margin-bottom: 10px;">🏀 No Season Data Yet!</div>
                                 <div style="font-size: 0.9rem; opacity: 0.8;">
-                                    Teams will appear here once players create their lineups<br>
-                                    and administrators input player statistics.
+                                    Season standings will appear here once players create their lineups<br>
+                                    across multiple weeks and administrators input player statistics.
                                 </div>
                                 <br>
                                 <button class="retry-button" onclick="window.location.reload()">

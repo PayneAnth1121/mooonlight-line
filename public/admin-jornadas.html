@@ -711,8 +711,9 @@
                                         </button>
                                         ` : ''}
                                         ${jornada.lineup_locked ? `
-                                        <button class="action-btn unlock-btn" onclick="unlockLineups(${jornada.id})">
-                                            UNLOCK
+                                        <button class="action-btn unlock-btn" onclick="unlockLineups(${jornada.id})" 
+                                                title="Allow users to modify their teams">
+                                            🔓 UNLOCK LINEUPS
                                         </button>
                                         ` : ''}
                                         <button class="action-btn delete-btn" onclick="deleteJornada(${jornada.id}, ${jornada.week_number})">
@@ -752,9 +753,9 @@
             function getLineupStatus(jornada) {
                 let badge;
                 if (jornada.lineup_locked) {
-                    badge = '<span class="status-badge locked">LOCKED</span>';
+                    badge = '<span class="status-badge locked">🔒 LOCKED</span>';
                 } else {
-                    badge = '<span class="status-badge pending">OPEN</span>';
+                    badge = '<span class="status-badge pending">✅ OPEN</span>';
                 }
                 
                 return { badge };
@@ -928,7 +929,7 @@
             };
             
             window.unlockLineups = async function(id) {
-                if (!confirm('Are you sure you want to unlock lineups for this week? Users will be able to modify their teams.')) {
+                if (!confirm('🔓 UNLOCK LINEUPS?\n\nThis will allow all users to modify their teams for this week.\n\n⚠️ Warning: If stats are already uploaded, team points may change when users update their lineups.\n\nContinue?')) {
                     return;
                 }
                 

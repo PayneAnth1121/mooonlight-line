@@ -114,7 +114,7 @@ module.exports = async function handler(req, res) {
 
     if (req.method === 'POST') {
       // 🆕 CREATE JORNADA WITHOUT MANDATORY DATES
-      const { week_number, start_date, end_date, is_current } = req.body;
+      const { week_number, start_date, end_date, is_current, lineup_locked } = req.body;
       
       if (!week_number) {
         return res.status(400).json({ message: 'Week number is required' });
@@ -166,7 +166,7 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ message: 'Valid jornada ID is required for updates' });
       }
 
-      const { week_number, start_date, end_date, is_current, is_completed } = req.body;
+      const { week_number, start_date, end_date, is_current, is_completed, lineup_locked } = req.body;
       
       if (!week_number) {
         return res.status(400).json({ 
@@ -207,17 +207,18 @@ module.exports = async function handler(req, res) {
         
         // Update the jornada (dates are optional)
         const result = await client.query(`
-          UPDATE jornadas 
-          SET 
-            week_number = $1,
-            start_date = $2,
-            end_date = $3,
-            is_current = $4,
-            is_completed = $5,
-            updated_at = NOW()
-          WHERE id = $6
-          RETURNING *
-        `, [week_number, start_date || null, end_date || null, is_current, is_completed, parseInt(id)]);
+        UPDATE jornadas 
+        SET 
+          week_number = $1,
+          start_date = $2,
+          end_date = $3,
+          is_current = $4,
+          is_completed = $5,
+          lineup_locked = $6,
+          updated_at = NOW()
+        WHERE id = $7
+        RETURNING *
+      `, [week_number, start_date || null, end_date || null, is_current, is_completed, lineup_locked || false, parseInt(id)]);
         
         if (result.rows.length === 0) {
           await client.query('ROLLBACK');

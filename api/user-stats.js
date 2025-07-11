@@ -1,4 +1,4 @@
-// api/user-stats.js - CONVERTED TO COMMONJS
+// api/user-stats.js - CORREGIDO para usar el mismo sistema que leaderboards
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 
@@ -54,25 +54,41 @@ module.exports = async function handler(req, res) {
     // Authenticate user
     const user = authenticateToken(req);
     const user_id = user.id;
-    const { jornada_id } = req.query;
 
-    // Get current jornada if not specified
-    let targetJornada = jornada_id;
-    if (!targetJornada) {
-      const currentJornada = await pool.query('SELECT id FROM jornadas WHERE is_current = true LIMIT 1');
-      if (currentJornada.rows.length === 0) {
-        return res.status(404).json({ message: 'No active game week found' });
-      }
-      targetJornada = currentJornada.rows[0].id;
-    }
+    console.log('📈 Getting user stats for user ID:', user_id);
 
-    // Get user's position in leaderboard
-    const leaderboard = await pool.query('SELECT * FROM get_leaderboard($1)', [targetJornada]);
-    const userPosition = leaderboard.rows.find(row => parseInt(row.user_id) === parseInt(user_id));
+    // 🔥 NUEVA LÓGICA: Usar el mismo sistema que leaderboards para obtener el ranking correcto
+    // Obtener TODOS los usuarios con sus puntos totales acumulados (igual que leaderboards)
+    const leaderboardQuery = `
+      WITH user_total_points AS (
+        SELECT 
+          u.id as user_id,
+          u.username as manager,
+          u.team_name as team,
+          COALESCE(SUM(ut.total_points), 0) as total_points
+        FROM users u
+        LEFT JOIN user_teams ut ON u.id = ut.user_id
+        WHERE u.is_admin = FALSE
+        GROUP BY u.id, u.username, u.team_name
+      )
+      SELECT 
+        ROW_NUMBER() OVER (ORDER BY total_points DESC, manager ASC) as rank,
+        user_id,
+        manager,
+        team,
+        total_points as points
+      FROM user_total_points
+      ORDER BY total_points DESC, manager ASC
+    `;
 
-    // Get user's team name
+    const leaderboardResult = await pool.query(leaderboardQuery);
+    
+    // Buscar al usuario específico en el leaderboard
+    const userPosition = leaderboardResult.rows.find(row => parseInt(row.user_id) === parseInt(user_id));
+    
+    // Obtener información del usuario
     const userResult = await pool.query(
-      'SELECT team_name FROM users WHERE id = $1', 
+      'SELECT team_name, username FROM users WHERE id = $1', 
       [user_id]
     );
     
@@ -80,14 +96,27 @@ module.exports = async function handler(req, res) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json({
-      rank: userPosition ? userPosition.rank : null,
-      points: userPosition ? userPosition.points : 0,
-      team: userResult.rows[0].team_name
+    const userData = userResult.rows[0];
+
+    // Preparar respuesta
+    const response = {
+      rank: userPosition ? parseInt(userPosition.rank) : null,
+      points: userPosition ? parseInt(userPosition.points) : 0,
+      team: userData.team_name || 'No Team',
+      username: userData.username || 'Unknown'
+    };
+
+    console.log('✅ User stats calculated:', {
+      user_id,
+      rank: response.rank,
+      points: response.points,
+      found_in_leaderboard: !!userPosition
     });
 
+    res.json(response);
+
   } catch (error) {
-    console.error('Error fetching user stats:', error);
+    console.error('❌ Error fetching user stats:', error);
     if (error.message.includes('token')) {
       return res.status(401).json({ message: error.message });
     }

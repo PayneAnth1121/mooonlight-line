@@ -1011,6 +1011,12 @@
         <div class="section-subtitle" style="font-size: 1.1rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 30px; text-align: center; line-height: 1.6;">
             Place your players strategically! Only players in the <strong style="color: #00ff80;">GREEN ZONE</strong> will earn points.
         </div>
+
+        <div id="draft-status-info" style="background: rgba(255, 140, 0, 0.1); border: 2px solid #ff8c00; border-radius: 15px; padding: 20px; margin-bottom: 25px; text-align: center; color: #ff8c00; font-size: 1rem; line-height: 1.6; display: none;">
+            <strong>🔒 YOUR SEASON PLAYER POOL</strong><br>
+            You can only use the players you drafted. Move them weekly between zones based on your strategy!<br>
+            <small style="opacity: 0.8;">Draft selections are permanent for the entire season</small>
+        </div>
         
         <div style="display: flex; justify-content: center; gap: 40px; margin-bottom: 25px; flex-wrap: wrap;">
             <div style="display: flex; align-items: center; gap: 10px;">
@@ -1206,12 +1212,14 @@
                         // Ya hizo draft, deshabilitar botón
                         if (draftButton) {
                             draftButton.classList.add('disabled');
-                            draftButton.textContent = 'DRAFT COMPLETED';
-                            draftButton.setAttribute('title', 'You have already completed your draft');
+                            draftButton.style.opacity = '0.5';
+                            draftButton.style.cursor = 'not-allowed';
+                            draftButton.textContent = '✅ DRAFT COMPLETED';
+                            draftButton.setAttribute('title', 'Your player pool is locked for the season');
                             draftButton.removeAttribute('href');
                             draftButton.onclick = (e) => {
                                 e.preventDefault();
-                                alert('You have already completed your player draft. Each manager can only draft once.');
+                                alert('🔒 DRAFT COMPLETED\n\nYour player pool is locked for the entire season.\n\n📝 You can arrange these players each week by moving them between:\n• GREEN ZONE (Starters) - Earn points\n• RED ZONE (Bench) - No points\n\nUse the court below to set your weekly lineup!');
                             };
                         }
                     }
@@ -1883,6 +1891,14 @@
                                 } else if (player.position_type === 'bench') {
                                     teamData[`bench${player.position_number}`] = player.player_id.toString();
                                 }
+                                // Verificar si el usuario ya tiene jugadores drafteados
+                            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                            if (!userData.has_drafted && teamFromAPI.players && teamFromAPI.players.length > 0) {
+                                // Si tiene jugadores pero no está marcado como drafteado, marcarlo
+                                userData.has_drafted = true;
+                                localStorage.setItem('userData', JSON.stringify(userData));
+                                console.log('✅ User auto-marked as drafted based on existing team');
+                            }
                             });
                             
                             console.log('Team data loaded from API:', teamData);

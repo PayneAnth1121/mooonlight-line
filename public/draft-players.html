@@ -972,8 +972,13 @@
             <div class="blocked-icon">🔒</div>
             <div class="blocked-title">DRAFT ALREADY COMPLETED</div>
             <div class="blocked-message">
-                You have already completed your player draft. Each manager can only draft once to ensure fairness.<br><br>
-                You can still modify your team lineup by going to "MY TEAM" and arranging your drafted players.
+                🔒 <strong>Your player pool is locked for the entire season!</strong><br><br>
+                ✅ You have successfully completed your one-time player draft.<br><br>
+                📝 <strong>What you can do now:</strong><br>
+                • Arrange your drafted players each week<br>
+                • Move players between GREEN ZONE (starters) and RED ZONE (bench)<br>
+                • Only GREEN ZONE players earn points each week<br><br>
+                🏀 Go to "MY TEAM" to set your weekly lineup!
             </div>
             <div class="blocked-actions">
                 <a href="create-team.html" class="nav-button">GO TO MY TEAM</a>
@@ -1088,6 +1093,14 @@
                 // 🎵 INICIALIZAR MÚSICA
                 if (typeof initBackgroundMusic === 'function') {
                 initBackgroundMusic();
+                }
+                // Mostrar información de draft si el usuario ya drafteó
+                const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                if (userData.has_drafted) {
+                    const draftStatusInfo = document.getElementById('draft-status-info');
+                    if (draftStatusInfo) {
+                        draftStatusInfo.style.display = 'block';
+                    }
                 }
             }
 
@@ -1274,7 +1287,7 @@
                     
                     // 🆕 MARCAR USUARIO COMO DRAFTEADO EN LA BASE DE DATOS
                     try {
-                        await fetch(`/api/admin/users`, {
+                        const markResponse = await fetch(`/api/admin/users`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -1286,10 +1299,16 @@
                             })
                         });
                         
-                        console.log('✅ User marked as drafted successfully');
+                        if (markResponse.ok) {
+                            console.log('✅ User marked as drafted successfully');
+                            // Actualizar localStorage para reflejar el cambio inmediatamente
+                            userData.has_drafted = true;
+                            localStorage.setItem('userData', JSON.stringify(userData));
+                        } else {
+                            console.error('⚠️ Could not mark user as drafted in database');
+                        }
                     } catch (markError) {
                         console.error('Warning: Could not mark user as drafted:', markError);
-                        // Continuar de todos modos para no bloquear al usuario
                     }
                     
                     // Preparar datos del equipo

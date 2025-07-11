@@ -278,17 +278,17 @@ module.exports = async function handler(req, res) {
             });
 
             // Preparar respuesta con información de semana actual
-            const response = {
-                leaderboard: leaderboardData,
-                current_week: {
-                    id: jornadaInfo?.id || null,
-                    week_number: jornadaInfo?.week_number || null,
-                    is_current: jornadaInfo?.is_current || false,
-                    is_completed: jornadaInfo?.is_completed || false,
-                    lineup_locked: jornadaInfo?.lineup_locked || false,
-                    is_active: jornadaInfo ? true : false
-                }
-            };
+        const response = {
+            leaderboard: leaderboardData,  // <-- Importante: debe ser leaderboardData, no otra cosa
+            current_week: {
+                id: jornadaInfo?.id || null,
+                week_number: jornadaInfo?.week_number || null,
+                is_current: jornadaInfo?.is_current || false,
+                is_completed: jornadaInfo?.is_completed || false,
+                lineup_locked: jornadaInfo?.lineup_locked || false,
+                is_active: jornadaInfo ? true : false
+            }
+        };
 
         // En desarrollo, incluir debug info
         if (process.env.NODE_ENV === 'development') {

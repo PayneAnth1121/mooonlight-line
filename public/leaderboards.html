@@ -1035,15 +1035,17 @@
                     
                     const data = await response.json();
                     console.log('✅ Leaderboard data received:', data);
-                    
+
                     // Manejar nueva estructura de respuesta
                     let leaderboardEntries = [];
                     if (data.leaderboard && Array.isArray(data.leaderboard)) {
                         leaderboardEntries = data.leaderboard;
+                        console.log('📊 Using new leaderboard structure with', leaderboardEntries.length, 'entries');
                     } else if (Array.isArray(data)) {
                         leaderboardEntries = data; // Retrocompatibilidad
+                        console.log('📊 Using legacy leaderboard structure with', leaderboardEntries.length, 'entries');
                     }
-                    
+
                     // Store the full data for pagination
                     window.leaderboardData = leaderboardEntries;
                     window.currentPage = 1;

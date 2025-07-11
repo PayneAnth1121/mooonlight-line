@@ -1584,7 +1584,7 @@
                 }, 500);
             }
             
-            // 🆕 FUNCIÓN CORREGIDA PARA OBTENER JORNADA ACTUAL SIN PERMISOS DE ADMIN
+            // 🆕 FUNCIÓN CORREGIDA PARA OBTENER JORNADA ACTUAL
             async function getCurrentJornada() {
                 try {
                     console.log('🔍 Looking for current jornada...');
@@ -1592,7 +1592,32 @@
                     const authToken = localStorage.getItem('authToken');
                     const userData = JSON.parse(localStorage.getItem('userData') || '{}');
                     
-                    // Método 1: Si es admin, usar endpoint admin
+                    // Método 1: Usar leaderboards para obtener info de semana actual
+                    try {
+                        console.log('📡 Using leaderboards endpoint for week info...');
+                        const response = await fetch('/api/leaderboards');
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            console.log('✅ Leaderboards response:', data);
+                            
+                            // Verificar si tiene información de semana actual
+                            if (data.current_week && data.current_week.is_active && data.current_week.week_number) {
+                                console.log('✅ Found current week info:', data.current_week);
+                                return {
+                                    id: data.current_week.id,
+                                    week_number: data.current_week.week_number,
+                                    is_current: data.current_week.is_current,
+                                    is_completed: data.current_week.is_completed,
+                                    lineup_locked: data.current_week.lineup_locked || false
+                                };
+                            }
+                        }
+                    } catch (leaderboardError) {
+                        console.log('⚠️ Leaderboards endpoint failed, trying admin fallback:', leaderboardError.message);
+                    }
+                    
+                    // Método 2: Si es admin, usar endpoint admin como fallback
                     if (userData.is_admin && authToken) {
                         try {
                             const response = await fetch('/api/admin/jornadas', {
@@ -1605,68 +1630,15 @@
                                 const jornadas = await response.json();
                                 console.log('📅 Admin jornadas found:', jornadas.length);
 
-                                if (jornadas.length === 0) {
-                                    throw new Error('NO_JORNADAS_EXIST');
-                                }
-
-                                // Buscar jornada activa
-                                let currentJornada = jornadas.find(j => j.is_current);
-                                
-                                if (currentJornada) {
-                                    console.log('✅ Found current jornada:', currentJornada.week_number);
-                                    return currentJornada;
-                                }
-
-                                // Si no hay activa, usar la más reciente
                                 if (jornadas.length > 0) {
-                                    currentJornada = jornadas[0];
-                                    console.log('⚠️ Using latest jornada:', currentJornada.week_number);
+                                    // Buscar jornada activa
+                                    let currentJornada = jornadas.find(j => j.is_current) || jornadas[0];
+                                    console.log('✅ Found jornada from admin:', currentJornada.week_number);
                                     return currentJornada;
                                 }
                             }
                         } catch (adminError) {
-                            console.log('⚠️ Admin endpoint failed, trying fallback:', adminError.message);
-                        }
-                    }
-
-                    // Método 2: Fallback para usuarios regulares - usar leaderboards
-                    console.log('🔄 Using leaderboards fallback for jornada info...');
-                    try {
-                        const leaderboardResponse = await fetch('/api/leaderboards');
-                        if (leaderboardResponse.ok) {
-                            // Los leaderboards están disponibles, asumir que hay jornadas configuradas
-                            console.log('📊 Leaderboards accessible, inferring jornada exists');
-                            return { 
-                                id: 1, 
-                                week_number: 'Current', 
-                                lineup_locked: false, 
-                                message: 'Inferred from leaderboards access' 
-                            };
-                        }
-                    } catch (leaderboardError) {
-                        console.log('⚠️ Leaderboard fallback failed:', leaderboardError.message);
-                    }
-
-                    // Método 3: Último recurso - usar user-stats para inferir
-                    if (authToken) {
-                        try {
-                            const userStatsResponse = await fetch('/api/user-stats', {
-                                headers: {
-                                    'Authorization': `Bearer ${authToken}`
-                                }
-                            });
-                            
-                            if (userStatsResponse.ok) {
-                                console.log('📈 User stats accessible, inferring jornada exists');
-                                return { 
-                                    id: 1, 
-                                    week_number: 'Active', 
-                                    lineup_locked: false, 
-                                    message: 'Inferred from user stats access' 
-                                };
-                            }
-                        } catch (userStatsError) {
-                            console.log('⚠️ User stats fallback failed:', userStatsError.message);
+                            console.log('⚠️ Admin endpoint failed:', adminError.message);
                         }
                     }
 

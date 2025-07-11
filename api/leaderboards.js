@@ -269,24 +269,33 @@ module.exports = async function handler(req, res) {
         res.setHeader('X-Cache-Control', 'no-cache');
         
         // Log final
-        console.log('📋 Leaderboard response ready:', {
-            query_type: targetJornada ? 'specific_week' : 'cumulative_total',
-            reference_week: jornadaInfo?.week_number,
-            entries: leaderboardData.length,
-            total_points: totalPointsInLeaderboard,
-            processing_time: `${Date.now() - startTime}ms`
-        });
+            console.log('📋 Leaderboard response ready:', {
+                query_type: targetJornada ? 'specific_week' : 'cumulative_total',
+                reference_week: jornadaInfo?.week_number,
+                entries: leaderboardData.length,
+                total_points: totalPointsInLeaderboard,
+                processing_time: `${Date.now() - startTime}ms`
+            });
+
+            // Preparar respuesta con información de semana actual
+            const response = {
+                leaderboard: leaderboardData,
+                current_week: {
+                    id: jornadaInfo?.id || null,
+                    week_number: jornadaInfo?.week_number || null,
+                    is_current: jornadaInfo?.is_current || false,
+                    is_completed: jornadaInfo?.is_completed || false,
+                    lineup_locked: jornadaInfo?.lineup_locked || false,
+                    is_active: jornadaInfo ? true : false
+                }
+            };
 
         // En desarrollo, incluir debug info
         if (process.env.NODE_ENV === 'development') {
-            return res.json({
-                leaderboard: leaderboardData,
-                debug: debugInfo
-            });
+            response.debug = debugInfo;
         }
 
-        // En producción, solo devolver leaderboard
-        return res.json(leaderboardData);
+        return res.json(response);
 
     } catch (error) {
         console.error('❌ Error in leaderboards API:', error);

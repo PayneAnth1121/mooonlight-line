@@ -770,7 +770,7 @@
             justify-content: center;
             margin: 30px 0;
         }
-        
+
         .confirm-button {
             background: linear-gradient(135deg, rgba(0, 255, 128, 0.1), rgba(0, 255, 128, 0.2));
             border: 2px solid #00ff80;
@@ -787,7 +787,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .confirm-button::before {
             content: '';
             position: absolute;
@@ -798,22 +798,38 @@
             background: linear-gradient(90deg, transparent, rgba(0, 255, 128, 0.4), transparent);
             transition: left 0.5s ease;
         }
-        
+
         .confirm-button:hover::before {
             left: 100%;
         }
-        
+
         .confirm-button:hover {
             background: linear-gradient(135deg, rgba(0, 255, 128, 0.2), rgba(0, 255, 128, 0.3));
             box-shadow: 0 0 35px rgba(0, 255, 128, 0.6);
             transform: translateY(-3px) scale(1.05);
         }
-        
+
         .confirm-button:disabled {
             opacity: 0.4;
             cursor: not-allowed;
             transform: none;
             box-shadow: 0 0 10px rgba(0, 255, 128, 0.2);
+        }
+
+        /* 🆕 ANIMACIÓN PARA LLAMAR LA ATENCIÓN AL BOTÓN CONFIRM */
+        @keyframes pulse-confirm {
+            0% { 
+                transform: scale(1);
+                box-shadow: 0 0 25px rgba(0, 255, 128, 0.3);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 40px rgba(0, 255, 128, 0.8);
+            }
+            100% { 
+                transform: scale(1);
+                box-shadow: 0 0 25px rgba(0, 255, 128, 0.3);
+            }
         }
         
         /* RESPONSIVE MEJORADO */
@@ -1220,10 +1236,37 @@
                 updateSelectionCount();
                 updateSelectionBadges();
                 confirmDraftBtn.disabled = selectedPlayers.length === 0;
+                
+                // 🆕 AUTO-SCROLL WHEN SELECTION IS COMPLETE
+                if (selectedPlayers.length === 10) {
+                    setTimeout(() => {
+                        scrollToConfirmButton();
+                    }, 500); // Pequeño delay para que el usuario vea la carta seleccionada
+                }
             }
             
             function updateSelectionCount() {
                 selectionCount.textContent = selectedPlayers.length;
+            }
+
+            // 🆕 FUNCIÓN PARA HACER SCROLL AUTOMÁTICO AL BOTÓN CONFIRM
+            function scrollToConfirmButton() {
+                console.log('🎯 Auto-scrolling to confirm button...');
+                
+                // Encontrar el botón confirm
+                const confirmButton = document.getElementById('confirm-draft-btn');
+                if (!confirmButton) return;
+                
+                // Hacer scroll suave hacia el botón
+                confirmButton.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                // Efecto visual para llamar la atención
+                setTimeout(() => {
+                    confirmButton.style.animation = 'pulse-confirm 1s ease-in-out 3';
+                }, 800);
             }
             
             function updateSelectionBadges() {

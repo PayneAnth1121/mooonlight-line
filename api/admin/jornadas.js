@@ -243,9 +243,9 @@ module.exports = async function handler(req, res) {
     }
 
     if (req.method === 'DELETE') {
-      // Delete jornada (requires ID in query)
+      // Reset jornada points (requires ID in query) - RESET POINTS VERSION
       if (!id || isNaN(parseInt(id))) {
-        return res.status(400).json({ message: 'Valid jornada ID is required for deletion' });
+        return res.status(400).json({ message: 'Valid jornada ID is required for reset' });
       }
 
       const client = await pool.connect();
@@ -266,47 +266,79 @@ module.exports = async function handler(req, res) {
         
         const jornadaInfo = checkResult.rows[0];
         
-        // Check if jornada has associated data
-        const statsCount = await client.query(
-          'SELECT COUNT(*) as count FROM player_stats WHERE jornada_id = $1',
+        // 🔄 RESET VERSION: Solo resetear puntos, mantener estructura
+        console.log(`🔄 Resetting all points for Week ${jornadaInfo.week_number}...`);
+        
+        // Paso 1: Resetear estadísticas de jugadores a 0
+        const resetPlayerStatsResult = await client.query(
+          `UPDATE player_stats SET 
+             rebounds = 0, 
+             two_points = 0, 
+             three_points = 0, 
+             free_throws = 0, 
+             assists = 0, 
+             blocks = 0, 
+             victories = false, 
+             total_points = 0, 
+             updated_at = NOW()
+           WHERE jornada_id = $1`,
           [parseInt(id)]
         );
         
-        const teamsCount = await client.query(
-          'SELECT COUNT(*) as count FROM user_teams WHERE jornada_id = $1',
+        // Paso 2: Resetear puntos de selecciones de jugadores a 0
+        const resetPlayerSelectionsResult = await client.query(
+          `UPDATE user_team_players 
+           SET points_earned = 0
+           WHERE user_team_id IN (
+             SELECT id FROM user_teams WHERE jornada_id = $1
+           )`,
           [parseInt(id)]
         );
         
-        const hasStats = parseInt(statsCount.rows[0].count) > 0;
-        const hasTeams = parseInt(teamsCount.rows[0].count) > 0;
+        // Paso 3: Resetear puntos totales de equipos a 0
+        const resetUserTeamsResult = await client.query(
+          `UPDATE user_teams 
+           SET total_points = 0, updated_at = NOW()
+           WHERE jornada_id = $1`,
+          [parseInt(id)]
+        );
         
-        if (hasStats || hasTeams) {
-          await client.query('ROLLBACK');
-          return res.status(400).json({ 
-            message: `Cannot delete Week ${jornadaInfo.week_number} - it has associated data`,
-            details: {
-              playerStats: parseInt(statsCount.rows[0].count),
-              userTeams: parseInt(teamsCount.rows[0].count),
-              suggestion: 'Mark as completed instead of deleting'
-            }
-          });
-        }
-        
-        // Delete the jornada
-        await client.query('DELETE FROM jornadas WHERE id = $1', [parseInt(id)]);
+        // Paso 4: Desactivar la jornada y desbloquear lineups para permitir cambios
+        const resetJornadaResult = await client.query(
+          `UPDATE jornadas 
+           SET is_current = false, 
+               is_completed = false, 
+               lineup_locked = false, 
+               updated_at = NOW()
+           WHERE id = $1`,
+          [parseInt(id)]
+        );
         
         await client.query('COMMIT');
         
-        console.log(`🗑️ Deleted Week ${jornadaInfo.week_number} (ID: ${id})`);
+        console.log(`✅ Week ${jornadaInfo.week_number} points reset successfully:`, {
+          player_stats_reset: resetPlayerStatsResult.rowCount,
+          player_selections_reset: resetPlayerSelectionsResult.rowCount,
+          user_teams_reset: resetUserTeamsResult.rowCount,
+          jornada_reset: resetJornadaResult.rowCount
+        });
         
         return res.json({
-          message: `Week ${jornadaInfo.week_number} deleted successfully`,
-          deletedId: parseInt(id),
-          deletedWeek: jornadaInfo.week_number
+          message: `Week ${jornadaInfo.week_number} points reset successfully`,
+          resetId: parseInt(id),
+          resetWeek: jornadaInfo.week_number,
+          resetData: {
+            player_stats: resetPlayerStatsResult.rowCount,
+            player_selections: resetPlayerSelectionsResult.rowCount,
+            user_teams: resetUserTeamsResult.rowCount
+          },
+          info: 'All points reset to 0. User lineups preserved. Week unlocked for new stats.',
+          status: 'Week is now ready for new statistics input'
         });
         
       } catch (error) {
         await client.query('ROLLBACK');
+        console.error('❌ Error during points reset:', error);
         throw error;
       } finally {
         client.release();

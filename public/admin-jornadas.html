@@ -978,20 +978,45 @@
                 }
             };
             
-            // 🆕 FUNCIÓN MEJORADA PARA ELIMINAR
+                // 🔄 FUNCIÓN PARA RESETEAR PUNTOS (NO ELIMINAR)
             window.deleteJornada = async function(id, weekNumber) {
-                if (!confirm(`Are you sure you want to delete Week ${weekNumber}?\n\nThis will permanently delete:\n• All player statistics for this week\n• All user teams for this week\n• All associated data\n\nThis action CANNOT be undone!`)) {
+                // Primera confirmación - cambiar el texto para reflejar que es un reset
+                if (!confirm(`🔄 RESET Week ${weekNumber} Points?\n\nThis will reset to ZERO:\n• All player statistics for this week\n• All calculated points\n• All user team scores\n\n✅ PRESERVED:\n• User lineups and player selections\n• Week structure\n\nThe week will be unlocked for new stats input.\n\nContinue with points reset?`)) {
                     return;
                 }
                 
-                // Confirmación más simple y flexible
-                const confirmText = prompt(`To confirm deletion of Week ${weekNumber}, type: delete`);
-                if (!confirmText || confirmText.toLowerCase().trim() !== 'delete') {
-                    showAlert('error', 'Deletion cancelled - please type "delete" to confirm.');
+                // Segunda confirmación más simple para reset
+                const confirmText = prompt(`🔄 Confirm Points Reset\n\nResetting Week ${weekNumber} will set all points to 0 but preserve user lineups.\n\nType "RESET" to confirm:`);
+                
+                if (!confirmText || confirmText.trim().toUpperCase() !== 'RESET') {
+                    showAlert('error', 'Reset cancelled - please type "RESET" to confirm.');
                     return;
                 }
                 
                 try {
+                    // Mostrar estado de carga
+                    const loadingMessage = document.createElement('div');
+                    loadingMessage.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: rgba(0, 0, 0, 0.9);
+                        color: #ff8c00;
+                        padding: 20px;
+                        border-radius: 10px;
+                        border: 2px solid #ff8c00;
+                        z-index: 10000;
+                        text-align: center;
+                        font-family: 'Orbitron', sans-serif;
+                    `;
+                    loadingMessage.innerHTML = `
+                        <div style="font-size: 1.2rem; margin-bottom: 10px;">🔄 RESETTING WEEK ${weekNumber}</div>
+                        <div style="font-size: 0.9rem;">Setting all points to zero...</div>
+                        <div style="margin-top: 10px;">⏳ Please wait...</div>
+                    `;
+                    document.body.appendChild(loadingMessage);
+                    
                     const response = await fetch(`${API_URL}/admin/jornadas?id=${id}`, {
                         method: 'DELETE',
                         headers: {
@@ -999,17 +1024,39 @@
                         }
                     });
                     
+                    // Remover mensaje de carga
+                    document.body.removeChild(loadingMessage);
+                    
                     if (!response.ok) {
                         const error = await response.json();
-                        throw new Error(error.message || 'Failed to delete game week');
+                        throw new Error(error.message || 'Failed to reset game week points');
                     }
                     
-                    showAlert('success', `Week ${weekNumber} deleted successfully!`);
+                    const result = await response.json();
+                    
+                    showAlert('success', `✅ Week ${weekNumber} POINTS RESET!\n\nReset data:\n• ${result.resetData?.player_stats || 0} player statistics → 0\n• ${result.resetData?.user_teams || 0} team scores → 0\n• ${result.resetData?.player_selections || 0} player selections → 0 points\n\n✅ User lineups preserved!\n🔓 Week unlocked for new stats input.`);
+                    
+                    // Recargar la lista
                     loadJornadas();
                     
+                    // Sugerir siguiente acción
+                    setTimeout(() => {
+                        const nextAction = confirm(
+                            '🔄 Points reset completed!\n\n' +
+                            'Week is now ready for new statistics.\n\n' +
+                            'What would you like to do next?\n\n' +
+                            'OK = Go to Stats Manager\n' +
+                            'Cancel = Stay here'
+                        );
+                        
+                        if (nextAction) {
+                            window.location.href = 'stats-manager.html';
+                        }
+                    }, 2000);
+                    
                 } catch (error) {
-                    console.error('Error deleting game week:', error);
-                    showAlert('error', error.message || 'Error deleting game week.');
+                    console.error('❌ Error during points reset:', error);
+                    showAlert('error', `❌ Points reset failed: ${error.message}\n\nThe points could not be reset. Please check the console for more details.`);
                 }
             };
 

@@ -400,6 +400,180 @@
         }
     </style>
 </head>
+<script>
+// 🆘 HERRAMIENTA DE EMERGENCIA PARA USUARIOS QUE PERDIERON SU EQUIPO
+async function resetUserDraftStatus(userId) {
+    try {
+        console.log(`🔄 Resetting draft status for user ${userId}...`);
+        
+        const authToken = localStorage.getItem('authToken');
+        
+        if (!authToken) {
+            throw new Error('No auth token found. Please login as admin first.');
+        }
+        
+        const response = await fetch('/api/admin/users', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+            body: JSON.stringify({
+                user_id: parseInt(userId),
+                has_drafted: false
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to reset user draft status');
+        }
+        
+        const result = await response.json();
+        console.log('✅ User draft status reset successfully:', result);
+        
+        return {
+            success: true,
+            message: `User ${userId} can now draft players again`,
+            data: result
+        };
+        
+    } catch (error) {
+        console.error('❌ Error resetting user draft status:', error);
+        return {
+            success: false,
+            message: error.message
+        };
+    }
+}
+
+async function helpUserWhoLostTeam(username) {
+    try {
+        console.log(`🔍 Looking for user: ${username}`);
+        
+        const authToken = localStorage.getItem('authToken');
+        
+        if (!authToken) {
+            throw new Error('Please login as admin first');
+        }
+        
+        // 1. Buscar el usuario por username
+        const usersResponse = await fetch('/api/admin/users', {
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        });
+        
+        if (!usersResponse.ok) {
+            throw new Error('Could not fetch users list');
+        }
+        
+        const usersData = await usersResponse.json();
+        console.log('📊 Users data received:', usersData);
+        
+        // Buscar en el array de usuarios
+        const user = usersData.users ? 
+            usersData.users.find(u => u.username.toLowerCase() === username.toLowerCase()) :
+            usersData.find(u => u.username.toLowerCase() === username.toLowerCase());
+        
+        if (!user) {
+            console.error('❌ Available users:', usersData.users ? usersData.users.map(u => u.username) : 'No users array found');
+            throw new Error(`User "${username}" not found. Check spelling and try again.`);
+        }
+        
+        console.log(`👤 Found user:`, {
+            id: user.id,
+            username: user.username,
+            team_name: user.team_name,
+            has_drafted: user.has_drafted
+        });
+        
+        // 2. Verificar si realmente necesita ayuda
+        if (!user.has_drafted) {
+            const message = `ℹ️ User "${username}" can already draft players (has_drafted = false).\n\nThey should go to "Draft Players" page.`;
+            console.log(message);
+            alert(message);
+            return { success: true, message: 'User can already draft' };
+        }
+        
+        // 3. Resetear su estado de draft
+        console.log(`🔄 Resetting draft status for ${user.username}...`);
+        const resetResult = await resetUserDraftStatus(user.id);
+        
+        if (resetResult.success) {
+            const successMessage = `✅ SUCCESS!\n\nUser "${username}" (${user.team_name}) can now draft players again!\n\n📋 Instructions for the user:\n1. Go to "Draft Players" page\n2. Select 10 players\n3. Click "Confirm Draft"\n4. Go to "My Team" to arrange lineup\n\n⚠️ Their previous team has been reset.`;
+            
+            console.log(successMessage);
+            alert(successMessage);
+            
+            // Opcional: Recargar la página para ver cambios
+            setTimeout(() => {
+                if (confirm('Reload page to see updated user data?')) {
+                    window.location.reload();
+                }
+            }, 2000);
+            
+        } else {
+            const errorMessage = `❌ ERROR: ${resetResult.message}`;
+            console.error(errorMessage);
+            alert(errorMessage);
+        }
+        
+        return resetResult;
+        
+    } catch (error) {
+        console.error('❌ Error helping user:', error);
+        const errorMessage = `❌ ERROR: ${error.message}`;
+        alert(errorMessage);
+        return { success: false, message: error.message };
+    }
+}
+
+// Agregar botón de ayuda rápida a la interfaz
+document.addEventListener('DOMContentLoaded', function() {
+    // Agregar botón de ayuda de emergencia
+    const helpButton = document.createElement('button');
+    helpButton.innerHTML = '🆘 HELP USER WHO LOST TEAM';
+    helpButton.className = 'nav-button';
+    helpButton.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background-color: rgba(255, 107, 107, 0.1);
+        border-color: #ff6b6b;
+        color: #ff6b6b;
+        z-index: 1000;
+        font-size: 0.8rem;
+        padding: 8px 15px;
+    `;
+    
+    helpButton.addEventListener('click', function() {
+        const username = prompt('🆘 EMERGENCY USER HELP\n\nEnter the username of the user who lost their team:');
+        if (username && username.trim()) {
+            helpUserWhoLostTeam(username.trim());
+        }
+    });
+    
+    document.body.appendChild(helpButton);
+});
+
+// Logging para debug
+console.log(`
+🆘 EMERGENCY TOOLS LOADED
+
+Para ayudar a un usuario que perdió su equipo:
+
+MÉTODO 1 - Usar el botón:
+- Click en el botón rojo "🆘 HELP USER WHO LOST TEAM" 
+- Escribir el username del usuario
+
+MÉTODO 2 - Usar la consola:
+- helpUserWhoLostTeam("username_exacto")
+
+Ejemplo:
+helpUserWhoLostTeam("alfredo_ocana")
+`);
+</script>
 <body>
     <div class="grid-lines"></div>
     
